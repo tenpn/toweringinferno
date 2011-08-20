@@ -1,7 +1,7 @@
 #include "libtcod.hpp"
 #include "game.h"
 #include "world.h"
-#include "proceduralgeneration\floorgenerator.h"
+#include "proceduralgeneration/floorgenerator.h"
 #include "utils.h"
 
 namespace toweringinferno

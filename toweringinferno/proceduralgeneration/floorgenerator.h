@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <assert.h>
-#include "..\celltype.h"
-#include "..\position.h"
+#include "../celltype.h"
+#include "../position.h"
 
 namespace toweringinferno
 {
