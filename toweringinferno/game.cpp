@@ -58,7 +58,10 @@ void renderWorld(
 					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
 						floorRng.getGaussianFloat(0.0f, 0.25f))
 				: TCODColor::lightGrey;
-			const TCODColor bgCol = TCODColor::lerp(baseBgCol, fire, cell.fire);
+			const TCODColor bgCol = TCODColor::lerp(baseBgCol, fire, 
+				cell.fire > 0.0f 
+					? utils::clamp(TCODRandom::getInstance()->getGaussianFloat(-0.2f, 0.2f) + cell.fire, 0.0f, 1.0f)
+					: 0.0f);
 			
 			const bool isPlayer = x == world.getPlayerPos().first && y == world.getPlayerPos().second;
 
