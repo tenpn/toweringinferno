@@ -84,7 +84,7 @@ void renderWorld(
 
 			const TCODColor waterBgCol = TCODColor::lerp(baseBgCol, water, cell.water);
 
-			const TCODColor bgCol = (cell.water < cell.heat) 
+			const TCODColor bgCol = (cell.water < cell.fire) 
 					|| renderMode == eRender_Heat && cell.heat > 0.0f 
 				? heatBgCol
 				: waterBgCol;
