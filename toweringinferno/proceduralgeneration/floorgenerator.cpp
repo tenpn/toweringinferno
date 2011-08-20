@@ -15,29 +15,48 @@ public:
 		assert(userData != NULL);
 		assert(node != NULL);
 
-		if (node->isLeaf() == false)
-		{
-			return true;
-		}
-
 		FloorGenerator * const floor = static_cast<FloorGenerator*>(userData);
 
-		assert(node->w > 0);
-		assert(node->h > 0);
-
-		const int maxCol = node->x + node->w;
-		const int maxRow = node->y + node->h;
-
-		for(int wallCol = node->x; wallCol < maxCol; ++wallCol)
+		if (node->isLeaf())
 		{
-			floor->setWall(wallCol, node->y);
-			floor->setWall(wallCol, maxRow - 1);
+			// make room walls
+			assert(node->w > 0);
+			assert(node->h > 0);
+
+			const int maxCol = node->x + node->w;
+			const int maxRow = node->y + node->h;
+
+			for(int wallCol = node->x; wallCol < maxCol; ++wallCol)
+			{
+				floor->setWall(wallCol, node->y, true);
+				floor->setWall(wallCol, maxRow - 1, true);
+			}
+
+			for(int wallRow = node->y; wallRow < maxRow; ++wallRow)
+			{
+				floor->setWall(node->x, wallRow, true);
+				floor->setWall(maxCol - 1, wallRow, true);
+			}
+		} 
+		else if (node->horizontal) 
+		{
+			int doorRow = node->position-2;
+			const int doorCol = node->x + (node->w / 2);
+
+			floor->setWall(doorCol, doorRow++, false);
+			floor->setWall(doorCol, doorRow++, false);
+			floor->setWall(doorCol, doorRow++, false);
+			floor->setWall(doorCol, doorRow++, false);
 		}
-
-		for(int wallRow = node->y; wallRow < maxRow; ++wallRow)
+		else // vertical split
 		{
-			floor->setWall(node->x, wallRow);
-			floor->setWall(maxCol - 1, wallRow);
+			int doorCol = node->position-2;
+			const int doorRow = node->y + (node->h / 2);
+
+			floor->setWall(doorCol++, doorRow, false);
+			floor->setWall(doorCol++, doorRow, false);
+			floor->setWall(doorCol++, doorRow, false);
+			floor->setWall(doorCol++, doorRow, false);
 		}
 
 		return true;
@@ -60,8 +79,8 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	, m_top(top)
 {
 	TCODBsp officeBsp(left,top,w,h);
-	officeBsp.splitRecursive(NULL, 4, 8, 8, 0.9f, 0.9f);
+	officeBsp.splitRecursive(NULL, 6, 8, 8, 0.9f, 0.9f);
 
 	BSPWallWriter wallWriter;
-	officeBsp.traverseInOrder(&wallWriter, this);
+	officeBsp.traversePostOrder(&wallWriter, this);
 }

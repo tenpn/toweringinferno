@@ -15,7 +15,7 @@ public:
 	FloorGenerator(int left, int top, int w, int h);
 	
 	bool isWall(int x, int y) const;
-	void setWall(int x, int y);
+	void setWall(int x, int y, bool wall);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
@@ -65,11 +65,12 @@ int toweringinferno::proceduralgeneration::FloorGenerator::worldCoordsToIndex(
 inline 
 void toweringinferno::proceduralgeneration::FloorGenerator::setWall(
 	const int x, 
-	const int y
+	const int y,
+	const bool wall
 	)
 {
 	assert(isWorldCoordsInFloor(x,y));
-	m_cells[worldCoordsToIndex(x,y)] = true;
+	m_cells[worldCoordsToIndex(x,y)] = wall;
 }
 
 inline
