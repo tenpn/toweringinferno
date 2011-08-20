@@ -159,6 +159,10 @@ void toweringinferno::executeGameLoop()
 		{
 			renderMode = static_cast<RenderMode>((static_cast<int>(renderMode) + 1) % eRender_Count);
 		}
+		else if (key.c == 'n')
+		{
+			newGamePlease = true;
+		}
 		
 	}
 }
