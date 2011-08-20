@@ -48,15 +48,19 @@ public:
 } // namespace toweringinferno
 
 toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
+	const int left,
+	const int top,
 	const int w, 
 	const int h
 	)
 	: m_cells(w*h,false)
 	, m_width(w)
 	, m_height(h)
+	, m_left(left)
+	, m_top(top)
 {
-	TCODBsp officeBsp(0,0,w,h);
-	officeBsp.splitRecursive(NULL, 5, 8, 8, 0.9f, 0.9f);
+	TCODBsp officeBsp(left,top,w,h);
+	officeBsp.splitRecursive(NULL, 4, 8, 8, 0.9f, 0.9f);
 
 	BSPWallWriter wallWriter;
 	officeBsp.traverseInOrder(&wallWriter, this);

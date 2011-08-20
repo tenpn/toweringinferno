@@ -5,15 +5,18 @@
 namespace toweringinferno
 {
 
-void renderFloor(const proceduralgeneration::FloorGenerator& floor)
+void renderFloor(
+	const proceduralgeneration::FloorGenerator& floor
+	)
 {
-	for(int col = 0; col < floor.getWidth(); ++col)
+	for(int col = floor.getLeft(); col < floor.getRight(); ++col)
 	{
-		for(int row=0; row < floor.getHeight(); ++row)
+		for(int row = floor.getTop(); row < floor.getBottom(); ++row)
 		{
+			TCODConsole::root->setBack(col, row, TCODColor::lightGrey);
 			if (floor.isWall(col, row))
 			{
-				TCODConsole::root->putChar(col, row, '#');
+				TCODConsole::root->putCharEx(col, row, '#', TCODColor::darkerGrey, TCODColor::lightGrey);
 			}
 		}
 	}
@@ -30,7 +33,10 @@ void toweringinferno::executeGameLoop()
 	TCODConsole::root->setBackgroundColor(TCODColor::lightSky);
 	TCODConsole::root->setForegroundColor(TCODColor::darkerGrey);
 
-	const proceduralgeneration::FloorGenerator floor(width, height);
+	const int buffer = 2;
+	const proceduralgeneration::FloorGenerator floor(
+		buffer, buffer,
+		width - buffer*2, height - buffer*2);
 
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{

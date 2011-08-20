@@ -12,55 +12,75 @@ namespace toweringinferno
 class FloorGenerator
 {
 public:
-	FloorGenerator(int w, int h);
+	FloorGenerator(int left, int top, int w, int h);
 	
 	bool isWall(int x, int y) const;
 	void setWall(int x, int y);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
+	int getLeft() const { return m_left; }
+	int getTop() const { return m_top; }
+	int getRight() const { return m_left + m_width; }
+	int getBottom() const { return m_top + m_height; }
 
 private:
-
-	int coordsToIndex(int x, int y) const;
+	bool isWorldCoordsInFloor(int x, int y) const;
+	int worldCoordsToIndex(int x, int y) const;
 
 	std::vector<bool> m_cells;
 	int m_width;
 	int m_height;
+	int m_left;
+	int m_top;
 }; 
 
 	} // namespace proceduralgeneration
 
 } // namespace toweringinferno
 
-inline
-int toweringinferno::proceduralgeneration::FloorGenerator::coordsToIndex(
-	int x, 
-	int y
+inline 
+bool toweringinferno::proceduralgeneration::FloorGenerator::isWorldCoordsInFloor(
+	const int x, 
+	const int y
 	) const
 {
-	assert(y >= 0 && y < m_height);
-	assert(x >= 0 && x < m_width);
-	assert((y*m_width + x) < static_cast<int>(m_cells.size()));
-	return y*m_width + x;
+	assert(x >= 0);
+	assert(y >= 0);
+	return x >= m_left && x < getRight() && y >= m_top && y < getBottom();
+}
+
+inline
+int toweringinferno::proceduralgeneration::FloorGenerator::worldCoordsToIndex(
+	const int x, 
+	const int y
+	) const
+{
+	assert(isWorldCoordsInFloor(x,y));
+	const int index = (y - m_top)*m_width + (x - m_left);
+	assert(index >= 0 && index < static_cast<int>(m_cells.size()));
+	return index;
 }
 
 inline 
 void toweringinferno::proceduralgeneration::FloorGenerator::setWall(
-	int x, 
-	int y
+	const int x, 
+	const int y
 	)
 {
-	m_cells[coordsToIndex(x,y)] = true;
+	assert(isWorldCoordsInFloor(x,y));
+	m_cells[worldCoordsToIndex(x,y)] = true;
 }
 
 inline
 bool toweringinferno::proceduralgeneration::FloorGenerator::isWall(
-	int x, 
-	int y
+	const int x, 
+	const int y
 	) const
 {
-	return m_cells[coordsToIndex(x,y)];
+	return isWorldCoordsInFloor(x,y)
+		? m_cells[worldCoordsToIndex(x,y)]
+		: false;
 }
 
 #endif // __TI_FLOORGENERATOR_H_
