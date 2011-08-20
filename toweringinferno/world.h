@@ -42,6 +42,7 @@ public:
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
 	void setFire(int x, int y, float newFire);
+	void setHose(int x, int y);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
@@ -97,6 +98,17 @@ void toweringinferno::World::set(
 	)
 {
 	m_map[coordsToIndex(x,y)].type = newType;
+}
+
+inline
+void toweringinferno::World::setHose(
+	const int x, 
+	const int y
+	)
+{
+	Cell& cell = m_map[coordsToIndex(x,y)];
+	cell.type = eHose;
+	cell.water = 1.0f;
 }
 
 inline

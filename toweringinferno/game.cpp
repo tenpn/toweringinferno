@@ -34,7 +34,7 @@ void pushFloorToMap(
 
 	for(auto hosePos = floor.getHoses().begin(); hosePos != floor.getHoses().end(); ++hosePos)
 	{
-		world.set(hosePos->first, hosePos->second, eHose);
+		world.setHose(hosePos->first, hosePos->second);
 	}
 }
 
@@ -52,6 +52,7 @@ void renderWorld(
 {
 	static const TCODColor fire(255,0,0);
 	static const TCODColor heat(255,0,255);
+	static const TCODColor water(0,0,255);
 
 	const TCODColor& renderTargetColor = renderMode == eRender_Heat ? heat : fire;
 
@@ -76,10 +77,17 @@ void renderWorld(
 				: TCODColor::lightGrey;
 
 			const float renderTarget = renderMode == eRender_Normal ? cell.fire : cell.heat;
-			const TCODColor bgCol = TCODColor::lerp(baseBgCol, renderTargetColor, 
+			const TCODColor heatBgCol = TCODColor::lerp(baseBgCol, renderTargetColor, 
 				renderTarget > 0.0f 
 					? utils::clamp(TCODRandom::getInstance()->getGaussianFloat(-0.2f, 0.2f) + renderTarget, 0.0f, 1.0f)
 					: 0.0f);
+
+			const TCODColor waterBgCol = TCODColor::lerp(baseBgCol, water, cell.water);
+
+			const TCODColor bgCol = (cell.water < cell.heat) 
+					|| renderMode == eRender_Heat && cell.heat > 0.0f 
+				? heatBgCol
+				: waterBgCol;
 			
 			const bool isPlayer = x == world.getPlayerPos().first && y == world.getPlayerPos().second;
 
