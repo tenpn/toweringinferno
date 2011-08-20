@@ -81,6 +81,7 @@ copy $(SolutionDir)\libtcod-1.5.0\terminal.png $(SolutionDir)$(Configuration)\</
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="celltype.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="proceduralgeneration\floorgenerator.h" />
     <ClInclude Include="utils.h" />

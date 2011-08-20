@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <assert.h>
+#include "..\celltype.h"
 
 namespace toweringinferno
 {
@@ -28,7 +29,7 @@ private:
 	bool isWorldCoordsInFloor(int x, int y) const;
 	int worldCoordsToIndex(int x, int y) const;
 
-	std::vector<bool> m_cells;
+	std::vector<CellType> m_cells;
 	int m_width;
 	int m_height;
 	int m_left;
@@ -70,7 +71,7 @@ void toweringinferno::proceduralgeneration::FloorGenerator::setWall(
 	)
 {
 	assert(isWorldCoordsInFloor(x,y));
-	m_cells[worldCoordsToIndex(x,y)] = wall;
+	m_cells[worldCoordsToIndex(x,y)] = wall ? eWall : eFloor;
 }
 
 inline
@@ -80,7 +81,7 @@ bool toweringinferno::proceduralgeneration::FloorGenerator::isWall(
 	) const
 {
 	return isWorldCoordsInFloor(x,y)
-		? m_cells[worldCoordsToIndex(x,y)]
+		? m_cells[worldCoordsToIndex(x,y)] == eWall
 		: false;
 }
 

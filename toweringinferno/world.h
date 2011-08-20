@@ -4,16 +4,10 @@
 #include <assert.h>
 #include <vector>
 #include "libtcod.hpp"
+#include "celltype.h"
 
 namespace toweringinferno
 {
-
-enum CellType
-{
-	eWall,
-	eFloor,
-	eSky,
-};
 
 struct Cell
 {

@@ -72,7 +72,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const int w, 
 	const int h
 	)
-	: m_cells(w*h,false)
+	: m_cells(w*h,eFloor)
 	, m_width(w)
 	, m_height(h)
 	, m_left(left)

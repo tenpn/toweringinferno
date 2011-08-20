@@ -44,5 +44,8 @@
     <ClInclude Include="utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="celltype.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
