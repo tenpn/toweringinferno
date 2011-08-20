@@ -49,6 +49,7 @@ public:
 private:
 
 	Position calculateNewPlayerPos(TCOD_keycode_t movementDir)const;
+	void updateDynamics();
 
 	int coordsToIndex(int x, int y) const;
 

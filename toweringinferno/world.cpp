@@ -56,6 +56,11 @@ void toweringinferno::World::update(
 {
 	m_playerPos = calculateNewPlayerPos(movementDir);
 
+	updateDynamics();
+}
+
+void toweringinferno::World::updateDynamics()
+{
 	for(int col = 0; col < getWidth(); ++col)
 	{
 		for(int row = 0; row < getHeight(); ++row)
@@ -98,7 +103,7 @@ void toweringinferno::World::update(
 
 			const float maxHeat = 1.0f;
 
-			const float heatBuildRate = cell.type == eWall ? 0.25f : 0.05f;
+			const float heatBuildRate = cell.type == eWall ? 0.35f : 0.1f;
 
 			cell.heat = utils::min( cell.heat + heat * heatBuildRate, maxHeat);
 
