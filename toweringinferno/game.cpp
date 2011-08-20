@@ -17,7 +17,7 @@ void pushFloorToMap(
 		for(int row = floor.getTop(); row < floor.getBottom(); ++row)
 		{
 			world.set(col, row, 
-				floor.isWall(col, row) ? eWall : eFloor
+				floor.getType(col, row)
 				);
 
 			if (col == world.getWidth()/2 && row == world.getHeight() / 2)

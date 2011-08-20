@@ -15,8 +15,8 @@ class FloorGenerator
 public:
 	FloorGenerator(int left, int top, int w, int h);
 	
-	bool isWall(int x, int y) const;
-	void setWall(int x, int y, bool wall);
+	CellType getType(int x, int y) const;
+	void setType(int x, int y, CellType newType);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
@@ -64,25 +64,25 @@ int toweringinferno::proceduralgeneration::FloorGenerator::worldCoordsToIndex(
 }
 
 inline 
-void toweringinferno::proceduralgeneration::FloorGenerator::setWall(
+void toweringinferno::proceduralgeneration::FloorGenerator::setType(
 	const int x, 
 	const int y,
-	const bool wall
+	const CellType newType
 	)
 {
 	assert(isWorldCoordsInFloor(x,y));
-	m_cells[worldCoordsToIndex(x,y)] = wall ? eWall : eFloor;
+	m_cells[worldCoordsToIndex(x,y)] = newType;
 }
 
 inline
-bool toweringinferno::proceduralgeneration::FloorGenerator::isWall(
+toweringinferno::CellType toweringinferno::proceduralgeneration::FloorGenerator::getType(
 	const int x, 
 	const int y
 	) const
 {
 	return isWorldCoordsInFloor(x,y)
-		? m_cells[worldCoordsToIndex(x,y)] == eWall
-		: false;
+		? m_cells[worldCoordsToIndex(x,y)]
+		: eSky;
 }
 
 #endif // __TI_FLOORGENERATOR_H_

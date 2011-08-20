@@ -28,14 +28,14 @@ public:
 
 			for(int wallCol = node->x; wallCol < maxCol; ++wallCol)
 			{
-				floor->setWall(wallCol, node->y, true);
-				floor->setWall(wallCol, maxRow - 1, true);
+				floor->setType(wallCol, node->y, eWall);
+				floor->setType(wallCol, maxRow - 1, eWall);
 			}
 
 			for(int wallRow = node->y; wallRow < maxRow; ++wallRow)
 			{
-				floor->setWall(node->x, wallRow, true);
-				floor->setWall(maxCol - 1, wallRow, true);
+				floor->setType(node->x, wallRow, eWall);
+				floor->setType(maxCol - 1, wallRow, eWall);
 			}
 		} 
 		else if (node->horizontal) 
@@ -43,20 +43,20 @@ public:
 			int doorRow = node->position-2;
 			const int doorCol = node->x + (node->w / 2);
 
-			floor->setWall(doorCol, doorRow++, false);
-			floor->setWall(doorCol, doorRow++, false);
-			floor->setWall(doorCol, doorRow++, false);
-			floor->setWall(doorCol, doorRow++, false);
+			floor->setType(doorCol, doorRow++, eFloor);
+			floor->setType(doorCol, doorRow++, eFloor);
+			floor->setType(doorCol, doorRow++, eFloor);
+			floor->setType(doorCol, doorRow++, eFloor);
 		}
 		else // vertical split
 		{
 			int doorCol = node->position-2;
 			const int doorRow = node->y + (node->h / 2);
 
-			floor->setWall(doorCol++, doorRow, false);
-			floor->setWall(doorCol++, doorRow, false);
-			floor->setWall(doorCol++, doorRow, false);
-			floor->setWall(doorCol++, doorRow, false);
+			floor->setType(doorCol++, doorRow, eFloor);
+			floor->setType(doorCol++, doorRow, eFloor);
+			floor->setType(doorCol++, doorRow, eFloor);
+			floor->setType(doorCol++, doorRow, eFloor);
 		}
 
 		return true;
