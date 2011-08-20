@@ -25,6 +25,11 @@ void pushFloorToMap(
 				world.setFire(col, row, 1.0f);
 			}
 
+			if (floor.getType(col, row) == eStairsUp)
+			{
+				world.setPlayerPos(col, row);
+			}
+
 			//if (col % 5 == 0)
 			//{
 			//	world.setFire(col, row, 
@@ -53,9 +58,8 @@ void renderWorld(
 			}
 
 			const TCODColor baseBgCol 
-				= cell.type == eFloor ? TCODColor::lightGrey
-				: cell.type == eWall ? TCODColor::darkGrey
-				: TCODColor::lightSky;
+				= cell.type == eWall ? TCODColor::darkGrey
+				: TCODColor::lightGrey;
 			const TCODColor bgCol = TCODColor::lerp(baseBgCol, fire, cell.fire);
 			
 			const bool isPlayer = x == world.getPlayerPos().first && y == world.getPlayerPos().second;
@@ -63,6 +67,8 @@ void renderWorld(
 			const int c
 				= isPlayer ? '@'
 				: cell.type == eWall ? '#'
+				: cell.type == eStairsUp ? '<'
+				: cell.type == eStairsDown ? '>'
 				: ' ';
 
 			const TCODColor fgColor = isPlayer ? TCODColor::orange : TCODColor::black;

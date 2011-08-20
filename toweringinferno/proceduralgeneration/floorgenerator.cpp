@@ -1,6 +1,7 @@
-
+#include <assert.h>
 #include "floorgenerator.h"
 #include "libtcod.hpp"
+
 
 namespace toweringinferno
 {
@@ -63,6 +64,22 @@ public:
 	}
 }; 
 
+const TCODBsp& findRandomLeaf(const TCODBsp& node)
+{
+	return node.isLeaf() ? node
+		: TCODRandom::getInstance()->getInt(0,1) == 0 ? *node.getLeft() : *node.getRight();
+}
+
+typedef std::pair<int,int> Position;
+
+Position calculateRandomPosition(const TCODBsp& node)
+{
+	return Position(
+		TCODRandom::getInstance()->getInt(node.x + 1,node.x + node.w - 2),
+		TCODRandom::getInstance()->getInt(node.y + 1,node.y + node.h - 2)
+		);
+}
+
 	} // namespace proceduralgeneration
 } // namespace toweringinferno
 
@@ -83,4 +100,14 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 
 	BSPWallWriter wallWriter;
 	officeBsp.traversePostOrder(&wallWriter, this);
+
+	// find player start / end pos by iterating down branches
+	const bool startOnLeft = TCODRandom::getInstance()->getInt(0,1) == 0;
+	const TCODBsp& playerStartNode = findRandomLeaf(startOnLeft ? *officeBsp.getLeft() : *officeBsp.getRight());
+	const Position playerStartPos = calculateRandomPosition(playerStartNode);
+	setType(playerStartPos.first, playerStartPos.second, eStairsUp);
+
+	const TCODBsp& playerExitNode = findRandomLeaf(startOnLeft ? *officeBsp.getRight() : *officeBsp.getLeft());
+	const Position playerExitPos = calculateRandomPosition(playerExitNode);
+	setType(playerExitPos.first, playerExitPos.second, eStairsDown);
 }

@@ -28,6 +28,13 @@ Position calculateIdealNewPlayerPosition(
 	}
 }
 
+bool isValidPlayerCell(
+	const CellType cell
+	)
+{
+	return cell == eFloor || cell == eStairsDown || cell == eStairsUp;
+}
+
 } // namespace toweringinferno
 
 toweringinferno::World::World(
@@ -47,7 +54,8 @@ toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
 	)const
 {
 	const Position idealNewPosition = calculateIdealNewPlayerPosition(m_playerPos, movementDir);
-	return getType(idealNewPosition) == eFloor ? idealNewPosition : m_playerPos;
+	const CellType newPositionType = getType(idealNewPosition);
+	return isValidPlayerCell(newPositionType) ? idealNewPosition : m_playerPos;
 }
 
 void toweringinferno::World::update(

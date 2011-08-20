@@ -39,6 +39,7 @@ public:
 	int getHeight() const { return m_height; }
 
 	const Position& getPlayerPos() const { return m_playerPos; }
+	void setPlayerPos(int x, int y) { m_playerPos = Position(x, y); }
 
 private:
 
