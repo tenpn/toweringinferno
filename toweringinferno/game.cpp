@@ -85,7 +85,12 @@ void renderWorld(
 				: cell.type == eStairsDown ? '>'
 				: ' ';
 
-			const TCODColor fgColor = isPlayer ? TCODColor::orange : TCODColor::black;
+			const TCODColor fgColor = isPlayer 
+				? (world.getPlayerHealth() <= 0.2f 
+					? TCODColor::lerp(TCODColor::pink, TCODColor::desaturatedOrange, utils::mapValue(world.getPlayerHealth(), 0.0f, 0.2f, 0.0f, 1.0f))
+					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(world.getPlayerHealth(), 0.2f, 1.0f, 0.0f, 1.0f))
+					)
+				: TCODColor::black;
 
 			TCODConsole::root->putCharEx(x, y, c, fgColor, bgCol);
 		}
@@ -103,6 +108,7 @@ void toweringinferno::executeGameLoop()
 	TCODConsole::root->setBackgroundColor(TCODColor::lightSky);
 	TCODConsole::root->setForegroundColor(TCODColor::darkerGrey);
 
+	bool newGamePlease = false;
 	bool newFloorPlease = true;
 	RenderMode renderMode = eRender_Normal;
 
@@ -110,7 +116,7 @@ void toweringinferno::executeGameLoop()
 
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
-		if (newFloorPlease)
+		if (newFloorPlease || newGamePlease)
 		{
 			world = World(width,height);
 
@@ -121,6 +127,7 @@ void toweringinferno::executeGameLoop()
 
 			pushFloorToMap(floor, world);
 			newFloorPlease = false;
+			newGamePlease = false;
 		}
 
 		TCODConsole::root->clear();
@@ -130,7 +137,9 @@ void toweringinferno::executeGameLoop()
 		if (key.vk == TCODK_LEFT || key.vk == TCODK_RIGHT || key.vk == TCODK_UP || key.vk == TCODK_DOWN 
 			|| key.vk == TCODK_SPACE)
 		{
-			newFloorPlease = world.update(key.vk) == eEvent_NextFloorDown;
+			const WorldEvents ev = world.update(key.vk);
+			newFloorPlease = ev == eEvent_NextFloorDown;
+			newGamePlease = key.vk == TCODK_SPACE && ev == eEvent_PlayerDied;
 		}	
 		else if (key.c == 'v')
 		{

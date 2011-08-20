@@ -35,6 +35,15 @@ bool isValidPlayerCell(
 	return cell == eFloor || cell == eStairsDown || cell == eStairsUp;
 }
 
+float calculateDamage(
+	const Cell& cell
+	)
+{
+	return cell.fire > 0.2f 
+		? 0.25f
+		: utils::mapValue(cell.heat, 0.0f, 1.0f, 0.0f, 0.1f);
+}
+
 } // namespace toweringinferno
 
 toweringinferno::World::World(
@@ -45,6 +54,7 @@ toweringinferno::World::World(
 	, m_width(w)
 	, m_height(h)
 	, m_playerPos(static_cast<int>(w*0.25f), static_cast<int>(h*0.25f))
+	, m_playerHealth(1.0f)
 {
 
 }
@@ -62,11 +72,18 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 	const TCOD_keycode_t movementDir
 	)
 {
+	if (m_playerHealth == 0.0f)
+	{
+		return eEvent_PlayerDied;
+	}
+
 	m_playerPos = calculateNewPlayerPos(movementDir);
+	m_playerHealth = utils::max(m_playerHealth - calculateDamage(getCell(m_playerPos)), 0.0f);
 
 	updateDynamics();
 
-	return getType(m_playerPos) == eStairsDown ? eEvent_NextFloorDown : eEvent_None;
+	return getType(m_playerPos) == eStairsDown ? eEvent_NextFloorDown 
+		: eEvent_None;
 }
 
 void toweringinferno::World::updateDynamics()

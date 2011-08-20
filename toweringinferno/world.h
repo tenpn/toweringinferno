@@ -14,7 +14,7 @@ enum WorldEvents
 {
 	eEvent_None,
 	eEvent_NextFloorDown,
-
+	eEvent_PlayerDied,
 };
 
 struct Cell
@@ -37,6 +37,7 @@ public:
 
 	CellType getType(const Position& pos)const { return getType(pos.first, pos.second); }
 	CellType getType(int x, int y)const;
+	const Cell& getCell(const Position& pos)const { return getCell(pos.first, pos.second); }
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
 	void setFire(int x, int y, float newFire);
@@ -46,6 +47,7 @@ public:
 
 	const Position& getPlayerPos() const { return m_playerPos; }
 	void setPlayerPos(int x, int y) { m_playerPos = Position(x, y); }
+	float getPlayerHealth()const { return m_playerHealth; }
 
 private:
 
@@ -59,6 +61,7 @@ private:
 	int m_height;
 
 	Position m_playerPos;
+	float m_playerHealth;
 }; 
 
 } // namespace toweringinferno
