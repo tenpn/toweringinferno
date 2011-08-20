@@ -31,6 +31,11 @@ void pushFloorToMap(
 	{
 		world.setFire(firePos->first, firePos->second, 1.0f);
 	}
+
+	for(auto hosePos = floor.getHoses().begin(); hosePos != floor.getHoses().end(); ++hosePos)
+	{
+		world.set(hosePos->first, hosePos->second, eHose);
+	}
 }
 
 enum RenderMode
@@ -83,6 +88,7 @@ void renderWorld(
 				: cell.type == eWall ? '#'
 				: cell.type == eStairsUp ? '<'
 				: cell.type == eStairsDown ? '>'
+				: cell.type == eHose ? 'H'
 				: ' ';
 
 			const TCODColor fgColor = isPlayer 

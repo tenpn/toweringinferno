@@ -11,6 +11,7 @@ enum CellType
 	eSky,
 	eStairsUp,
 	eStairsDown,
+	eHose,
 };
 
 } // namespace toweringinferno

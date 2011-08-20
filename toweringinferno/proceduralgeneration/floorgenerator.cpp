@@ -136,7 +136,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	while(hoseCount > 0)
 	{
 		const TCODBsp& hoseRoom = findRandomLeaf(officeBsp);
-		m_initialFires.push_back(calculateRandomWallPosition(hoseRoom));
+		m_hoses.push_back(calculateRandomWallPosition(hoseRoom));
 
 		--hoseCount;
 	}
