@@ -1,5 +1,7 @@
+#include <array>
 #include "world.h"
 #include "utils.h"
+
 
 namespace toweringinferno
 {
@@ -107,6 +109,10 @@ void toweringinferno::World::updateDynamics()
 			{
 				// calculate heat
 				float heat = 0.0f;
+				std::array<Cell*, 8> lessFloodedNeighbours;
+				int lessFloodedNeighboursCount = 0;
+				float highestLowerWater = 0.0f;
+
 				for(int neighbourCol = utils::max(col - 1, 0); 
 					neighbourCol < utils::min(getWidth(), col + 2);
 					++neighbourCol)
@@ -120,7 +126,7 @@ void toweringinferno::World::updateDynamics()
 							continue;
 						}
 
-						const Cell& neighbour = getCell(neighbourCol,neighbourRow);
+						Cell& neighbour = m_map[coordsToIndex(neighbourCol,neighbourRow)];
 
 						const bool wallCanContribute 
 							= (row == neighbourRow && (getType(row, col - 1) == eFloor || getType(row, col + 1) == eFloor))
@@ -130,9 +136,18 @@ void toweringinferno::World::updateDynamics()
 							= neighbour.type == eWall && cell.type == eWall && wallCanContribute == false ? 0.0f
 							: (1.0f/8.0f);
 					
-						heat += getCell(neighbourCol,neighbourRow).fire * contribution;
+						heat += neighbour.fire * contribution;
+
+						if(cell.type != eFloor && cell.type != eHose && cell.type != eSky && neighbour.water < cell.water)
+						{
+							lessFloodedNeighbours[lessFloodedNeighboursCount++] = &neighbour;
+							highestLowerWater = utils::max(neighbour.water, highestLowerWater);
+						}
 					}
 				}
+
+				const float waterToDispose = cell.water - highestLowerWater;
+				for(auto lowerNeighbour = lessFloodedNeighbours.begin(); 
 
 				const float maxHeat = 1.0f;
 
