@@ -24,6 +24,9 @@
     <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="proceduralgeneration\floorgenerator.cpp">
+      <Filter>Source Files\proceduralgeneration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
