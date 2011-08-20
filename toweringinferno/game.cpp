@@ -94,17 +94,25 @@ void toweringinferno::executeGameLoop()
 	TCODConsole::root->setBackgroundColor(TCODColor::lightSky);
 	TCODConsole::root->setForegroundColor(TCODColor::darkerGrey);
 
-	const int buffer = 2;
-	const proceduralgeneration::FloorGenerator floor(
-		buffer, buffer,
-		width - buffer*2, height - buffer*2);
+	bool newFloorPlease = true;
 
 	World world(width, height);
 
-	pushFloorToMap(floor, world);
-
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
+		if (newFloorPlease)
+		{
+			world = World(width,height);
+
+			const int buffer = 2;
+			const proceduralgeneration::FloorGenerator floor(
+				buffer, buffer,
+				width - buffer*2, height - buffer*2);
+
+			pushFloorToMap(floor, world);
+			newFloorPlease = false;
+		}
+
 		TCODConsole::root->clear();
 		renderWorld(world);
 		TCODConsole::flush();
@@ -112,7 +120,7 @@ void toweringinferno::executeGameLoop()
 		if (key.vk == TCODK_LEFT || key.vk == TCODK_RIGHT || key.vk == TCODK_UP || key.vk == TCODK_DOWN 
 			|| key.vk == TCODK_SPACE)
 		{
-			world.update(key.vk);
+			newFloorPlease = world.update(key.vk) == eEvent_NextFloorDown;
 		}	
 		
 	}

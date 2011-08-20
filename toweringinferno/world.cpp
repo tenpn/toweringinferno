@@ -58,13 +58,15 @@ toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
 	return isValidPlayerCell(newPositionType) ? idealNewPosition : m_playerPos;
 }
 
-void toweringinferno::World::update(
+toweringinferno::WorldEvents toweringinferno::World::update(
 	const TCOD_keycode_t movementDir
 	)
 {
 	m_playerPos = calculateNewPlayerPos(movementDir);
 
 	updateDynamics();
+
+	return getType(m_playerPos) == eStairsDown ? eEvent_NextFloorDown : eEvent_None;
 }
 
 void toweringinferno::World::updateDynamics()

@@ -9,6 +9,13 @@
 namespace toweringinferno
 {
 
+enum WorldEvents
+{
+	eEvent_None,
+	eEvent_NextFloorDown,
+
+};
+
 struct Cell
 {
 	Cell() : type(eSky), fire(0.0f), heat(0.0f) {}
@@ -27,7 +34,7 @@ class World
 public:
 	World(int w, int h);
 
-	void update(TCOD_keycode_t movementDir);
+	WorldEvents update(TCOD_keycode_t movementDir);
 
 	CellType getType(const Position& pos)const { return getType(pos.first, pos.second); }
 	CellType getType(int x, int y)const;
