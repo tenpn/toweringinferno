@@ -1,3 +1,5 @@
+#include <string>
+#include <sstream>
 #include "libtcod.hpp"
 #include "game.h"
 #include "world.h"
@@ -111,6 +113,24 @@ void renderWorld(
 	}
 }
 
+void debugRender(
+	const World& world
+	)
+{
+	const int mouseX = TCODMouse::getStatus().cx;
+	const int mouseY = TCODMouse::getStatus().cy;
+
+	if (world.isValidCoords(mouseX, mouseY))
+	{
+		const Cell& currentMouseCell = world.getCell(mouseX, mouseY);
+
+		std::stringstream waterText;
+		waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
+			<< currentMouseCell.heat << " f:" << currentMouseCell.fire;
+		TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
+	}
+}
+
 } // namespace toweringinferno
 
 void toweringinferno::executeGameLoop()
@@ -121,13 +141,14 @@ void toweringinferno::executeGameLoop()
 	TCODConsole::initRoot(width,height,"inferno",false);
 	TCODConsole::root->setBackgroundColor(TCODColor::lightSky);
 	TCODConsole::root->setForegroundColor(TCODColor::darkerGrey);
+	TCODSystem::setFps(25);
 
 	bool newGamePlease = false;
 	bool newFloorPlease = true;
 	RenderMode renderMode = eRender_Normal;
 
 	World world(width, height);
-
+	
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
 		if (newFloorPlease || newGamePlease)
@@ -146,8 +167,10 @@ void toweringinferno::executeGameLoop()
 
 		TCODConsole::root->clear();
 		renderWorld(world, renderMode);
+		debugRender(world);
 		TCODConsole::flush();
-		const TCOD_key_t key=TCODConsole::waitForKeypress(true);
+
+		const TCOD_key_t key=TCODConsole::checkForKeypress();
 		if (key.vk == TCODK_LEFT || key.vk == TCODK_RIGHT || key.vk == TCODK_UP || key.vk == TCODK_DOWN 
 			|| key.vk == TCODK_SPACE)
 		{
