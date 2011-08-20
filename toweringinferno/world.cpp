@@ -148,7 +148,7 @@ void toweringinferno::World::updateDynamics()
 
 				cell.waterFlip = cell.type == eWall || cell.type == eSky 
 					? 0.0f
-					: utils::clamp(waterDelta + cell.water, 0.0f, 1.0f);
+					: utils::clamp(waterDelta + cell.water - 0.005f, 0.0f, 1.0f);
 
 				const float maxHeat = 1.0f;
 
