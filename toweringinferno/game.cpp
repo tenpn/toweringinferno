@@ -20,23 +20,16 @@ void pushFloorToMap(
 				floor.getType(col, row)
 				);
 
-			if (col == world.getWidth()/2 && row == world.getHeight() / 2)
-			{
-				world.setFire(col, row, 1.0f);
-			}
-
 			if (floor.getType(col, row) == eStairsUp)
 			{
 				world.setPlayerPos(col, row);
 			}
-
-			//if (col % 5 == 0)
-			//{
-			//	world.setFire(col, row, 
-			//		utils::mapValue(static_cast<float>(row), static_cast<float>(floor.getTop()), static_cast<float>(floor.getBottom()),
-			//		0.0f, 1.0f));
-			//}
 		}
+	}
+
+	for(auto firePos = floor.getInitialFires().begin(); firePos != floor.getInitialFires().end(); ++firePos)
+	{
+		world.setFire(firePos->first, firePos->second, 1.0f);
 	}
 }
 

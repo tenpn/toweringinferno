@@ -27,7 +27,7 @@ public:
 	int getBottom() const { return m_top + m_height; }
 
 	typedef std::vector<Position> PositionList;
-	const PositionList& getInitialFires() { return m_initialFires; }
+	const PositionList& getInitialFires() const { return m_initialFires; }
 
 private:
 	bool isWorldCoordsInFloor(int x, int y) const;

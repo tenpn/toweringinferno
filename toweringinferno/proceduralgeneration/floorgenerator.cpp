@@ -78,6 +78,16 @@ Position calculateRandomPosition(const TCODBsp& node)
 		);
 }
 
+Position calculateRandomWallPosition(const TCODBsp& node)
+{
+	const int wallChoice =  TCODRandom::getInstance()->getInt(0,3);
+
+	return wallChoice == 0 ? Position(TCODRandom::getInstance()->getInt(node.x,node.x + node.w - 1), node.y)
+		: wallChoice == 1 ? Position(TCODRandom::getInstance()->getInt(node.x,node.x + node.w - 1), node.y + node.h - 1)
+		: wallChoice == 2 ? Position(node.x, TCODRandom::getInstance()->getInt(node.y, node.y + node.h - 1))
+		: Position(node.x + node.w - 1, TCODRandom::getInstance()->getInt(node.y, node.y + node.h - 1));
+}
+
 	} // namespace proceduralgeneration
 } // namespace toweringinferno
 
@@ -108,4 +118,15 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const TCODBsp& playerExitNode = findRandomLeaf(startOnLeft ? *officeBsp.getRight() : *officeBsp.getLeft());
 	const Position playerExitPos = calculateRandomPosition(playerExitNode);
 	setType(playerExitPos.first, playerExitPos.second, eStairsDown);
+
+	int fireCount = TCODRandom::getInstance()->getInt(1,3);
+	m_initialFires.reserve(fireCount);
+	while(fireCount>0)
+	{
+		const TCODBsp& fireRoom = findRandomLeaf(officeBsp);
+
+		m_initialFires.push_back(calculateRandomWallPosition(fireRoom));
+
+		--fireCount;
+	}
 }
