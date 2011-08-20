@@ -39,6 +39,7 @@ T mapValue(
 	const T clampedOutValue = outMin < outMax
 		? clamp(unclampedOutValue, outMin, outMax)
 		: clamp(unclampedOutValue, outMax, outMin);
+	return clampedOutValue;
 }
 
 	} // namespace utils

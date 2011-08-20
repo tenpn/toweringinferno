@@ -30,6 +30,7 @@ public:
 	CellType getType(int x, int y)const { return getCell(x,y).type; }
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
+	void setFire(int x, int y, float newFire);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
@@ -75,6 +76,16 @@ void toweringinferno::World::set(
 	)
 {
 	m_map[coordsToIndex(x,y)].type = newType;
+}
+
+inline
+void toweringinferno::World::setFire(
+	const int x, 
+	const int y, 
+	const float newFire
+	)
+{
+	m_map[coordsToIndex(x,y)].fire = newFire;
 }
 
 #endif // __TI_WORLD_H_

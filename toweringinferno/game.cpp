@@ -19,6 +19,13 @@ void pushFloorToMap(
 			world.set(col, row, 
 				floor.isWall(col, row) ? eWall : eFloor
 				);
+
+			//if (col % 5 == 0)
+			//{
+			//	world.setFire(col, row, 
+			//		utils::mapValue(static_cast<float>(row), static_cast<float>(floor.getTop()), static_cast<float>(floor.getBottom()),
+			//		0.0f, 1.0f));
+			//}
 		}
 	}
 }
