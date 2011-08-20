@@ -118,7 +118,9 @@ void toweringinferno::World::setFire(
 	const float newFire
 	)
 {
-	m_map[coordsToIndex(x,y)].fire = newFire;
+	Cell& cell = m_map[coordsToIndex(x,y)];
+	cell.fire = newFire;
+	cell.heat = 1.0f;
 }
 
 inline
