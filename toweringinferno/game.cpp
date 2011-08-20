@@ -2,6 +2,7 @@
 #include "game.h"
 #include "world.h"
 #include "proceduralgeneration\floorgenerator.h"
+#include "utils.h"
 
 namespace toweringinferno
 {
@@ -26,23 +27,27 @@ void renderWorld(
 	const World& world
 	)
 {
+	static const TCODColor fire(255,0,0);
+
 	for(int x = 0; x < world.getWidth(); ++x)
 	{
 		for(int y = 0; y < world.getHeight(); ++y)
 		{
-			const CellType type = world.get(x,y);
+			const Cell& cell = world.getCell(x,y);
 
-			if (type == eSky)
+			if (cell.type == eSky)
 			{
 				continue;
 			}
 
-			const TCODColor bgCol 
-				= type == eFloor ? TCODColor::lightGrey
-				: type == eWall ? TCODColor::darkGrey
+			const TCODColor baseBgCol 
+				= cell.type == eFloor ? TCODColor::lightGrey
+				: cell.type == eWall ? TCODColor::darkGrey
 				: TCODColor::lightSky;
+			const TCODColor bgCol = TCODColor::lerp(baseBgCol, fire, cell.fire);
+			
 			const int c
-				= type == eWall ? '#'
+				= cell.type == eWall ? '#'
 				: ' ';
 
 			TCODConsole::root->putCharEx(x, y, c, TCODColor::black, bgCol);

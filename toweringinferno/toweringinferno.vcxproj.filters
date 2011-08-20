@@ -41,5 +41,8 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

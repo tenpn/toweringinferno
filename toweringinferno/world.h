@@ -14,12 +14,21 @@ enum CellType
 	eSky,
 };
 
+struct Cell
+{
+	Cell() : type(eSky), fire(0.0f) {}
+
+	CellType type;
+	float fire;
+};
+
 class World
 {
 public:
 	World(int w, int h);
 
-	CellType get(int x, int y)const;
+	CellType getType(int x, int y)const { return getCell(x,y).type; }
+	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
 
 	int getWidth() const { return m_width; }
@@ -29,7 +38,7 @@ private:
 
 	int coordsToIndex(int x, int y) const;
 
-	std::vector<CellType> m_map;
+	std::vector<Cell> m_map;
 	int m_width;
 	int m_height;
 }; 
@@ -50,7 +59,7 @@ int toweringinferno::World::coordsToIndex(
 }
 
 inline
-toweringinferno::CellType toweringinferno::World::get(
+const toweringinferno::Cell& toweringinferno::World::getCell(
 	const int x,
 	const int y
 	) const
@@ -65,7 +74,7 @@ void toweringinferno::World::set(
 	const CellType newType
 	)
 {
-	m_map[coordsToIndex(x,y)] = newType;
+	m_map[coordsToIndex(x,y)].type = newType;
 }
 
 #endif // __TI_WORLD_H_
