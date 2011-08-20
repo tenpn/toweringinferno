@@ -16,10 +16,13 @@ enum CellType
 
 struct Cell
 {
-	Cell() : type(eSky), fire(0.0f) {}
+	Cell() : type(eSky), fire(0.0f), heat(0.0f) {}
 
 	CellType type;
 	float fire;
+	float heat;
+
+	void setFire(const float fireIn) { fire = heat = fireIn; }
 };
 
 class World
@@ -27,7 +30,9 @@ class World
 public:
 	World(int w, int h);
 
-	CellType getType(int x, int y)const { return getCell(x,y).type; }
+	void update();
+
+	CellType getType(int x, int y)const;
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
 	void setFire(int x, int y, float newFire);
@@ -86,6 +91,17 @@ void toweringinferno::World::setFire(
 	)
 {
 	m_map[coordsToIndex(x,y)].fire = newFire;
+}
+
+inline
+toweringinferno::CellType toweringinferno::World::getType(
+	const int x, 
+	const int y
+	)const
+{
+	return x < 0 || x >= m_width ? eSky
+		: y < 0 || y >= m_height ? eSky
+		: m_map[coordsToIndex(x,y)].type;
 }
 
 #endif // __TI_WORLD_H_

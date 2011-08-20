@@ -20,6 +20,11 @@ void pushFloorToMap(
 				floor.isWall(col, row) ? eWall : eFloor
 				);
 
+			if (col == world.getWidth()/2 && row == world.getHeight() / 2)
+			{
+				world.setFire(col, row, 1.0f);
+			}
+
 			//if (col % 5 == 0)
 			//{
 			//	world.setFire(col, row, 
@@ -85,8 +90,9 @@ void toweringinferno::executeGameLoop()
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
 		TCODConsole::root->clear();
-		TCODConsole::root->putChar(5,5,'@');
+		world.update();
 		renderWorld(world);
+		TCODConsole::root->putChar(5,5,'@');
 		TCODConsole::flush();
 		const TCOD_key_t key=TCODConsole::waitForKeypress(true);
 		
