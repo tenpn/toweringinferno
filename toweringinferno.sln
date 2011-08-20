@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "toweringinferno", "toweringinferno\toweringinferno.vcxproj", "{3F6EC338-72EB-4D6E-9287-3D6620DB4DB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F6EC338-72EB-4D6E-9287-3D6620DB4DB8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3F6EC338-72EB-4D6E-9287-3D6620DB4DB8}.Debug|Win32.Build.0 = Debug|Win32
+		{3F6EC338-72EB-4D6E-9287-3D6620DB4DB8}.Release|Win32.ActiveCfg = Release|Win32
+		{3F6EC338-72EB-4D6E-9287-3D6620DB4DB8}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
