@@ -19,12 +19,13 @@ enum WorldEvents
 
 struct Cell
 {
-	Cell() : type(eSky), fire(0.0f), heat(0.0f), water(0.0f) {}
+	Cell() : type(eSky), fire(0.0f), heat(0.0f), water(0.0f), waterFlip(0.0f) {}
 
 	CellType type;
 	float fire;
 	float heat;
 	float water;
+	float waterFlip;
 
 	void setFire(const float fireIn) { fire = heat = fireIn; }
 };
@@ -51,6 +52,8 @@ public:
 	void setPlayerPos(int x, int y) { m_playerPos = Position(x, y); }
 	float getPlayerHealth()const { return m_playerHealth; }
 
+	void toggleHoses() { m_hosesEnabled = !m_hosesEnabled; }
+
 private:
 
 	Position calculateNewPlayerPos(TCOD_keycode_t movementDir)const;
@@ -64,6 +67,8 @@ private:
 
 	Position m_playerPos;
 	float m_playerHealth;
+
+	bool m_hosesEnabled;
 }; 
 
 } // namespace toweringinferno

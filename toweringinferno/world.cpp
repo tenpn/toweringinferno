@@ -57,6 +57,7 @@ toweringinferno::World::World(
 	, m_height(h)
 	, m_playerPos(static_cast<int>(w*0.25f), static_cast<int>(h*0.25f))
 	, m_playerHealth(1.0f)
+	, m_hosesEnabled(true)
 {
 
 }
@@ -101,17 +102,16 @@ void toweringinferno::World::updateDynamics()
 				continue;
 			}
 
-			if (cell.type == eHose)
+			if (cell.type == eHose && m_hosesEnabled)
 			{
-				cell.water = 1.0f;
+				cell.waterFlip = 1.0f;
 			}
 			else
 			{
 				// calculate heat
 				float heat = 0.0f;
-				std::array<Cell*, 8> lessFloodedNeighbours;
-				int lessFloodedNeighboursCount = 0;
-				float highestLowerWater = 0.0f;
+				
+				float waterDelta = 0.0f;
 
 				for(int neighbourCol = utils::max(col - 1, 0); 
 					neighbourCol < utils::min(getWidth(), col + 2);
@@ -138,16 +138,17 @@ void toweringinferno::World::updateDynamics()
 					
 						heat += neighbour.fire * contribution;
 
-						if(cell.type != eFloor && cell.type != eHose && cell.type != eSky && neighbour.water < cell.water)
-						{
-							lessFloodedNeighbours[lessFloodedNeighboursCount++] = &neighbour;
-							highestLowerWater = utils::max(neighbour.water, highestLowerWater);
-						}
+						const float waterDeltaCoefficent 
+							= neighbour.type == eWall || neighbour.type == eSky ? 0.0f
+							: neighbour.water > cell.water ? (1.0f/5.0f) 
+							: (1.0f/20.0f);
+						waterDelta += waterDeltaCoefficent * (neighbour.water - cell.water);
 					}
 				}
 
-				const float waterToDispose = cell.water - highestLowerWater;
-				for(auto lowerNeighbour = lessFloodedNeighbours.begin(); 
+				cell.waterFlip = cell.type == eWall || cell.type == eSky 
+					? 0.0f
+					: utils::clamp(waterDelta + cell.water, 0.0f, 1.0f);
 
 				const float maxHeat = 1.0f;
 
@@ -164,6 +165,15 @@ void toweringinferno::World::updateDynamics()
 					cell.fire = utils::mapValue(cell.heat, fireThreshold, maxHeat, 0.0f, 1.0f);
 				}
 			}
+		}
+	}
+
+	for(int col = 0; col < getWidth(); ++col)
+	{
+		for(int row = 0; row < getHeight(); ++row)
+		{
+			Cell& cell = m_map[coordsToIndex(col, row)];
+			cell.water = cell.waterFlip;
 		}
 	}
 }

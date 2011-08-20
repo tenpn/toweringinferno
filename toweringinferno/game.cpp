@@ -163,6 +163,10 @@ void toweringinferno::executeGameLoop()
 		{
 			newGamePlease = true;
 		}
+		else if (key.c == 'h')
+		{
+			world.toggleHoses();
+		}
 		
 	}
 }
