@@ -79,7 +79,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	, m_top(top)
 {
 	TCODBsp officeBsp(left,top,w,h);
-	officeBsp.splitRecursive(NULL, 6, 8, 8, 0.9f, 0.9f);
+	officeBsp.splitRecursive(NULL, 5, 8, 8, 0.9f, 0.9f);
 
 	BSPWallWriter wallWriter;
 	officeBsp.traversePostOrder(&wallWriter, this);
