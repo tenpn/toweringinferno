@@ -47,5 +47,8 @@
     <ClInclude Include="celltype.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="position.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

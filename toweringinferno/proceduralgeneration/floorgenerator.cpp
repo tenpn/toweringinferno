@@ -70,8 +70,6 @@ const TCODBsp& findRandomLeaf(const TCODBsp& node)
 		: TCODRandom::getInstance()->getInt(0,1) == 0 ? *node.getLeft() : *node.getRight();
 }
 
-typedef std::pair<int,int> Position;
-
 Position calculateRandomPosition(const TCODBsp& node)
 {
 	return Position(

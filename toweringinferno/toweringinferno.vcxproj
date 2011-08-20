@@ -83,6 +83,7 @@ copy $(SolutionDir)\libtcod-1.5.0\terminal.png $(SolutionDir)$(Configuration)\</
   <ItemGroup>
     <ClInclude Include="celltype.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="position.h" />
     <ClInclude Include="proceduralgeneration\floorgenerator.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="world.h" />

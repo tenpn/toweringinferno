@@ -5,6 +5,7 @@
 #include <vector>
 #include "libtcod.hpp"
 #include "celltype.h"
+#include "position.h"
 
 namespace toweringinferno
 {
@@ -26,8 +27,6 @@ struct Cell
 
 	void setFire(const float fireIn) { fire = heat = fireIn; }
 };
-
-typedef std::pair<int,int> Position;
 
 class World
 {
