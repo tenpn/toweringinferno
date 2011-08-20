@@ -33,11 +33,22 @@ void pushFloorToMap(
 	}
 }
 
+enum RenderMode
+{
+	eRender_Normal,
+	eRender_Heat,
+	eRender_Count,
+};
+
 void renderWorld(
-	const World& world
+	const World& world,
+	const RenderMode renderMode
 	)
 {
 	static const TCODColor fire(255,0,0);
+	static const TCODColor heat(255,0,255);
+
+	const TCODColor& renderTargetColor = renderMode == eRender_Heat ? heat : fire;
 
 	TCODRandom floorRng(0);
 
@@ -58,9 +69,11 @@ void renderWorld(
 					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
 						floorRng.getGaussianFloat(0.0f, 0.25f))
 				: TCODColor::lightGrey;
-			const TCODColor bgCol = TCODColor::lerp(baseBgCol, fire, 
-				cell.fire > 0.0f 
-					? utils::clamp(TCODRandom::getInstance()->getGaussianFloat(-0.2f, 0.2f) + cell.fire, 0.0f, 1.0f)
+
+			const float renderTarget = renderMode == eRender_Normal ? cell.fire : cell.heat;
+			const TCODColor bgCol = TCODColor::lerp(baseBgCol, renderTargetColor, 
+				renderTarget > 0.0f 
+					? utils::clamp(TCODRandom::getInstance()->getGaussianFloat(-0.2f, 0.2f) + renderTarget, 0.0f, 1.0f)
 					: 0.0f);
 			
 			const bool isPlayer = x == world.getPlayerPos().first && y == world.getPlayerPos().second;
@@ -91,6 +104,7 @@ void toweringinferno::executeGameLoop()
 	TCODConsole::root->setForegroundColor(TCODColor::darkerGrey);
 
 	bool newFloorPlease = true;
+	RenderMode renderMode = eRender_Normal;
 
 	World world(width, height);
 
@@ -110,7 +124,7 @@ void toweringinferno::executeGameLoop()
 		}
 
 		TCODConsole::root->clear();
-		renderWorld(world);
+		renderWorld(world, renderMode);
 		TCODConsole::flush();
 		const TCOD_key_t key=TCODConsole::waitForKeypress(true);
 		if (key.vk == TCODK_LEFT || key.vk == TCODK_RIGHT || key.vk == TCODK_UP || key.vk == TCODK_DOWN 
@@ -118,6 +132,10 @@ void toweringinferno::executeGameLoop()
 		{
 			newFloorPlease = world.update(key.vk) == eEvent_NextFloorDown;
 		}	
+		else if (key.c == 'v')
+		{
+			renderMode = static_cast<RenderMode>((static_cast<int>(renderMode) + 1) % eRender_Count);
+		}
 		
 	}
 }
