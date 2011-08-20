@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <vector>
+#include "libtcod.hpp"
 
 namespace toweringinferno
 {
@@ -25,13 +26,16 @@ struct Cell
 	void setFire(const float fireIn) { fire = heat = fireIn; }
 };
 
+typedef std::pair<int,int> Position;
+
 class World
 {
 public:
 	World(int w, int h);
 
-	void update();
+	void update(TCOD_keycode_t movementDir);
 
+	CellType getType(const Position& pos)const { return getType(pos.first, pos.second); }
 	CellType getType(int x, int y)const;
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
@@ -40,13 +44,19 @@ public:
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
 
+	const Position& getPlayerPos() const { return m_playerPos; }
+
 private:
+
+	Position calculateNewPlayerPos(TCOD_keycode_t movementDir)const;
 
 	int coordsToIndex(int x, int y) const;
 
 	std::vector<Cell> m_map;
 	int m_width;
 	int m_height;
+
+	Position m_playerPos;
 }; 
 
 } // namespace toweringinferno

@@ -58,11 +58,16 @@ void renderWorld(
 				: TCODColor::lightSky;
 			const TCODColor bgCol = TCODColor::lerp(baseBgCol, fire, cell.fire);
 			
+			const bool isPlayer = x == world.getPlayerPos().first && y == world.getPlayerPos().second;
+
 			const int c
-				= cell.type == eWall ? '#'
+				= isPlayer ? '@'
+				: cell.type == eWall ? '#'
 				: ' ';
 
-			TCODConsole::root->putCharEx(x, y, c, TCODColor::black, bgCol);
+			const TCODColor fgColor = isPlayer ? TCODColor::orange : TCODColor::black;
+
+			TCODConsole::root->putCharEx(x, y, c, fgColor, bgCol);
 		}
 	}
 }
@@ -90,11 +95,14 @@ void toweringinferno::executeGameLoop()
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
 		TCODConsole::root->clear();
-		world.update();
 		renderWorld(world);
-		TCODConsole::root->putChar(5,5,'@');
 		TCODConsole::flush();
 		const TCOD_key_t key=TCODConsole::waitForKeypress(true);
+		if (key.vk == TCODK_LEFT || key.vk == TCODK_RIGHT || key.vk == TCODK_UP || key.vk == TCODK_DOWN 
+			|| key.vk == TCODK_SPACE)
+		{
+			world.update(key.vk);
+		}	
 		
 	}
 }

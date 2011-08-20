@@ -1,6 +1,35 @@
 #include "world.h"
 #include "utils.h"
 
+namespace toweringinferno
+{
+
+Position calculateIdealNewPlayerPosition(
+	const Position& current,
+	const TCOD_keycode_t movementDir
+	)
+{
+	switch(movementDir)
+	{
+	case TCODK_LEFT:
+		return Position(current.first - 1, current.second);
+
+	case TCODK_RIGHT:
+		return Position(current.first + 1, current.second);
+
+	case TCODK_UP:
+		return Position(current.first, current.second - 1);
+
+	case TCODK_DOWN:
+		return Position(current.first, current.second + 1);
+
+	default:
+		return current;
+	}
+}
+
+} // namespace toweringinferno
+
 toweringinferno::World::World(
 	const int w, 
 	const int h
@@ -8,12 +37,25 @@ toweringinferno::World::World(
 	: m_map(w*h)
 	, m_width(w)
 	, m_height(h)
+	, m_playerPos(static_cast<int>(w*0.25f), static_cast<int>(h*0.25f))
 {
 
 }
 
-void toweringinferno::World::update()
+toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
+	const TCOD_keycode_t movementDir
+	)const
 {
+	const Position idealNewPosition = calculateIdealNewPlayerPosition(m_playerPos, movementDir);
+	return getType(idealNewPosition) == eFloor ? idealNewPosition : m_playerPos;
+}
+
+void toweringinferno::World::update(
+	const TCOD_keycode_t movementDir
+	)
+{
+	m_playerPos = calculateNewPlayerPos(movementDir);
+
 	for(int col = 0; col < getWidth(); ++col)
 	{
 		for(int row = 0; row < getHeight(); ++row)
