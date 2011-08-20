@@ -1,5 +1,51 @@
 
 #include "floorgenerator.h"
+#include "libtcod.hpp"
+
+namespace toweringinferno
+{
+	namespace proceduralgeneration
+	{
+
+class BSPWallWriter : public ITCODBspCallback 
+{
+public:
+	virtual bool visitNode(TCODBsp * node, void * userData)
+	{
+		assert(userData != NULL);
+		assert(node != NULL);
+
+		if (node->isLeaf() == false)
+		{
+			return true;
+		}
+
+		FloorGenerator * const floor = static_cast<FloorGenerator*>(userData);
+
+		assert(node->w > 0);
+		assert(node->h > 0);
+
+		const int maxCol = node->x + node->w;
+		const int maxRow = node->y + node->h;
+
+		for(int wallCol = node->x; wallCol < maxCol; ++wallCol)
+		{
+			floor->setWall(wallCol, node->y);
+			floor->setWall(wallCol, maxRow - 1);
+		}
+
+		for(int wallRow = node->y; wallRow < maxRow; ++wallRow)
+		{
+			floor->setWall(node->x, wallRow);
+			floor->setWall(maxCol - 1, wallRow);
+		}
+
+		return true;
+	}
+}; 
+
+	} // namespace proceduralgeneration
+} // namespace toweringinferno
 
 toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const int w, 
@@ -9,9 +55,9 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	, m_width(w)
 	, m_height(h)
 {
-	// sample wall
-	for (int col = 0; col < w; ++col)
-	{
-		m_cells[coordsToIndex(col,(h/2))] = true;
-	}
+	TCODBsp officeBsp(0,0,w,h);
+	officeBsp.splitRecursive(NULL, 5, 8, 8, 0.9f, 0.9f);
+
+	BSPWallWriter wallWriter;
+	officeBsp.traverseInOrder(&wallWriter, this);
 }
