@@ -28,6 +28,7 @@ public:
 
 	typedef std::vector<Position> PositionList;
 	const PositionList& getInitialFires() const { return m_initialFires; }
+	const PositionList& getHoses() const { return m_hoses; }
 
 private:
 	bool isWorldCoordsInFloor(int x, int y) const;
@@ -40,6 +41,7 @@ private:
 	int m_top;
 
 	std::vector<Position> m_initialFires;
+	std::vector<Position> m_hoses;
 }; 
 
 	} // namespace proceduralgeneration

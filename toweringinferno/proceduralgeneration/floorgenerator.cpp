@@ -125,8 +125,21 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	{
 		const TCODBsp& fireRoom = findRandomLeaf(officeBsp);
 
-		m_initialFires.push_back(calculateRandomWallPosition(fireRoom));
+		m_initialFires.push_back(calculateRandomPosition(fireRoom));
 
 		--fireCount;
 	}
+
+	// 2/3rds of time have one hose, only rarely have 2
+	int hoseCount = TCODRandom::getInstance()->getInt(1,3) <= 2 ? 1 : 2;
+	m_hoses.reserve(hoseCount);
+	while(hoseCount > 0)
+	{
+		const TCODBsp& hoseRoom = findRandomLeaf(officeBsp);
+		m_initialFires.push_back(calculateRandomWallPosition(hoseRoom));
+
+		--hoseCount;
+	}
+
 }
+
