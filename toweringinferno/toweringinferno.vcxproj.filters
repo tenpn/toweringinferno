@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\proceduralgeneration">
+      <UniqueIdentifier>{bcc0758f-8077-4145-8201-8153be74d060}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -25,6 +28,9 @@
   <ItemGroup>
     <ClInclude Include="game.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="proceduralgeneration\floorgenerator.h">
+      <Filter>Source Files\proceduralgeneration</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

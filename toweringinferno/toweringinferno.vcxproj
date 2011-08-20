@@ -80,6 +80,7 @@ copy $(SolutionDir)\libtcod-1.5.0\terminal.png $(SolutionDir)$(Configuration)\</
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+    <ClInclude Include="proceduralgeneration\floorgenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
