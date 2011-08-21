@@ -39,7 +39,7 @@ class World
 public:
 	World(int w, int h);
 
-	WorldEvents update(TCOD_key_t command);
+	WorldEvents update(const TCOD_key_t& command);
 
 	CellType getType(const Position& pos)const { return getType(pos.first, pos.second); }
 	CellType getType(int x, int y)const;
@@ -59,14 +59,15 @@ public:
 
 private:
 	
-	enum DoorActionSuccess
+	enum ActionSuccess
 	{
-		eDoorAction_FlippedDoor,
-		eDoorAction_InvalidInput,
-		eDoorAction_NoDoorsFlipped,
+		eAction_Succeeded,
+		eAction_InvalidInput,
+		eAction_Failed,
 	};
 
-	DoorActionSuccess updateDoors(TCOD_key_t command);
+	ActionSuccess updateDoors(const TCOD_key_t& command);
+	ActionSuccess updateSprinklerControl(const TCOD_key_t& command);
 	void updateDynamics();
 	Position calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos)const;
 

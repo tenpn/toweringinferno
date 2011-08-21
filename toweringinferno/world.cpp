@@ -13,12 +13,20 @@ bool isMovementKey(
 	return key == TCODK_LEFT || key == TCODK_RIGHT || key == TCODK_UP || key == TCODK_DOWN;
 }
 
+bool isActionKey(
+	const TCOD_key_t& command
+	)
+{
+	return (command.vk == TCODK_CHAR && command.c == 'a' || command.c == 'A') || command.vk == TCODK_ENTER;
+}
+
 bool isDoorToggleKey(
 	const TCOD_key_t& command
 	)
 {
-	return command.vk == TCODK_CHAR 
-		&& (command.c == '=' || command.c == '+' || command.c == 'c' || command.c == 'C');
+	return isActionKey(command) 
+		|| (command.vk == TCODK_CHAR 
+			&& (command.c == '=' || command.c == '+' || command.c == 'c' || command.c == 'C'));
 }
 
 Position calculateIdealNewPlayerPosition(
@@ -93,10 +101,11 @@ toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
 }
 
 toweringinferno::WorldEvents toweringinferno::World::update(
-	const TCOD_key_t command
+	const TCOD_key_t& command
 	)
 {
-	if (isMovementKey(command.vk) == false && isDoorToggleKey(command) == false && command.vk != TCODK_SPACE)
+	if (isMovementKey(command.vk) == false && isActionKey(command) == false 
+		&& isDoorToggleKey(command) == false && command.vk != TCODK_SPACE)
 	{
 		return eEvent_InvalidInput;
 	}
@@ -106,7 +115,7 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		return eEvent_PlayerDied;
 	}
 
-	if (updateDoors(command) == eDoorAction_NoDoorsFlipped)
+	if (updateDoors(command) == eAction_Failed && updateSprinklerControl(command) == eAction_Failed)
 	{
 		// the player may have hit it by mistake, ignore it
 		return eEvent_InvalidInput;
@@ -121,13 +130,25 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		: eEvent_None;
 }
 
-toweringinferno::World::DoorActionSuccess toweringinferno::World::updateDoors(
-	const TCOD_key_t command
+toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerControl(
+	const TCOD_key_t& command
+	)
+{
+	if (isActionKey(command) == false)
+	{
+		return eAction_InvalidInput;
+	}
+
+	return eAction_Failed;
+}
+
+toweringinferno::World::ActionSuccess toweringinferno::World::updateDoors(
+	const TCOD_key_t& command
 	)
 {
 	if (isDoorToggleKey(command) == false)
 	{
-		return eDoorAction_InvalidInput;
+		return eAction_InvalidInput;
 	}
 
 	bool didAnyDoorFlip = false;
@@ -155,7 +176,7 @@ toweringinferno::World::DoorActionSuccess toweringinferno::World::updateDoors(
 		}
 	}
 
-	return didAnyDoorFlip ? eDoorAction_FlippedDoor : eDoorAction_NoDoorsFlipped;
+	return didAnyDoorFlip ? eAction_Succeeded : eAction_Failed;
 }
 
 void toweringinferno::World::updateDynamics()
