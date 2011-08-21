@@ -84,7 +84,7 @@ void renderWorld(
 					? utils::clamp(TCODRandom::getInstance()->getGaussianFloat(-0.2f, 0.2f) + renderTarget, 0.0f, 1.0f)
 					: 0.0f);
 
-			const TCODColor waterBgCol = TCODColor::lerp(baseBgCol, water, cell.water);
+			const TCODColor waterBgCol = TCODColor::lerp(baseBgCol, water, utils::min(cell.water, 1.0f));
 
 			const TCODColor bgCol = (cell.water < cell.fire) 
 					|| renderMode == eRender_Heat && cell.heat > 0.0f 
@@ -129,6 +129,9 @@ void debugRender(
 			<< currentMouseCell.heat << " f:" << currentMouseCell.fire;
 		TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
 	}
+
+	TCODConsole::root->printLeft(0, world.getHeight() - 2, TCOD_BKGND_NONE, 
+		world.isHosesEnabled() ? "hoses ON" : "hoses OFF");
 }
 
 } // namespace toweringinferno

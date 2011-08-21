@@ -45,6 +45,7 @@ public:
 	void setFire(int x, int y, float newFire);
 	void setHose(int x, int y);
 
+	bool isValidCoords(const int x, const int y)const { return x >= 0 && x < m_width && y >= 0 && y < m_height; }
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
 
@@ -52,6 +53,7 @@ public:
 	void setPlayerPos(int x, int y) { m_playerPos = Position(x, y); }
 	float getPlayerHealth()const { return m_playerHealth; }
 
+	bool isHosesEnabled() const { return m_hosesEnabled; }
 	void toggleHoses() { m_hosesEnabled = !m_hosesEnabled; }
 
 private:
@@ -113,7 +115,7 @@ void toweringinferno::World::setHose(
 {
 	Cell& cell = m_map[coordsToIndex(x,y)];
 	cell.type = eHose;
-	cell.water = 1.0f;
+	cell.water = 3.0f;
 }
 
 inline

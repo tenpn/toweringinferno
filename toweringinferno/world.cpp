@@ -102,68 +102,60 @@ void toweringinferno::World::updateDynamics()
 				continue;
 			}
 
-			if (cell.type == eHose && m_hosesEnabled)
-			{
-				cell.waterFlip = 1.0f;
-			}
-			else
-			{
-				// calculate heat
-				float heat = 0.0f;
+			// calculate heat
+			float heat = 0.0f;
 				
-				float waterDelta = 0.0f;
+			float waterTotal = cell.water - 0.1f;
+			int waterContributors = 1;
 
-				for(int neighbourCol = utils::max(col - 1, 0); 
-					neighbourCol < utils::min(getWidth(), col + 2);
-					++neighbourCol)
+			for(int neighbourCol = utils::max(col - 1, 0); 
+				neighbourCol < utils::min(getWidth(), col + 2);
+				++neighbourCol)
+			{
+				for (int neighbourRow = utils::max(row - 1, 0);
+					neighbourRow < utils::min(getHeight(), row + 2);
+					++neighbourRow)
 				{
-					for (int neighbourRow = utils::max(row - 1, 0);
-						neighbourRow < utils::min(getHeight(), row + 2);
-						++neighbourRow)
+					if (neighbourCol == col && neighbourRow == row)
 					{
-						if (neighbourCol == col && neighbourRow == row)
-						{
-							continue;
-						}
-
-						Cell& neighbour = m_map[coordsToIndex(neighbourCol,neighbourRow)];
-
-						const bool wallCanContribute 
-							= (row == neighbourRow && (getType(row, col - 1) == eFloor || getType(row, col + 1) == eFloor))
-							|| (col == neighbourCol && (getType(row - 1, col) == eFloor || getType(row + 1, col) == eFloor));
-
-						const float contribution 
-							= neighbour.type == eWall && cell.type == eWall && wallCanContribute == false ? 0.0f
-							: (1.0f/8.0f);
-					
-						heat += neighbour.fire * contribution;
-
-						const float waterDeltaCoefficent 
-							= neighbour.type == eWall || neighbour.type == eSky ? 0.0f
-							: neighbour.water > cell.water ? (1.0f/5.0f) 
-							: (1.0f/20.0f);
-						waterDelta += waterDeltaCoefficent * (neighbour.water - cell.water);
+						continue;
 					}
+
+					Cell& neighbour = m_map[coordsToIndex(neighbourCol,neighbourRow)];
+
+					const bool wallCanContribute 
+						= (row == neighbourRow && (getType(row, col - 1) == eFloor || getType(row, col + 1) == eFloor))
+						|| (col == neighbourCol && (getType(row - 1, col) == eFloor || getType(row + 1, col) == eFloor));
+
+					const float contribution 
+						= neighbour.type == eWall && cell.type == eWall && wallCanContribute == false ? 0.0f
+						: (1.0f/8.0f);
+					
+					heat += neighbour.fire * contribution;
+
+					const bool isNeighbourContributingWater = neighbour.type != eWall && neighbour.type != eSky
+						&& cell.water < neighbour.water;
+					waterTotal += (isNeighbourContributingWater ? neighbour.water : 0.0f);
+					waterContributors += isNeighbourContributingWater ? 1 : 0;
 				}
+			}
 
-				cell.waterFlip = cell.type == eWall || cell.type == eSky 
-					? 0.0f
-					: utils::clamp(waterDelta + cell.water - 0.005f, 0.0f, 1.0f);
+			cell.waterFlip = cell.type == eWall || cell.type == eSky ? 0.0f
+				: utils::max(waterTotal / static_cast<float>(waterContributors), 0.0f);
 
-				const float maxHeat = 1.0f;
+			const float maxHeat = 1.0f;
 
-				const float heatBuildRate = cell.type == eWall ? 0.35f : 0.1f;
+			const float heatBuildRate = cell.type == eWall ? 0.35f : 0.1f;
 
-				cell.heat = utils::min( cell.heat + heat * heatBuildRate, maxHeat);
+			cell.heat = utils::min( cell.heat + heat * heatBuildRate, maxHeat);
 
-				const float fireThreshold 
-					= cell.type == eWall ? 0.3f
-					: 0.6f;
+			const float fireThreshold 
+				= cell.type == eWall ? 0.3f
+				: 0.6f;
 
-				if (cell.heat > fireThreshold)
-				{
-					cell.fire = utils::mapValue(cell.heat, fireThreshold, maxHeat, 0.0f, 1.0f);
-				}
+			if (cell.heat > fireThreshold)
+			{
+				cell.fire = utils::mapValue(cell.heat, fireThreshold, maxHeat, 0.0f, 1.0f);
 			}
 		}
 	}
