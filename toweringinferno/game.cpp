@@ -117,7 +117,7 @@ void renderWorld(
 					? TCODColor::lerp(TCODColor::pink, TCODColor::desaturatedOrange, utils::mapValue(playerHealth, 0.0f, 0.2f, 0.0f, 1.0f))
 					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(playerHealth, 0.2f, 1.0f, 0.0f, 1.0f))
 					)
-				: cell.type == eCivilian ? TCODColor::violet 
+				: cell.type == eCivilian ? TCODColor::darkViolet
 				: cell.type == eHose && cell.hp > 0.0f ? TCODColor::blue
 				: cell.type == eStairsDown ? TCODColor::darkGreen
 				: TCODColor::black;
@@ -202,17 +202,17 @@ void debugRender(
 
 	static const char* const motd[] = {
 		"You are '@'. Move with cursor keys, action with 'a' or enter, space to wait.",
-		"'b' drops water bombs.",
-		"hover mouse over items for tooltips",
-		"Touch civilians 'd' to rescue them before they burn or drown.",
-		"The sprinkler control panel 'S' will help control the fire.",
-		"Fire hoses 'H' can be turned on to flood small areas.",
-		"Closed doors will slow down the fire but also block water",
-		"If you're trapped, 'x' will use your axe on the nearest wall",
-		"Water bombs work well through a constriction or a doorway",
-		"Saving civilians gets you health and bomb bonuses on completing a floor",
-		"Water bombs are most effective a few squares away from fire.",
-		"If you put water bombs right next to fire, they evaporate too quickly",
+		"TIP: 'b' drops water bombs.",
+		"TIP: hover mouse over items for tooltips",
+		"TIP: Touch civilians 'd' to rescue them before they burn or drown.",
+		"TIP: The sprinkler control panel 'S' will help control the fire.",
+		"TIP: Fire hoses 'H' can be turned on to flood small areas.",
+		"TIP: Closed doors will slow down the fire but also block water",
+		"TIP: If you're trapped, 'x' will use your axe on the nearest wall",
+		"TIP: Water bombs work well through a constriction or a doorway",
+		"TIP: Saving civilians gets you health and bomb bonuses on completing a floor",
+		"TIP: Water bombs are most effective a few squares away from fire.",
+		"TIP: If you put water bombs right next to fire, they evaporate too quickly",
 	};
 	static const int motdCount = sizeof(motd)/sizeof(char*);
 
