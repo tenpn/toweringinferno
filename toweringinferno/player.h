@@ -26,6 +26,8 @@ public:
 
 	void useWaterBomb(World& world);
 
+	void useAxe() { --m_axeCount; }
+	int getAxesRemaining() const { return m_axeCount; }
 	int getBombsRemaining() const { return m_waterBombs; }
 	int getCiviliansRescued() const { return m_levelData.civiliansRescued; }
 	int getScore() const { return m_score; }
@@ -43,6 +45,7 @@ private:
 	int m_score;
 	int m_waterBombs;
 	float m_health;
+	int m_axeCount;
 }; 
 
 } // namespace toweringinferno

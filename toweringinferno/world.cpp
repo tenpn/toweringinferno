@@ -251,6 +251,11 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 		return eAction_InvalidInput;
 	}
 
+	if (m_player.getAxesRemaining() == 0)
+	{
+		return eAction_Failed;
+	}
+
 	Cell* wallToAxe = NULL;
 
 	const Position playerPos = m_player.getPos();
@@ -281,6 +286,8 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 		{
 			wallToAxe->type = eFloor;
 		}
+		
+		m_player.useAxe();
 		return eAction_Succeeded;
 	}
 	else

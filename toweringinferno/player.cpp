@@ -14,6 +14,17 @@ float calculateDamage(
 		: utils::mapValue(cell.heat, 0.0f, 1.0f, 0.0f, 0.1f);
 }
 
+struct Rewards
+{
+	Rewards(float _healthDelta, int _bombDelta, int _axeDelta)
+		: healthDelta(_healthDelta), bombDelta(_bombDelta), axeDelta(_axeDelta)
+	{}
+
+	float healthDelta;
+	int bombDelta;
+	int axeDelta;
+};
+
 } // namespace toweringinferno
 
 toweringinferno::Player::Player()
@@ -21,6 +32,7 @@ toweringinferno::Player::Player()
 	, m_score(0)
 	, m_waterBombs(8)
 	, m_health(1.0f)
+	, m_axeCount(6)
 {
 }
 
@@ -53,21 +65,24 @@ void toweringinferno::Player::useWaterBomb(
 
 void toweringinferno::Player::resetForNewFloor()
 {
-	typedef std::pair<float,int> HealthAndBombGain;
-	static const HealthAndBombGain gains[] = {
-		HealthAndBombGain(0.0f, 0),
-		HealthAndBombGain(0.2f, 1),
-		HealthAndBombGain(0.25f, 2),
-		HealthAndBombGain(0.3f, 3),
-		HealthAndBombGain(0.1f, 5),
+	using namespace std::tr1;
+
+	static const Rewards gains[] = {
+		Rewards(0.0f, 0, 1),
+		Rewards(0.2f, 1, 2),
+		Rewards(0.25f, 2, 2),
+		Rewards(0.3f, 3, 2),
+		Rewards(0.3f, 5, 3),
+		Rewards(0.4f, 6, 4),
 	};
-	static const int gainCount = sizeof(gains)/sizeof(HealthAndBombGain);
+	static const int gainCount = sizeof(gains)/sizeof(Rewards);
 
 	const int gainLevel = utils::min(m_levelData.civiliansRescued, gainCount);
-	const HealthAndBombGain& gain = gains[gainLevel];
+	const Rewards& gain = gains[gainLevel];
 
-	m_health = utils::min(1.0f, m_health + gain.first);
-	m_waterBombs += gain.second;
+	m_health = utils::min(1.0f, m_health + gain.healthDelta);
+	m_waterBombs += gain.bombDelta;
+	m_axeCount += gain.axeDelta;
 
 	m_levelData = FloorSpecificData();
 }

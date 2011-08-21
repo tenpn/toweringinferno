@@ -181,8 +181,9 @@ void debugRender(
 	}
 	else
 	{
-		hud << "Health:" << static_cast<int>(world.getPlayer().getHealth()*100) << " 'B'ombs remaining:" 
-			<< world.getPlayer().getBombsRemaining() << " Civilians rescued:" << world.getPlayer().getCiviliansRescued();
+		hud << "Health:" << static_cast<int>(world.getPlayer().getHealth()*100) << " (B)ombs remaining:" 
+			<< world.getPlayer().getBombsRemaining() << " (A)xe strength:" << world.getPlayer().getAxesRemaining() 
+			<< " Civilians rescued:" << world.getPlayer().getCiviliansRescued();
 	}
 	TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 2, TCOD_BKGND_NONE, hud.str().c_str());
 
