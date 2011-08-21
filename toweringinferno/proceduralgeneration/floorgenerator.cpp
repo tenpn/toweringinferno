@@ -149,9 +149,14 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	{
 		const TCODBsp& fireRoom = findRandomLeaf(officeBsp);
 
-		m_initialFires.push_back(calculateRandomPosition(fireRoom));
+		const bool isTooCloseToExitRoom = fireRoom.getFather() == playerExitNode.getFather();
 
-		--fireCount;
+		if (isTooCloseToExitRoom == false)
+		{
+			m_initialFires.push_back(calculateRandomPosition(fireRoom));
+
+			--fireCount;
+		}
 	}
 
 	// 2/3rds of time have one hose, only rarely have 2
