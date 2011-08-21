@@ -45,6 +45,7 @@ Position calculateIdealNewPlayerPosition(
 	}
 }
 
+inline
 bool isValidPlayerCell(
 	const CellType cell
 	)
@@ -52,11 +53,20 @@ bool isValidPlayerCell(
 	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
 }
 
+inline
+bool isHeatProof(
+	const CellType cell
+	)
+{
+	return cell == eClosedDoor || cell == eSprinklerControl;
+}
+
+inline
 bool isWaterBlocker(
 	const CellType cell
 	)
 {
-	return cell == eSky || cell == eWall || cell == eClosedDoor;
+	return cell == eSky || cell == eWall || cell == eClosedDoor || cell == eSprinklerControl;
 }
 
 } // namespace toweringinferno
@@ -225,7 +235,7 @@ void toweringinferno::World::updateDynamics()
 			
 			const float heatBuildRate 
 				= cell.type == eWall ? 0.45f 
-				: cell.type == eClosedDoor ? 0.0f
+				: isHeatProof(cell.type) ? 0.0f
 				: 0.2f;
 
 			const float condensation = utils::mapValue(condensationScore / static_cast<float>(condensationContributors), 

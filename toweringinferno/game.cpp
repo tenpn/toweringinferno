@@ -75,6 +75,7 @@ void renderWorld(
 			const TCODColor baseBgCol 
 				= cell.type == eWall ? TCODColor::darkGrey
 				: cell.type == eClosedDoor ? closedDoor
+				: cell.type == eSprinklerControl ? TCODColor::yellow
 				: x % 2 == y % 2
 					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
 						floorRng.getGaussianFloat(0.0f, 0.25f))
@@ -103,6 +104,7 @@ void renderWorld(
 				: cell.type == eHose ? 'H'
 				: cell.type == eClosedDoor ? '+'
 				: cell.type == eOpenDoor ? '-'
+				: cell.type == eSprinklerControl ? 'S'
 				: ' ';
 
 			const float playerHealth = world.getPlayer().getHealth();

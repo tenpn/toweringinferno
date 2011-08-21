@@ -162,5 +162,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 		--hoseCount;
 	}
 
+	const Position sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp));
+	m_cells[worldCoordsToIndex(sprinklerControlPosition.first, sprinklerControlPosition.second)] = eSprinklerControl;
 }
 
