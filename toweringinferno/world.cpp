@@ -17,14 +17,16 @@ bool isMovementKey(
 	const TCOD_keycode_t& key
 	)
 {
-	return key == TCODK_LEFT || key == TCODK_RIGHT || key == TCODK_UP || key == TCODK_DOWN;
+	return key == TCODK_LEFT || key == TCODK_RIGHT || key == TCODK_UP || key == TCODK_DOWN
+		|| (key >= TCODK_KP1 && key <= TCODK_KP9);
 }
 
 bool isActionKey(
 	const TCOD_key_t& command
 	)
 {
-	return (command.vk == TCODK_CHAR && command.c == 'a' || command.c == 'A') || command.vk == TCODK_ENTER;
+	return (command.vk == TCODK_CHAR && command.c == 'a' || command.c == 'A') 
+		|| command.vk == TCODK_ENTER || command.vk == TCODK_KPENTER;
 }
 
 bool isDoorToggleKey(
@@ -44,16 +46,32 @@ Position calculateIdealNewPlayerPosition(
 	switch(movementDir)
 	{
 	case TCODK_LEFT:
+	case TCODK_KP4:
 		return Position(current.first - 1, current.second);
 
 	case TCODK_RIGHT:
+	case TCODK_KP6:
 		return Position(current.first + 1, current.second);
 
 	case TCODK_UP:
+	case TCODK_KP8:
 		return Position(current.first, current.second - 1);
 
 	case TCODK_DOWN:
+	case TCODK_KP2:
 		return Position(current.first, current.second + 1);
+
+	case TCODK_KP7:
+		return Position(current.first-1, current.second-1);
+
+	case TCODK_KP9:
+		return Position(current.first+1, current.second-1);
+
+	case TCODK_KP1:
+		return Position(current.first-1, current.second+1);
+
+	case TCODK_KP3:
+		return Position(current.first+1, current.second+1);
 
 	default:
 		return current;
@@ -120,14 +138,22 @@ toweringinferno::World::World(
 
 }
 
-toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
+toweringinferno::World::ActionSuccess toweringinferno::World::calculateNewPlayerPos(
 	const TCOD_keycode_t movementDir, 
 	const Position& playerPos
-	)const
+	)
 {
 	const Position idealNewPosition = calculateIdealNewPlayerPosition(playerPos, movementDir);
 	const CellType newPositionType = getType(idealNewPosition);
-	return isValidPlayerCell(newPositionType) ? idealNewPosition : playerPos;
+	if (isValidPlayerCell(newPositionType))
+	{
+		m_player.setPos(idealNewPosition);
+		return eAction_Succeeded;
+	}
+	else
+	{
+		return eAction_InvalidInput;
+	}
 }
 
 toweringinferno::WorldEvents toweringinferno::World::update(
@@ -156,9 +182,12 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		return eEvent_InvalidInput;
 	}
 
-	++m_floorData.turnCount;
+	if (calculateNewPlayerPos(command.vk, m_player.getPos()) == eAction_InvalidInput)
+	{
+		return eEvent_InvalidInput;
+	}
 
-	m_player.setPos(calculateNewPlayerPos(command.vk, m_player.getPos()));
+	++m_floorData.turnCount;
 	m_player.update(*this);
 
 	m_floorData.lastMovementDir = isMovementKey(command.vk) ? command.vk : m_floorData.lastMovementDir;

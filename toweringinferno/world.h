@@ -83,7 +83,7 @@ private:
 	ActionSuccess updateHoseRelease(const TCOD_key_t& command);
 	ActionSuccess updateAxe(const TCOD_key_t& command);
 	void updateDynamics();
-	Position calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos)const;
+	ActionSuccess calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos);
 
 	inline int coordsToIndex(const Position& pos) const { return coordsToIndex(pos.first, pos.second); }
 	int coordsToIndex(int x, int y) const;
