@@ -123,19 +123,31 @@ void toweringinferno::World::updateDynamics()
 
 					Cell& neighbour = m_map[coordsToIndex(neighbourCol,neighbourRow)];
 
+					const bool isDiagonalNeighbour = row != neighbourRow && col != neighbourCol;
+
 					const bool wallCanContributeHeat 
-						= (row == neighbourRow && (getType(col, row - 1) == eFloor || getType(col, row + 1) == eFloor))
-						|| (col == neighbourCol && (getType(col - 1, row) == eFloor || getType(col + 1, row) == eFloor));
+						= (row == neighbourRow 
+							&& getType(col + 1, row) != eClosedDoor && getType(col - 1, row) != eClosedDoor 
+							&& ((getType(col, row - 1) == eFloor && getType(col + (neighbourCol < col ? -1 : 1), row - 1) != eClosedDoor) 
+								|| (getType(col, row + 1) == eFloor && getType(col + (neighbourCol < col ? -1 : 1), row + 1) != eClosedDoor)))
+						|| (col == neighbourCol 
+							&& getType(col, row - 1) != eClosedDoor && getType(col, row + 1) != eClosedDoor
+							&& ((getType(col - 1, row) == eFloor && getType(col - 1, row + (neighbourRow < row ? -1 : 1)) != eClosedDoor)
+								|| (getType(col + 1, row) == eFloor && getType(col + 1, row + (neighbourRow < row ? -1 : 1)) != eClosedDoor)));
 
 					const float heatContribution 
-						= neighbour.type == eWall && cell.type == eWall && wallCanContributeHeat == false ? 0.0f
-						: neighbour.type == eWall ? (3.0f/12.0f)
-						: (1.0f/12.0f);
+						= isDiagonalNeighbour ? 0.0f
+						: neighbour.type == eWall && cell.type == eWall && wallCanContributeHeat == false ? 0.0f
+						: neighbour.type == eWall ? (3.0f/6.0f)
+						: (1.0f/6.0f);
 					
 					heat += neighbour.heat * heatContribution;
 
-					condensationScore += neighbour.water;
-					condensationContributors += neighbour.water > 0.0f ? 1 : 0;
+					if (isDiagonalNeighbour == false)
+					{
+						condensationScore += neighbour.water;
+						condensationContributors += neighbour.water > 0.0f ? 1 : 0;
+					}
 
 					const bool isNeighbourContributingWater = isWaterBlocker(neighbour.type) == false
 						&& cell.water < neighbour.water;
@@ -147,7 +159,10 @@ void toweringinferno::World::updateDynamics()
 			cell.waterFlip = isWaterBlocker(cell.type) ? 0.0f
 				: utils::max(waterTotal / static_cast<float>(waterContributors), 0.0f);
 			
-			const float heatBuildRate = cell.type == eWall ? 0.6f : 0.2f;
+			const float heatBuildRate 
+				= cell.type == eWall ? 0.45f 
+				: cell.type == eClosedDoor ? 0.0f
+				: 0.2f;
 
 			const float condensation = utils::mapValue(condensationScore / static_cast<float>(condensationContributors), 
 				0.0f, 1.0f, 0.01f, 0.5f);
@@ -155,7 +170,7 @@ void toweringinferno::World::updateDynamics()
 
 			if (cell.type == eWall)
 			{
-				cell.hp = utils::max(0.0f, cell.hp - utils::mapValue(cell.fire, 0.9f, 1.0f, 0.0f, 0.05f));
+				cell.hp = utils::max(0.0f, cell.hp - utils::mapValue(cell.fire, 0.9f, 1.0f, 0.0f, 0.02f));
 
 				if (cell.hp == 0.0f)
 				{
@@ -175,9 +190,7 @@ void toweringinferno::World::updateDynamics()
 
 			cell.heat = cell.heatFlip;
 
-			const float fireThreshold 
-				= cell.type == eWall ? 0.5f
-				: 0.9f;
+			const float fireThreshold = 0.6f;
 
 			if (cell.heat > fireThreshold)
 			{
