@@ -62,6 +62,7 @@ public:
 	bool isSprinklerSystemAvailable() const { return m_sprinkerAvailable; }
 
 	int getTurnCount() const { return m_turnCount; }
+	void resetTurnCount() { m_turnCount = 0; }
 
 private:
 	

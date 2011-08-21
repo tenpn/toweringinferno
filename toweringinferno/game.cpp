@@ -243,6 +243,13 @@ void toweringinferno::executeGameLoop()
 			pushFloorToMap(floor, world);
 			newFloorPlease = false;
 			newGamePlease = false;
+
+			for(int updateSetup = 0; updateSetup < 3; ++updateSetup)
+			{
+				TCOD_key_t space = { TCODK_SPACE };
+				world.update(space);
+			}
+			world.resetTurnCount();
 		}
 
 		TCODConsole::root->clear();
