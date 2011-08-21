@@ -53,8 +53,6 @@ void toweringinferno::Player::useWaterBomb(
 
 void toweringinferno::Player::resetForNewFloor()
 {
-	m_levelData = FloorSpecificData();
-
 	typedef std::pair<float,int> HealthAndBombGain;
 	static const HealthAndBombGain gains[] = {
 		HealthAndBombGain(0.0f, 0),
@@ -70,6 +68,8 @@ void toweringinferno::Player::resetForNewFloor()
 
 	m_health = utils::min(1.0f, m_health + gain.first);
 	m_waterBombs += gain.second;
+
+	m_levelData = FloorSpecificData();
 }
 
 toweringinferno::Player::FloorSpecificData::FloorSpecificData()
