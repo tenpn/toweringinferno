@@ -14,7 +14,7 @@ class Player
 public:
 	Player();
 
-	void resetForNewFloor();
+	void resetForNewFloor(int floorsCleared);
 
 	void update(World& world);
 
@@ -25,8 +25,9 @@ public:
 	bool isDead() const { return m_health == 0.0f; }
 
 	void useWaterBomb(World& world);
-
 	void useAxe() { --m_axeCount; }
+	void rescueCivilian() { ++m_levelData.civiliansRescued; }
+
 	int getAxesRemaining() const { return m_axeCount; }
 	int getBombsRemaining() const { return m_waterBombs; }
 	int getCiviliansRescued() const { return m_levelData.civiliansRescued; }

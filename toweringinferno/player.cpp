@@ -1,3 +1,4 @@
+#include <math.h>
 #include "player.h"
 #include "world.h"
 #include "utils.h"
@@ -44,12 +45,6 @@ void toweringinferno::Player::update(
 
 	const int civiliansRescuedThisTurn = world.rescueCivilian(m_pos) ? 1 : 0;
 	m_levelData.civiliansRescued += civiliansRescuedThisTurn;
-
-	if (civiliansRescuedThisTurn > 0)
-	{
-		m_score += m_levelData.civiliansRescued * m_levelData.civiliansRescued * 100 
-			* (1 + world.getFloorsEscaped());
-	}
 }
 
 void toweringinferno::Player::useWaterBomb(
@@ -63,7 +58,9 @@ void toweringinferno::Player::useWaterBomb(
 	}
 }
 
-void toweringinferno::Player::resetForNewFloor()
+void toweringinferno::Player::resetForNewFloor(
+	const int floorsCleared
+	)
 {
 	using namespace std::tr1;
 
@@ -83,6 +80,8 @@ void toweringinferno::Player::resetForNewFloor()
 	m_health = utils::min(1.0f, m_health + gain.healthDelta);
 	m_waterBombs += gain.bombDelta;
 	m_axeCount += gain.axeDelta;
+
+	m_score += floorsCleared * 100 * static_cast<int>(pow(2.0f, m_levelData.civiliansRescued));
 
 	m_levelData = FloorSpecificData();
 }
