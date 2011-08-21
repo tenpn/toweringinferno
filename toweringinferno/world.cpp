@@ -265,6 +265,20 @@ void toweringinferno::World::updateDynamics()
 				continue;
 			}
 
+			if (cell.type == eCivilian)
+			{
+				const float hpDelta 
+					= cell.fire > 0.0f ? utils::mapValue(cell.fire, 0.0f, 0.5f, 0.0f, -0.4f)
+					: cell.water > 0.0f ? utils::mapValue(cell.water, 0.85f, 1.5f, 0.0f, -0.4f)
+					: 0.0f;
+				cell.hp = utils::max(0.0f, cell.hp + hpDelta);
+				if (cell.hp <= 0.0f)
+				{
+					// they died!
+					cell.type = eFloor;
+				}
+			}
+
 			// calculate heat
 			float heat = 0.0f;
 				

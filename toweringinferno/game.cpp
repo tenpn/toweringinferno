@@ -148,7 +148,7 @@ void debugRender(
 		{
 			std::stringstream waterText;
 			waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
-				<< currentMouseCell.heat << " f:" << currentMouseCell.fire;
+				<< currentMouseCell.heat << " f:" << currentMouseCell.fire << " hp: " << currentMouseCell.hp;
 			TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
 		}
 
@@ -160,7 +160,7 @@ void debugRender(
 			: currentMouseCell.type == eHose ? "Open hoses with action. Completely floods nearby rooms."
 			: currentMouseCell.type == eSprinklerControl ? "Trigger sprinklers with action. Partially floods whole floor."
 			: currentMouseCell.type == eStairsDown ? "Step onto stairs down to escape floor"
-			: currentMouseCell.type == eCivilian ? "Walk over civilians to rescue them"
+			: currentMouseCell.type == eCivilian ? "Walk over civilians to rescue them before they burn or drown."
 			: currentMouseCell.water > 0.4f ? "Water quenches fire"
 			: currentMouseCell.fire > 0.0f ? "Fire will hurt you a lot"
 			: currentMouseCell.heat > 0.25f ? "Hot areas around fire will hurt you a litle"
