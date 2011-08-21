@@ -14,7 +14,7 @@ namespace toweringinferno
 class FloorGenerator
 {
 public:
-	FloorGenerator(int left, int top, int w, int h);
+	FloorGenerator(int left, int top, int w, int h, int floorsCleared);
 	
 	CellType getType(int x, int y) const;
 	void setType(int x, int y, CellType newType);

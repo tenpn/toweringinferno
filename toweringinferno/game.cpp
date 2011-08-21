@@ -258,7 +258,8 @@ void toweringinferno::executeGameLoop()
 			const int vbuffer = 3;
 			const proceduralgeneration::FloorGenerator floor(
 				hbuffer, vbuffer,
-				width - hbuffer*2, height - vbuffer*2);
+				width - hbuffer*2, height - vbuffer*2,
+				world.getFloorsEscaped());
 
 			pushFloorToMap(floor, world);
 			newFloorPlease = false;

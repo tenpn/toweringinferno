@@ -94,12 +94,20 @@ bool isDeltaWithDirection(
 		|| deltaX > 0 && deltaY > 0 && direction == TCODK_KP3;
 }
 
+inline 
+bool isValidCivilianCell(
+	const CellType cell
+	)
+{
+	return cell == eFloor || cell == eCivilian;
+}
+
 inline
 bool isValidPlayerCell(
 	const CellType cell
 	)
 {
-	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor || cell == eCivilian;
+	return isValidCivilianCell(cell) || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
 }
 
 inline
@@ -123,7 +131,7 @@ float calculateCellDanger(
 	const Cell& cell
 	)
 {
-	return isValidPlayerCell(cell.type) == false ? 99.0f
+	return isValidCivilianCell(cell.type) == false ? 99.0f
 		: cell.fire > 0.0f ? 99.0f
 		: utils::max(cell.heat, (cell.water <= 0.4 ? 0.0f : cell.water));
 }
@@ -333,9 +341,9 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 		if (wallToAxe->hp <= 0.0f)
 		{
 			wallToAxe->type = eFloor;
+			m_player.useAxe();
 		}
-		
-		m_player.useAxe();
+
 		return eAction_Succeeded;
 	}
 	else
@@ -480,8 +488,7 @@ void toweringinferno::World::updateDynamics()
 					if (cell.type == eCivilian)
 					{
 						const float dangerHere = calculateCellDanger(neighbour);
-						const bool isPlayerPos = Position(neighbourCol, neighbourRow) == m_player.getPos();
-						if ((dangerHere < dangerAtDesiredPosition || isPlayerPos)
+						if (dangerHere < dangerAtDesiredPosition
 							&& neighbour.type != eCivilian && neighbour.typeFlip != eCivilian)
 						{
 							desiredCivilianPosition = Position(neighbourCol, neighbourRow);

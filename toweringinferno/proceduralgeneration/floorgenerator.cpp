@@ -1,7 +1,7 @@
 #include <assert.h>
 #include "floorgenerator.h"
 #include "libtcod.hpp"
-
+#include "../utils.h"
 
 namespace toweringinferno
 {
@@ -117,7 +117,8 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const int left,
 	const int top,
 	const int w, 
-	const int h
+	const int h, 
+	const int floorsCleared
 	)
 	: m_cells(w*h,eFloor)
 	, m_width(w)
@@ -141,7 +142,9 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const Position playerExitPos = calculateRandomPosition(playerExitNode);
 	setType(playerExitPos.first, playerExitPos.second, eStairsDown);
 
-	int fireCount = TCODRandom::getInstance()->getInt(3,6);
+	int maxFireCount = utils::max(2, floorsCleared/2);
+	int fireCount = TCODRandom::getInstance()->getInt(utils::max(2,maxFireCount-2),maxFireCount);
+	assert(fireCount > 0);
 	m_initialFires.reserve(fireCount);
 	while(fireCount>0)
 	{
@@ -158,20 +161,39 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	while(hoseCount > 0)
 	{
 		const TCODBsp& hoseRoom = findRandomLeaf(officeBsp);
-		m_hoses.push_back(calculateRandomWallPosition(hoseRoom));
 
-		--hoseCount;
+		const Position hosePos = calculateRandomWallPosition(hoseRoom);
+		const int cellIndex = worldCoordsToIndex(hosePos.first, hosePos.second);
+		if (m_cells[cellIndex] == eWall)
+		{
+			m_cells[cellIndex] = eHose;
+			--hoseCount;
+		}
 	}
 
-	const Position sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp));
-	m_cells[worldCoordsToIndex(sprinklerControlPosition.first, sprinklerControlPosition.second)] = eSprinklerControl;
+	int sprinklers = 1;
+	while(sprinklers > 0)
+	{
+		const Position sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp));
+		const int sprinklerIndex = worldCoordsToIndex(sprinklerControlPosition.first, sprinklerControlPosition.second);
+		if (m_cells[sprinklerIndex] == eWall)
+		{
+			m_cells[sprinklerIndex] = eSprinklerControl;
+			--sprinklers;
+		}
+	}
 
 	int civilianCount = TCODRandom::getInstance()->getInt(6,8);
 	while(civilianCount > 0)
 	{
 		const Position civilianPosition = calculateRandomPosition(findRandomLeaf(officeBsp));
-		m_cells[worldCoordsToIndex(civilianPosition.first, civilianPosition.second)] = eCivilian;
-		--civilianCount;
+
+		const int cellIndex = worldCoordsToIndex(civilianPosition.first, civilianPosition.second);
+		if (m_cells[cellIndex] == eFloor)
+		{
+			m_cells[cellIndex] = eCivilian;
+			--civilianCount;
+		}
 	}
 }
 
