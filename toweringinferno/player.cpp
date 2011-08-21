@@ -31,7 +31,7 @@ struct Rewards
 toweringinferno::Player::Player()
 	: m_pos(0,0)
 	, m_score(0)
-	, m_waterBombs(8)
+	, m_waterBombs(4)
 	, m_health(1.0f)
 	, m_axeCount(4)
 {
@@ -66,9 +66,9 @@ void toweringinferno::Player::resetForNewFloor(
 		Rewards(0.0f, 0, 0),
 		Rewards(0.2f, 1, 0),
 		Rewards(0.25f, 2, 1),
+		Rewards(0.3f, 2, 2),
 		Rewards(0.3f, 3, 2),
-		Rewards(0.3f, 5, 2),
-		Rewards(0.4f, 6, 4),
+		Rewards(0.4f, 4, 3),
 	};
 	static const int gainCount = sizeof(gains)/sizeof(Rewards);
 
@@ -76,7 +76,7 @@ void toweringinferno::Player::resetForNewFloor(
 	const Rewards& gain = gains[gainLevel];
 
 	m_health = utils::min(1.0f, m_health + gain.healthDelta);
-	m_waterBombs = utils::min(m_waterBombs + gain.bombDelta, 10);
+	m_waterBombs = utils::min(m_waterBombs + gain.bombDelta, 6);
 	m_axeCount = utils::min(m_axeCount + gain.axeDelta, 5);
 
 	m_score += floorsCleared * 100 * static_cast<int>(pow(2.0f, m_levelData.civiliansRescued));

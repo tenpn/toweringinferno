@@ -468,8 +468,8 @@ void toweringinferno::World::updateDynamics()
 					const float heatContribution 
 						= isDiagonalNeighbour ? 0.0f
 						: neighbour.type == eWall && cell.type == eWall && wallCanContributeHeat == false ? 0.0f
-						: neighbour.type == eWall ? (3.0f/6.0f)
-						: (1.0f/6.0f);
+						: neighbour.type == eWall ? (3.5f/6.0f)
+						: (1.5f/6.0f);
 					
 					heat += neighbour.heat * heatContribution;
 
@@ -500,9 +500,9 @@ void toweringinferno::World::updateDynamics()
 				: utils::max(waterTotal / static_cast<float>(waterContributors), 0.0f);
 			
 			const float heatBuildRate 
-				= cell.type == eWall ? 0.45f 
+				= cell.type == eWall ? 0.65f 
 				: isHeatProof(cell.type) ? 0.0f
-				: 0.2f;
+				: 0.25f;
 
 			const float condensation = utils::mapValue(condensationScore / static_cast<float>(condensationContributors), 
 				0.0f, 1.0f, 0.01f, 0.4f);
@@ -548,7 +548,7 @@ void toweringinferno::World::updateDynamics()
 
 			cell.heat = cell.heatFlip;
 
-			const float fireThreshold = 0.6f;
+			const float fireThreshold = 0.5f;
 
 			if (cell.heat > fireThreshold)
 			{
