@@ -26,6 +26,7 @@ public:
 
 	int getBombsRemaining() const { return m_waterBombs; }
 	int getCiviliansRescued() const { return m_civiliansRescued; }
+	int getScore() const { return m_score; }
 
 private:
 	Position m_pos;
@@ -33,6 +34,7 @@ private:
 
 	int m_waterBombs;
 	int m_civiliansRescued;
+	int m_score;
 }; 
 
 } // namespace toweringinferno

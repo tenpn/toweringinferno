@@ -21,6 +21,7 @@ toweringinferno::Player::Player()
 	, m_health(1.0f)
 	, m_waterBombs(2)
 	, m_civiliansRescued(0)
+	, m_score(0)
 {
 }
 
@@ -30,7 +31,13 @@ void toweringinferno::Player::update(
 {
 	m_health = utils::max(m_health - calculateDamage(world.getCell(m_pos)), 0.0f);
 
-	m_civiliansRescued += world.rescueCivilian(m_pos) ? 1 : 0;
+	const int civiliansRescuedThisTurn = world.rescueCivilian(m_pos) ? 1 : 0;
+	m_civiliansRescued += civiliansRescuedThisTurn;
+
+	if (civiliansRescuedThisTurn > 0)
+	{
+		m_score += m_civiliansRescued * m_civiliansRescued * 100;
+	}
 }
 
 void toweringinferno::Player::useWaterBomb(
