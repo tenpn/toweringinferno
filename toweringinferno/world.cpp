@@ -37,6 +37,13 @@ bool isValidPlayerCell(
 	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
 }
 
+bool isWaterBlocker(
+	const CellType cell
+	)
+{
+	return cell == eSky || cell == eWall || cell == eClosedDoor;
+}
+
 } // namespace toweringinferno
 
 toweringinferno::World::World(
@@ -130,14 +137,14 @@ void toweringinferno::World::updateDynamics()
 					condensationScore += neighbour.water;
 					condensationContributors += neighbour.water > 0.0f ? 1 : 0;
 
-					const bool isNeighbourContributingWater = neighbour.type != eWall && neighbour.type != eSky
+					const bool isNeighbourContributingWater = isWaterBlocker(neighbour.type) == false
 						&& cell.water < neighbour.water;
 					waterTotal += (isNeighbourContributingWater ? neighbour.water : 0.0f);
 					waterContributors += isNeighbourContributingWater ? 1 : 0;
 				}
 			}
 
-			cell.waterFlip = cell.type == eWall || cell.type == eSky ? 0.0f
+			cell.waterFlip = isWaterBlocker(cell.type) ? 0.0f
 				: utils::max(waterTotal / static_cast<float>(waterContributors), 0.0f);
 			
 			const float heatBuildRate = cell.type == eWall ? 0.6f : 0.2f;
