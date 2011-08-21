@@ -107,7 +107,7 @@ void toweringinferno::World::updateDynamics()
 			float waterTotal = cell.water - 0.1f;
 			int waterContributors = 1;
 
-			for(int neighbourCol = utils::max(col - 1, 0); 
+ 			for(int neighbourCol = utils::max(col - 1, 0); 
 				neighbourCol < utils::min(getWidth(), col + 2);
 				++neighbourCol)
 			{
@@ -122,15 +122,16 @@ void toweringinferno::World::updateDynamics()
 
 					Cell& neighbour = m_map[coordsToIndex(neighbourCol,neighbourRow)];
 
-					const bool wallCanContribute 
-						= (row == neighbourRow && (getType(row, col - 1) == eFloor || getType(row, col + 1) == eFloor))
-						|| (col == neighbourCol && (getType(row - 1, col) == eFloor || getType(row + 1, col) == eFloor));
+					const bool wallCanContributeHeat 
+						= (row == neighbourRow && (getType(col, row - 1) == eFloor || getType(col, row + 1) == eFloor))
+						|| (col == neighbourCol && (getType(col - 1, row) == eFloor || getType(col + 1, row) == eFloor));
 
-					const float contribution 
-						= neighbour.type == eWall && cell.type == eWall && wallCanContribute == false ? 0.0f
-						: (1.0f/8.0f);
+					const float heatContribution 
+						= neighbour.type == eWall && cell.type == eWall && wallCanContributeHeat == false ? 0.0f
+						: neighbour.type == eWall ? (3.0f/12.0f)
+						: (1.0f/12.0f);
 					
-					heat += neighbour.fire * contribution;
+					heat += neighbour.heat * heatContribution;
 
 					const bool isNeighbourContributingWater = neighbour.type != eWall && neighbour.type != eSky
 						&& cell.water < neighbour.water;
@@ -141,21 +142,10 @@ void toweringinferno::World::updateDynamics()
 
 			cell.waterFlip = cell.type == eWall || cell.type == eSky ? 0.0f
 				: utils::max(waterTotal / static_cast<float>(waterContributors), 0.0f);
+			
+			const float heatBuildRate = cell.type == eWall ? 0.6f : 0.2f;
 
-			const float maxHeat = 1.0f;
-
-			const float heatBuildRate = cell.type == eWall ? 0.35f : 0.1f;
-
-			cell.heat = utils::min( cell.heat + heat * heatBuildRate, maxHeat);
-
-			const float fireThreshold 
-				= cell.type == eWall ? 0.3f
-				: 0.6f;
-
-			if (cell.heat > fireThreshold)
-			{
-				cell.fire = utils::mapValue(cell.heat, fireThreshold, maxHeat, 0.0f, 1.0f);
-			}
+			cell.heatFlip = utils::min( cell.heat + heat * heatBuildRate, 1.0f);
 		}
 	}
 
@@ -165,6 +155,17 @@ void toweringinferno::World::updateDynamics()
 		{
 			Cell& cell = m_map[coordsToIndex(col, row)];
 			cell.water = cell.waterFlip;
+
+			cell.heat = cell.heatFlip;
+
+			const float fireThreshold 
+				= cell.type == eWall ? 0.5f
+				: 0.9f;
+
+			if (cell.heat > fireThreshold)
+			{
+				cell.fire = utils::clamp(cell.fire + utils::mapValue(cell.heat, fireThreshold, 1.0f, 0.0f, 0.05f), 0.0f, 1.0f);
+			}
 		}
 	}
 }
