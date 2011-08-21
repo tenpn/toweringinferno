@@ -115,6 +115,7 @@ void renderWorld(
 					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(playerHealth, 0.2f, 1.0f, 0.0f, 1.0f))
 					)
 				: cell.type == eHose && cell.hp > 0.0f ? TCODColor::blue
+				: cell.type == eStairsDown ? TCODColor::darkGreen
 				: TCODColor::black;
 
 			TCODConsole::root->putCharEx(x, y, c, fgColor, bgCol);
