@@ -188,11 +188,19 @@ void debugRender(
 	TCODConsole::root->printCenter(world.getWidth()/2,0,TCOD_BKGND_NONE,"THE TOWERING INFERNO");
 	TCODConsole::root->printCenter(world.getWidth()/2,1,TCOD_BKGND_NONE,"Get to the stairs down '>' to escape the floor.");
 
-	const char* const helpMessage 
-		= world.getTurnCount() < 4 ? "You are '@'. Move with cursor keys, action with 'a' or enter, space to wait."
-		: world.getTurnCount() < 8 ? "'b' drops water bombs."
-		: world.getTurnCount() < 12 ? "hover mouse over items for tooltips"
-		: "";	
+	static const char* const motd[] = {
+		"You are '@'. Move with cursor keys, action with 'a' or enter, space to wait.",
+		"'b' drops water bombs.",
+		"hover mouse over items for tooltips",
+		"Touch civilians 'd' to rescue them before they burn or drown.",
+		"The sprinkler control panel 'S' will help control the fire.",
+		"Fire hoses 'H' can be turned on to flood small areas.",
+		"Closed doors will slow down the fire but also block water",
+	};
+	static const int motdCount = sizeof(motd)/sizeof(char*);
+
+	const int helpMessageIndex = (world.getTurnCount() / 3) % motdCount;
+	const char* const helpMessage = motd[helpMessageIndex];
 	
 	TCODConsole::root->printCenter(world.getWidth()/2,2,TCOD_BKGND_NONE,helpMessage);
 }
