@@ -80,6 +80,7 @@ private:
 	ActionSuccess updateDoors(const TCOD_key_t& command);
 	ActionSuccess updateSprinklerControl(const TCOD_key_t& command);
 	ActionSuccess updateHoseRelease(const TCOD_key_t& command);
+	ActionSuccess updateAxe(const TCOD_key_t& command);
 	void updateDynamics();
 	Position calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos)const;
 

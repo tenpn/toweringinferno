@@ -73,7 +73,9 @@ void renderWorld(
 			}
 
 			const TCODColor baseBgCol 
-				= cell.type == eWall ? TCODColor::darkGrey
+				= cell.type == eWall 
+					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
+						utils::mapValue(cell.hp, 0.0f, 1.0f, 0.5f, 1.0f))
 				: cell.type == eClosedDoor ? closedDoor
 				: cell.type == eSprinklerControl ? 
 					(world.isSprinklerSystemAvailable() ? TCODColor::yellow : TCODColor::darkerYellow)
@@ -200,6 +202,7 @@ void debugRender(
 		"The sprinkler control panel 'S' will help control the fire.",
 		"Fire hoses 'H' can be turned on to flood small areas.",
 		"Closed doors will slow down the fire but also block water",
+		"If you're trapped, 'x' will use your axe on the nearest wall",
 	};
 	static const int motdCount = sizeof(motd)/sizeof(char*);
 

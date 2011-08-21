@@ -6,6 +6,13 @@
 namespace toweringinferno
 {
 
+bool isAxeKey(
+	const TCOD_key_t& command
+	)
+{
+	return command.vk == TCODK_CHAR && (command.c == 'x' || command.c == 'X');
+}
+
 bool isMovementKey(
 	const TCOD_keycode_t& key
 	)
@@ -106,7 +113,8 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 	)
 {
 	if (isMovementKey(command.vk) == false && isActionKey(command) == false 
-		&& isDoorToggleKey(command) == false && command.vk != TCODK_SPACE)
+		&& isDoorToggleKey(command) == false && isAxeKey(command) == false
+		&& command.vk != TCODK_SPACE)
 	{
 		return eEvent_InvalidInput;
 	}
@@ -116,9 +124,10 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		return eEvent_PlayerDied;
 	}
 
-	if (updateDoors(command) == eAction_Failed 
-		&& updateSprinklerControl(command) == eAction_Failed
-		&& updateHoseRelease(command) == eAction_Failed
+	if ((updateDoors(command) == eAction_Failed 
+			&& updateSprinklerControl(command) == eAction_Failed
+			&& updateHoseRelease(command) == eAction_Failed)
+		|| updateAxe(command) == eAction_Failed
 		)
 	{
 		// the player may have hit it by mistake, ignore it
@@ -140,9 +149,14 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerCon
 	const TCOD_key_t& command
 	)
 {
-	if (isActionKey(command) == false || m_floorData.isSprinklerAvailable == false)
+	if (isActionKey(command) == false)
 	{
 		return eAction_InvalidInput;
+	}
+
+	if (m_floorData.isSprinklerAvailable == false)
+	{
+		return eAction_Failed;
 	}
 
 	const Position playerPos = m_player.getPos();
@@ -208,6 +222,42 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateHoseRelease(
 			hose.water = 3.5f;
 			hose.hp = 0.0f;
 			return eAction_Succeeded;
+		}
+	}
+
+	return eAction_Failed;
+}
+
+toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
+	const TCOD_key_t& command
+	)
+{
+	if (isAxeKey(command) == false)
+	{
+		return eAction_InvalidInput;
+	}
+
+	const Position playerPos = m_player.getPos();
+	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	{
+		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		{
+			if ((col != playerPos.first && row != playerPos.second) || isValidCoords(col, row) == false)
+			{
+				continue;
+			}
+
+			Cell& axisNeighbourCell = m_floorData.map[coordsToIndex(col, row)];
+
+			if (axisNeighbourCell.type == eWall)
+			{
+				axisNeighbourCell.hp -= 0.34f;
+				if (axisNeighbourCell.hp <= 0.0f)
+				{
+					axisNeighbourCell.type = eFloor;
+				}
+				return eAction_Succeeded;
+			}
 		}
 	}
 
