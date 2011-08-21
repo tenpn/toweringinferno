@@ -62,8 +62,6 @@ void toweringinferno::Player::resetForNewFloor(
 	const int floorsCleared
 	)
 {
-	using namespace std::tr1;
-
 	static const Rewards gains[] = {
 		Rewards(0.0f, 0, 1),
 		Rewards(0.2f, 1, 2),
