@@ -206,7 +206,6 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		return eEvent_InvalidInput;
 	}
 
-	++m_floorData.turnCount;
 	m_player.update(*this);
 	
 	updateDynamics();
@@ -234,7 +233,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerCon
 	{
 		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
 		{
-			if ((col != playerPos.first && row != playerPos.second) || getType(col, row) != eSprinklerControl)
+			if (getType(col, row) != eSprinklerControl)
 			{
 				continue;
 			}
@@ -278,7 +277,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateHoseRelease(
 	{
 		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
 		{
-			if ((col != playerPos.first && row != playerPos.second) || getType(col, row) != eHose)
+			if (getType(col, row) != eHose)
 			{
 				continue;
 			}
@@ -367,7 +366,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateDoors(
 	{
 		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
 		{
-			if ((col != playerPos.first && row != playerPos.second) || isValidCoords(col, row) == false)
+			if (isValidCoords(col, row) == false)
 			{
 				continue;
 			}
@@ -591,7 +590,6 @@ toweringinferno::World::FloorSpecificData::FloorSpecificData(
 	)
 	: map(w*h)
 	, isSprinklerAvailable(true)
-	, turnCount(0)
 	, lastMovementDir(TCODK_NONE)
 {
 }

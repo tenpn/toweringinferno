@@ -72,7 +72,7 @@ void toweringinferno::Player::resetForNewFloor(
 	};
 	static const int gainCount = sizeof(gains)/sizeof(Rewards);
 
-	const int gainLevel = utils::min(m_levelData.civiliansRescued, gainCount);
+	const int gainLevel = utils::min(m_levelData.civiliansRescued, gainCount-1);
 	const Rewards& gain = gains[gainLevel];
 
 	m_health = utils::min(1.0f, m_health + gain.healthDelta);

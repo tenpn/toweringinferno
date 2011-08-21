@@ -137,6 +137,7 @@ enum DebugRenderMode
 void debugRender(
 	const World& world,
 	const int highScore,
+	const int turnCount,
 	const DebugRenderMode renderMode
 	)
 {
@@ -156,7 +157,7 @@ void debugRender(
 	TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 2, TCOD_BKGND_NONE, hud.str().c_str());
 
 	std::stringstream score;
-	score << "Floors escaped:" << world.getFloorsEscaped() << " Score:" << world.getPlayer().getScore() 
+	score << "Turns:" << turnCount << " Floors escaped:" << world.getFloorsEscaped() << " Score:" << world.getPlayer().getScore() 
 		<< " High score:" << highScore;
 	TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 1, TCOD_BKGND_NONE, score.str().c_str());
 
@@ -215,7 +216,7 @@ void debugRender(
 	};
 	static const int motdCount = sizeof(motd)/sizeof(char*);
 
-	const int helpMessageIndex = (world.getTurnCount() / 3) % motdCount;
+	const int helpMessageIndex = (turnCount / 3) % motdCount;
 	const char* const helpMessage = motd[helpMessageIndex];
 	
 	TCODConsole::root->printCenter(world.getWidth()/2,2,TCOD_BKGND_NONE,helpMessage);
@@ -239,6 +240,7 @@ void toweringinferno::executeGameLoop()
 	DebugRenderMode debugRenderMode = eDebugRender_None;
 
 	int highestScore = 0;
+	int turnCount = 0;
 	World world(width, height);
 	
 	while ( TCODConsole::isWindowClosed() == false ) 
@@ -248,6 +250,7 @@ void toweringinferno::executeGameLoop()
 			if (newGamePlease)
 			{
 				world = World(width,height);
+				turnCount = 0;
 			}
 			else
 			{
@@ -270,16 +273,18 @@ void toweringinferno::executeGameLoop()
 				TCOD_key_t space = { TCODK_SPACE };
 				world.update(space);
 			}
-			world.resetTurnCount();
 		}
 
 		TCODConsole::root->clear();
 		renderWorld(world, renderMode);
-		debugRender(world, highestScore, debugRenderMode);
+		debugRender(world, highestScore, turnCount, debugRenderMode);
 		TCODConsole::flush();
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
 		const WorldEvents ev = world.update(key);
+
+		turnCount += (ev == eEvent_InvalidInput || ev == eEvent_PlayerDied) ? 0 : 1;
+
 		if (ev != eEvent_InvalidInput)
 		{
 			newFloorPlease = ev == eEvent_NextFloorDown;

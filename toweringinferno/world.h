@@ -64,9 +64,6 @@ public:
 
 	bool isSprinklerSystemAvailable() const { return m_floorData.isSprinklerAvailable; }
 
-	int getTurnCount() const { return m_floorData.turnCount; }
-	void resetTurnCount() { m_floorData.turnCount = 0; }
-
 	int getFloorsEscaped() const { return m_floorsEscaped; }
 
 private:
@@ -94,7 +91,6 @@ private:
 
 		std::vector<Cell> map;
 		bool isSprinklerAvailable;
-		int turnCount;
 		TCOD_keycode_t lastMovementDir;
 	};
 
