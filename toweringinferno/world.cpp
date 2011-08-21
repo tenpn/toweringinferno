@@ -164,7 +164,8 @@ void toweringinferno::World::updateDynamics()
 			// calculate heat
 			float heat = 0.0f;
 				
-			const float evaporation = utils::mapValue(cell.heat, 0.0f, 1.0f, 0.1f, 0.6f);
+			const float minEvaporation = utils::mapValue(cell.water, 0.1f, 0.15f, 0.0f, 0.1f);
+			const float evaporation = utils::mapValue(cell.heat, 0.0f, 1.0f, minEvaporation, 0.6f);
 			float waterTotal = cell.water - evaporation;
 			int waterContributors = 1;
 
@@ -228,7 +229,7 @@ void toweringinferno::World::updateDynamics()
 				: 0.2f;
 
 			const float condensation = utils::mapValue(condensationScore / static_cast<float>(condensationContributors), 
-				0.0f, 1.0f, 0.01f, 0.5f);
+				0.0f, 1.0f, 0.01f, 0.4f);
 			cell.heatFlip = utils::clamp( cell.heat + heat * heatBuildRate - condensation, 0.0f, 1.0f);
 
 			if (cell.type == eWall)
