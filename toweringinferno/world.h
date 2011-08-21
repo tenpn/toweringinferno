@@ -6,6 +6,7 @@
 #include "libtcod.hpp"
 #include "celltype.h"
 #include "position.h"
+#include "player.h"
 
 namespace toweringinferno
 {
@@ -44,29 +45,27 @@ public:
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
 	void setFire(int x, int y, float newFire);
+	void setWaterBomb(const Position& pos);
 	void setHose(int x, int y);
 
 	bool isValidCoords(const int x, const int y)const { return x >= 0 && x < m_width && y >= 0 && y < m_height; }
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
 
-	const Position& getPlayerPos() const { return m_playerPos; }
-	void setPlayerPos(int x, int y) { m_playerPos = Position(x, y); }
-	float getPlayerHealth()const { return m_playerHealth; }
+	const Player& getPlayer() const { return m_player; }
+	Player& getPlayer() { return m_player; }
 
 private:
-
-	Position calculateNewPlayerPos(TCOD_keycode_t movementDir)const;
+	
 	void updateDynamics();
+	Position calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos)const;
 
 	int coordsToIndex(int x, int y) const;
 
 	std::vector<Cell> m_map;
 	int m_width;
 	int m_height;
-
-	Position m_playerPos;
-	float m_playerHealth;
+	Player m_player;
 }; 
 
 } // namespace toweringinferno
@@ -101,6 +100,14 @@ void toweringinferno::World::set(
 	)
 {
 	m_map[coordsToIndex(x,y)].type = newType;
+}
+
+inline
+void toweringinferno::World::setWaterBomb(
+	const Position& pos
+	)
+{
+	m_map[coordsToIndex(pos.first,pos.second)].water = 1.5f;
 }
 
 inline

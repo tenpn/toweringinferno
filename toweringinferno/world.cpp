@@ -37,15 +37,6 @@ bool isValidPlayerCell(
 	return cell == eFloor || cell == eStairsDown || cell == eStairsUp;
 }
 
-float calculateDamage(
-	const Cell& cell
-	)
-{
-	return cell.fire > 0.2f 
-		? 0.25f
-		: utils::mapValue(cell.heat, 0.0f, 1.0f, 0.0f, 0.1f);
-}
-
 } // namespace toweringinferno
 
 toweringinferno::World::World(
@@ -55,36 +46,35 @@ toweringinferno::World::World(
 	: m_map(w*h)
 	, m_width(w)
 	, m_height(h)
-	, m_playerPos(static_cast<int>(w*0.25f), static_cast<int>(h*0.25f))
-	, m_playerHealth(1.0f)
 {
 
 }
 
 toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
-	const TCOD_keycode_t movementDir
+	const TCOD_keycode_t movementDir, 
+	const Position& playerPos
 	)const
 {
-	const Position idealNewPosition = calculateIdealNewPlayerPosition(m_playerPos, movementDir);
+	const Position idealNewPosition = calculateIdealNewPlayerPosition(playerPos, movementDir);
 	const CellType newPositionType = getType(idealNewPosition);
-	return isValidPlayerCell(newPositionType) ? idealNewPosition : m_playerPos;
+	return isValidPlayerCell(newPositionType) ? idealNewPosition : playerPos;
 }
 
 toweringinferno::WorldEvents toweringinferno::World::update(
 	const TCOD_keycode_t movementDir
 	)
 {
-	if (m_playerHealth == 0.0f)
+	if (m_player.isDead())
 	{
 		return eEvent_PlayerDied;
 	}
 
-	m_playerPos = calculateNewPlayerPos(movementDir);
-	m_playerHealth = utils::max(m_playerHealth - calculateDamage(getCell(m_playerPos)), 0.0f);
+	m_player.setPos(calculateNewPlayerPos(movementDir, m_player.getPos()));
+	m_player.update(*this);
 
 	updateDynamics();
 
-	return getType(m_playerPos) == eStairsDown ? eEvent_NextFloorDown 
+	return getType(m_player.getPos()) == eStairsDown ? eEvent_NextFloorDown 
 		: eEvent_None;
 }
 

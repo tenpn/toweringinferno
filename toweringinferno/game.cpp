@@ -24,7 +24,7 @@ void pushFloorToMap(
 
 			if (floor.getType(col, row) == eStairsUp)
 			{
-				world.setPlayerPos(col, row);
+				world.getPlayer().setPos(col, row);
 			}
 		}
 	}
@@ -91,7 +91,7 @@ void renderWorld(
 				? heatBgCol
 				: waterBgCol;
 			
-			const bool isPlayer = x == world.getPlayerPos().first && y == world.getPlayerPos().second;
+			const bool isPlayer = x == world.getPlayer().getPos().first && y == world.getPlayer().getPos().second;
 
 			const int c
 				= isPlayer ? '@'
@@ -101,10 +101,11 @@ void renderWorld(
 				: cell.type == eHose ? 'H'
 				: ' ';
 
+			const float playerHealth = world.getPlayer().getHealth();
 			const TCODColor fgColor = isPlayer 
-				? (world.getPlayerHealth() <= 0.2f 
-					? TCODColor::lerp(TCODColor::pink, TCODColor::desaturatedOrange, utils::mapValue(world.getPlayerHealth(), 0.0f, 0.2f, 0.0f, 1.0f))
-					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(world.getPlayerHealth(), 0.2f, 1.0f, 0.0f, 1.0f))
+				? (playerHealth <= 0.2f 
+					? TCODColor::lerp(TCODColor::pink, TCODColor::desaturatedOrange, utils::mapValue(playerHealth, 0.0f, 0.2f, 0.0f, 1.0f))
+					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(playerHealth, 0.2f, 1.0f, 0.0f, 1.0f))
 					)
 				: TCODColor::black;
 
@@ -178,6 +179,10 @@ void toweringinferno::executeGameLoop()
 			newFloorPlease = ev == eEvent_NextFloorDown;
 			newGamePlease = key.vk == TCODK_SPACE && ev == eEvent_PlayerDied;
 		}	
+		else if (key.c == 'b')
+		{
+			world.setWaterBomb(world.getPlayer().getPos());
+		}
 		else if (key.c == 'v')
 		{
 			renderMode = static_cast<RenderMode>((static_cast<int>(renderMode) + 1) % eRender_Count);

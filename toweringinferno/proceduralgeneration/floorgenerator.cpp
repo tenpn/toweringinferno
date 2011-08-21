@@ -119,7 +119,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const Position playerExitPos = calculateRandomPosition(playerExitNode);
 	setType(playerExitPos.first, playerExitPos.second, eStairsDown);
 
-	int fireCount = TCODRandom::getInstance()->getInt(1,3);
+	int fireCount = TCODRandom::getInstance()->getInt(3,6);
 	m_initialFires.reserve(fireCount);
 	while(fireCount>0)
 	{
