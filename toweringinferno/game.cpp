@@ -55,6 +55,7 @@ void renderWorld(
 	static const TCODColor fire(255,0,0);
 	static const TCODColor heat(255,0,255);
 	static const TCODColor water(0,0,255);
+	static const TCODColor closedDoor = TCODColor::lerp(TCODColor::darkGrey, TCODColor::grey, 0.5f);
 
 	const TCODColor& renderTargetColor = renderMode == eRender_Heat ? heat : fire;
 
@@ -73,6 +74,7 @@ void renderWorld(
 
 			const TCODColor baseBgCol 
 				= cell.type == eWall ? TCODColor::darkGrey
+				: cell.type == eClosedDoor ? closedDoor
 				: x % 2 == y % 2
 					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
 						floorRng.getGaussianFloat(0.0f, 0.25f))
@@ -99,6 +101,8 @@ void renderWorld(
 				: cell.type == eStairsUp ? '<'
 				: cell.type == eStairsDown ? '>'
 				: cell.type == eHose ? 'H'
+				: cell.type == eClosedDoor ? '+'
+				: cell.type == eOpenDoor ? '-'
 				: ' ';
 
 			const float playerHealth = world.getPlayer().getHealth();

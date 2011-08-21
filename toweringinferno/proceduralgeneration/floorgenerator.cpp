@@ -8,6 +8,23 @@ namespace toweringinferno
 	namespace proceduralgeneration
 	{
 
+// -1 if no door
+int calculateDoorFrameIndex()
+{
+	return TCODRandom::getInstance()->getInt(0,2) == 0
+		? TCODRandom::getInstance()->getInt(1,2)
+		: -1;
+}
+
+CellType calculateDoorCell(
+	const int doorFrameIndex
+	)
+{
+	return doorFrameIndex == 0 
+		? (TCODRandom::getInstance()->getInt(0,3) == 0 ? eClosedDoor : eOpenDoor)
+		: eFloor;
+}
+
 class BSPWallWriter : public ITCODBspCallback 
 {
 public:
@@ -44,20 +61,24 @@ public:
 			int doorRow = node->position-2;
 			const int doorCol = node->x + (node->w / 2);
 
-			floor->setType(doorCol, doorRow++, eFloor);
-			floor->setType(doorCol, doorRow++, eFloor);
-			floor->setType(doorCol, doorRow++, eFloor);
-			floor->setType(doorCol, doorRow++, eFloor);
+			int doorFrameIndex = calculateDoorFrameIndex();
+			while(doorRow < node->position + 2)
+			{
+				const CellType doorwayType = calculateDoorCell(doorFrameIndex--);
+				floor->setType(doorCol, doorRow++, doorwayType);
+			}
 		}
 		else // vertical split
 		{
 			int doorCol = node->position-2;
 			const int doorRow = node->y + (node->h / 2);
 
-			floor->setType(doorCol++, doorRow, eFloor);
-			floor->setType(doorCol++, doorRow, eFloor);
-			floor->setType(doorCol++, doorRow, eFloor);
-			floor->setType(doorCol++, doorRow, eFloor);
+			int doorFrameIndex = calculateDoorFrameIndex();
+			while(doorCol < node->position + 2)
+			{
+				const CellType doorwayType = calculateDoorCell(doorFrameIndex--);
+				floor->setType(doorCol++, doorRow, doorwayType);
+			}
 		}
 
 		return true;

@@ -12,6 +12,8 @@ enum CellType
 	eStairsUp,
 	eStairsDown,
 	eHose,
+	eClosedDoor,
+	eOpenDoor,
 };
 
 } // namespace toweringinferno

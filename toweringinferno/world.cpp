@@ -34,7 +34,7 @@ bool isValidPlayerCell(
 	const CellType cell
 	)
 {
-	return cell == eFloor || cell == eStairsDown || cell == eStairsUp;
+	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
 }
 
 } // namespace toweringinferno
