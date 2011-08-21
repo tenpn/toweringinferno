@@ -94,6 +94,7 @@ private:
 		std::vector<Cell> map;
 		bool isSprinklerAvailable;
 		int turnCount;
+		TCOD_keycode_t lastMovementDir;
 	};
 
 	int m_width;

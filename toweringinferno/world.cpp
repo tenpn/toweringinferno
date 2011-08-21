@@ -60,6 +60,18 @@ Position calculateIdealNewPlayerPosition(
 	}
 }
 
+bool isDeltaWithDirection(
+	int deltaX,
+	int deltaY,
+	const TCOD_keycode_t direction
+	)
+{
+	return deltaX < 0 && direction == TCODK_LEFT
+		|| deltaX > 0 && direction == TCODK_RIGHT
+		|| deltaY < 0 && direction == TCODK_UP
+		|| deltaY > 0 && direction == TCODK_DOWN;
+}
+
 inline
 bool isValidPlayerCell(
 	const CellType cell
@@ -138,6 +150,8 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 
 	m_player.setPos(calculateNewPlayerPos(command.vk, m_player.getPos()));
 	m_player.update(*this);
+
+	m_floorData.lastMovementDir = isMovementKey(command.vk) ? command.vk : m_floorData.lastMovementDir;
 	
 	updateDynamics();
 
@@ -237,6 +251,8 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 		return eAction_InvalidInput;
 	}
 
+	Cell* wallToAxe = NULL;
+
 	const Position playerPos = m_player.getPos();
 	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
 	{
@@ -249,19 +265,28 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 
 			Cell& axisNeighbourCell = m_floorData.map[coordsToIndex(col, row)];
 
-			if (axisNeighbourCell.type == eWall)
+			if (axisNeighbourCell.type == eWall 
+				&& (wallToAxe == NULL 
+					|| isDeltaWithDirection(col - playerPos.first, row - playerPos.second, m_floorData.lastMovementDir)))
 			{
-				axisNeighbourCell.hp -= 0.34f;
-				if (axisNeighbourCell.hp <= 0.0f)
-				{
-					axisNeighbourCell.type = eFloor;
-				}
-				return eAction_Succeeded;
+				wallToAxe = &axisNeighbourCell;
 			}
 		}
 	}
 
-	return eAction_Failed;
+	if (wallToAxe != NULL)
+	{
+		wallToAxe->hp -= 0.34f;
+		if (wallToAxe->hp <= 0.0f)
+		{
+			wallToAxe->type = eFloor;
+		}
+		return eAction_Succeeded;
+	}
+	else
+	{
+		return eAction_Failed;
+	}
 }
 
 toweringinferno::World::ActionSuccess toweringinferno::World::updateDoors(
@@ -465,5 +490,6 @@ toweringinferno::World::FloorSpecificData::FloorSpecificData(
 	: map(w*h)
 	, isSprinklerAvailable(true)
 	, turnCount(0)
+	, lastMovementDir(TCODK_NONE)
 {
 }
