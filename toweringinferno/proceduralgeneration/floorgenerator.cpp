@@ -103,10 +103,10 @@ Position calculateRandomWallPosition(const TCODBsp& node)
 {
 	const int wallChoice =  TCODRandom::getInstance()->getInt(0,3);
 
-	return wallChoice == 0 ? Position(TCODRandom::getInstance()->getInt(node.x,node.x + node.w - 1), node.y)
-		: wallChoice == 1 ? Position(TCODRandom::getInstance()->getInt(node.x,node.x + node.w - 1), node.y + node.h - 1)
-		: wallChoice == 2 ? Position(node.x, TCODRandom::getInstance()->getInt(node.y, node.y + node.h - 1))
-		: Position(node.x + node.w - 1, TCODRandom::getInstance()->getInt(node.y, node.y + node.h - 1));
+	return wallChoice == 0 ? Position(TCODRandom::getInstance()->getInt(node.x+1,node.x + node.w - 2), node.y)
+		: wallChoice == 1 ? Position(TCODRandom::getInstance()->getInt(node.x+1,node.x + node.w - 2), node.y + node.h - 1)
+		: wallChoice == 2 ? Position(node.x, TCODRandom::getInstance()->getInt(node.y+1, node.y + node.h - 2))
+		: Position(node.x + node.w - 1, TCODRandom::getInstance()->getInt(node.y+1, node.y + node.h - 2));
 }
 
 	} // namespace proceduralgeneration
