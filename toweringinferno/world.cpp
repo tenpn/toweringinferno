@@ -145,6 +145,17 @@ void toweringinferno::World::updateDynamics()
 			const float condensation = utils::mapValue(condensationScore / static_cast<float>(condensationContributors), 
 				0.0f, 1.0f, 0.01f, 0.5f);
 			cell.heatFlip = utils::clamp( cell.heat + heat * heatBuildRate - condensation, 0.0f, 1.0f);
+
+			if (cell.type == eWall)
+			{
+				cell.hp = utils::max(0.0f, cell.hp - utils::mapValue(cell.fire, 0.9f, 1.0f, 0.0f, 0.05f));
+
+				if (cell.hp == 0.0f)
+				{
+					cell.type = eFloor;
+					cell.fire = 0.75f;
+				}
+			}
 		}
 	}
 

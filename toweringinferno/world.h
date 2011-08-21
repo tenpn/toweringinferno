@@ -20,7 +20,7 @@ enum WorldEvents
 
 struct Cell
 {
-	Cell() : type(eSky), fire(0.0f), heat(0.0f), water(0.0f), waterFlip(0.0f), heatFlip(0.0f) {}
+	Cell() : type(eSky), fire(0.0f), heat(0.0f), water(0.0f), waterFlip(0.0f), heatFlip(0.0f), hp(1.0f) {}
 
 	CellType type;
 	float fire;
@@ -28,6 +28,7 @@ struct Cell
 	float water;
 	float waterFlip;
 	float heatFlip;
+	float hp;
 
 	void setFire(const float fireIn) { fire = heat = fireIn; }
 };
