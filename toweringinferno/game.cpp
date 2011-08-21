@@ -109,11 +109,12 @@ void renderWorld(
 				: ' ';
 
 			const float playerHealth = world.getPlayer().getHealth();
-			const TCODColor fgColor = isPlayer 
-				? (playerHealth <= 0.2f 
+			const TCODColor fgColor 
+				= isPlayer ? (playerHealth <= 0.2f 
 					? TCODColor::lerp(TCODColor::pink, TCODColor::desaturatedOrange, utils::mapValue(playerHealth, 0.0f, 0.2f, 0.0f, 1.0f))
 					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(playerHealth, 0.2f, 1.0f, 0.0f, 1.0f))
 					)
+				: cell.type == eHose && cell.hp > 0.0f ? TCODColor::blue
 				: TCODColor::black;
 
 			TCODConsole::root->putCharEx(x, y, c, fgColor, bgCol);

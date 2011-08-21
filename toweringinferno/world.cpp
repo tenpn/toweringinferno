@@ -116,7 +116,10 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		return eEvent_PlayerDied;
 	}
 
-	if (updateDoors(command) == eAction_Failed && updateSprinklerControl(command) == eAction_Failed)
+	if (updateDoors(command) == eAction_Failed 
+		&& updateSprinklerControl(command) == eAction_Failed
+		&& updateHoseRelease(command) == eAction_Failed
+		)
 	{
 		// the player may have hit it by mistake, ignore it
 		return eEvent_InvalidInput;
@@ -168,6 +171,40 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerCon
 			}
 
 			m_sprinkerAvailable = false;
+			return eAction_Succeeded;
+		}
+	}
+
+	return eAction_Failed;
+}
+
+toweringinferno::World::ActionSuccess toweringinferno::World::updateHoseRelease(
+	const TCOD_key_t& command
+	)
+{
+	if (isActionKey(command) == false)
+	{
+		return eAction_InvalidInput;
+	}
+
+	const Position playerPos = m_player.getPos();
+	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	{
+		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		{
+			if ((col != playerPos.first && row != playerPos.second) || getType(col, row) != eHose)
+			{
+				continue;
+			}
+
+			Cell& hose = m_map[coordsToIndex(col, row)];
+			if (hose.hp == 0.0f)
+			{
+				continue;
+			}
+
+			hose.water = 3.5f;
+			hose.hp = 0.0f;
 			return eAction_Succeeded;
 		}
 	}

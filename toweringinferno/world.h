@@ -70,6 +70,7 @@ private:
 
 	ActionSuccess updateDoors(const TCOD_key_t& command);
 	ActionSuccess updateSprinklerControl(const TCOD_key_t& command);
+	ActionSuccess updateHoseRelease(const TCOD_key_t& command);
 	void updateDynamics();
 	Position calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos)const;
 
@@ -133,7 +134,7 @@ void toweringinferno::World::setHose(
 {
 	Cell& cell = m_map[coordsToIndex(x,y)];
 	cell.type = eHose;
-	cell.water = 3.0f;
+	cell.water = 0.0f;
 }
 
 inline
