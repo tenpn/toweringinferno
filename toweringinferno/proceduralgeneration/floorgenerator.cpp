@@ -88,7 +88,8 @@ public:
 const TCODBsp& findRandomLeaf(const TCODBsp& node)
 {
 	return node.isLeaf() ? node
-		: TCODRandom::getInstance()->getInt(0,1) == 0 ? *node.getLeft() : *node.getRight();
+		: TCODRandom::getInstance()->getInt(0,1) == 0 ? findRandomLeaf(*node.getLeft())
+		: findRandomLeaf(*node.getRight());
 }
 
 Position calculateRandomPosition(const TCODBsp& node)
