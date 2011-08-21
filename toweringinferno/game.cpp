@@ -140,38 +140,6 @@ void debugRender(
 	const DebugRenderMode renderMode
 	)
 {
-	const int mouseX = TCODMouse::getStatus().cx;
-	const int mouseY = TCODMouse::getStatus().cy;
-
-	if (world.isValidCoords(mouseX, mouseY))
-	{
-		const Cell& currentMouseCell = world.getCell(mouseX, mouseY);
-
-		if (renderMode == eDebugRender_Cell)
-		{
-			std::stringstream waterText;
-			waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
-				<< currentMouseCell.heat << " f:" << currentMouseCell.fire << " hp: " << currentMouseCell.hp;
-			TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
-		}
-
-		const char* const tooltip 
-			= mouseX == world.getPlayer().getPos().first && mouseY == world.getPlayer().getPos().second
-				? "The player"
-			: currentMouseCell.type == eOpenDoor || currentMouseCell.type == eClosedDoor 
-				? "Close doors with action. Closed doors slow fire and block water."
-			: currentMouseCell.type == eHose ? "Open hoses with action. Completely floods nearby rooms."
-			: currentMouseCell.type == eSprinklerControl ? "Trigger sprinklers with action. Partially floods whole floor."
-			: currentMouseCell.type == eStairsDown ? "Step onto stairs down to escape floor"
-			: currentMouseCell.type == eCivilian ? "Walk over civilians to rescue them before they burn or drown."
-			: currentMouseCell.water > 0.4f ? "Water quenches fire"
-			: currentMouseCell.fire > 0.0f ? "Fire will hurt you a lot"
-			: currentMouseCell.heat > 0.25f ? "Hot areas around fire will hurt you a litle"
-			: "";
-
-		TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 3, TCOD_BKGND_NONE, tooltip);
-	}
-
 	// hud
 
 	std::stringstream hud;
@@ -192,6 +160,40 @@ void debugRender(
 		<< " High score:" << highScore;
 	TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 1, TCOD_BKGND_NONE, score.str().c_str());
 
+
+	const int mouseX = TCODMouse::getStatus().cx;
+	const int mouseY = TCODMouse::getStatus().cy;
+
+	if (world.isValidCoords(mouseX, mouseY))
+	{
+		const Cell& currentMouseCell = world.getCell(mouseX, mouseY);
+
+		if (renderMode == eDebugRender_Cell)
+		{
+			std::stringstream waterText;
+			waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
+				<< currentMouseCell.heat << " f:" << currentMouseCell.fire << " hp: " << currentMouseCell.hp << " ";
+			TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
+		}
+
+		const char* const tooltip 
+			= mouseX == world.getPlayer().getPos().first && mouseY == world.getPlayer().getPos().second
+				? "The player"
+			: currentMouseCell.type == eOpenDoor || currentMouseCell.type == eClosedDoor 
+				? "Close doors with action. Closed doors slow fire and block water."
+			: currentMouseCell.type == eHose ? "Open hoses with action. Completely floods nearby rooms."
+			: currentMouseCell.type == eSprinklerControl ? "Trigger sprinklers with action. Partially floods whole floor."
+			: currentMouseCell.type == eStairsDown ? "Step onto stairs down to escape floor"
+			: currentMouseCell.type == eCivilian ? "Walk over civilians to rescue them before they burn or drown."
+			: currentMouseCell.water > 0.4f ? "Water quenches fire"
+			: currentMouseCell.fire > 0.0f ? "Fire will hurt you a lot"
+			: currentMouseCell.heat > 0.25f ? "Hot areas around fire will hurt you a litle"
+			: "";
+
+		TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 3, TCOD_BKGND_NONE, tooltip);
+	}
+
+	
 	// titles
 
 	TCODConsole::root->printCenter(world.getWidth()/2,0,TCOD_BKGND_NONE,"THE TOWERING INFERNO");

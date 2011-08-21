@@ -96,6 +96,16 @@ bool isWaterBlocker(
 	return cell == eSky || cell == eWall || cell == eClosedDoor || cell == eSprinklerControl;
 }
 
+inline
+float calculateCellDanger(
+	const Cell& cell
+	)
+{
+	return isValidPlayerCell(cell.type) == false 
+		? 99.0f
+		: cell.heat;
+}
+
 } // namespace toweringinferno
 
 toweringinferno::World::World(
@@ -340,6 +350,15 @@ void toweringinferno::World::updateDynamics()
 		for(int row = 0; row < getHeight(); ++row)
 		{
 			Cell& cell = m_floorData.map[coordsToIndex(col, row)];
+			cell.typeFlip = cell.type;
+		}
+	}
+
+	for(int col = 0; col < getWidth(); ++col)
+	{
+		for(int row = 0; row < getHeight(); ++row)
+		{
+			Cell& cell = m_floorData.map[coordsToIndex(col, row)];
 
 			if (cell.type == eSky)
 			{
@@ -356,7 +375,7 @@ void toweringinferno::World::updateDynamics()
 				if (cell.hp <= 0.0f)
 				{
 					// they died!
-					cell.type = eFloor;
+					cell.typeFlip = eFloor;
 				}
 			}
 
@@ -370,6 +389,9 @@ void toweringinferno::World::updateDynamics()
 
 			float condensationScore = cell.water;
 			int condensationContributors = 1;
+
+			Position desiredCivilianPosition(col,row);
+			float dangerAtDesiredPosition = calculateCellDanger(cell);
 
  			for(int neighbourCol = utils::max(col - 1, 0); 
 				neighbourCol < utils::min(getWidth(), col + 2);
@@ -416,6 +438,16 @@ void toweringinferno::World::updateDynamics()
 						&& cell.water < neighbour.water;
 					waterTotal += (isNeighbourContributingWater ? neighbour.water : 0.0f);
 					waterContributors += isNeighbourContributingWater ? 1 : 0;
+
+					if (cell.type == eCivilian)
+					{
+						const float dangerHere = calculateCellDanger(neighbour);
+						if (dangerHere < dangerAtDesiredPosition 
+							&& neighbour.type != eCivilian && neighbour.typeFlip != eCivilian)
+						{
+							desiredCivilianPosition = Position(neighbourCol, neighbourRow);
+						}
+					}
 				}
 			}
 
@@ -437,9 +469,18 @@ void toweringinferno::World::updateDynamics()
 
 				if (cell.hp == 0.0f)
 				{
-					cell.type = eFloor;
+					cell.typeFlip = eFloor;
 					cell.fire = 0.75f;
 				}
+			}
+			else if (cell.type == eCivilian 
+				&& (desiredCivilianPosition.first != col || desiredCivilianPosition.second != row))
+			{
+				cell.typeFlip = eFloor;
+				Cell& targetCell = m_floorData.map[coordsToIndex(desiredCivilianPosition)];
+				targetCell.typeFlip = eCivilian;
+				targetCell.hp = cell.hp;
+				cell.hp = 1.0f;
 			}
 		}
 	}
@@ -449,6 +490,8 @@ void toweringinferno::World::updateDynamics()
 		for(int row = 0; row < getHeight(); ++row)
 		{
 			Cell& cell = m_floorData.map[coordsToIndex(col, row)];
+			cell.type = cell.typeFlip;
+
 			cell.water = cell.waterFlip;
 
 			cell.heat = cell.heatFlip;
