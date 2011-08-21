@@ -10,8 +10,8 @@ float calculateDamage(
 	const Cell& cell
 	)
 {
-	return cell.fire > 0.2f 
-		? 0.25f
+	return cell.fire > 0.2f ? 0.25f
+		: cell.water > 0.0f ? 0.0f
 		: utils::mapValue(cell.heat, 0.0f, 1.0f, 0.0f, 0.1f);
 }
 
