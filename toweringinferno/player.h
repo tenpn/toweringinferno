@@ -14,26 +14,34 @@ class Player
 public:
 	Player();
 
+	void resetForNewFloor();
+
 	void update(World& world);
 
 	const Position& getPos() const { return m_pos; }
 	void setPos(const Position& pos) { setPos(pos.first, pos.second); }
 	void setPos(int x, int y) { m_pos = Position(x, y); }
-	float getHealth()const { return m_health; }
-	bool isDead() const { return m_health == 0.0f; }
+	float getHealth()const { return m_levelData.health; }
+	bool isDead() const { return m_levelData.health == 0.0f; }
 
 	void useWaterBomb(World& world);
 
-	int getBombsRemaining() const { return m_waterBombs; }
-	int getCiviliansRescued() const { return m_civiliansRescued; }
+	int getBombsRemaining() const { return m_levelData.waterBombs; }
+	int getCiviliansRescued() const { return m_levelData.civiliansRescued; }
 	int getScore() const { return m_score; }
 
 private:
-	Position m_pos;
-	float m_health;
 
-	int m_waterBombs;
-	int m_civiliansRescued;
+	struct FloorSpecificData
+	{
+		FloorSpecificData();
+		float health;
+		int waterBombs;
+		int civiliansRescued;
+	};
+
+	Position m_pos;
+	FloorSpecificData m_levelData;
 	int m_score;
 }; 
 
