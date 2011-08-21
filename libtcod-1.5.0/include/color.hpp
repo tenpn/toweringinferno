@@ -34,7 +34,7 @@ public :
 
 	TCODColor() : r(0),g(0),b(0) {}
 	TCODColor(uint8 r, uint8 g, uint8 b) :r(r),g(g),b(b) {}
-	TCODColor(int r, int g, int b) :r(r),g(g),b(b) {}
+	TCODColor(int r, int g, int b) :r(static_cast<uint8>(r)),g(static_cast<uint8>(g)),b(static_cast<uint8>(b)) {}
 	TCODColor(const TCOD_color_t &col) :r(col.r),g(col.g),b(col.b) {}
 	bool operator == (const TCODColor & c) const {
 		return (c.r == r && c.g == g && c.b == b);
