@@ -123,8 +123,16 @@ void renderWorld(
 	}
 }
 
+enum DebugRenderMode
+{
+	eDebugRender_None,
+	eDebugRender_Cell,
+	eDebugRender_Count,
+};
+
 void debugRender(
-	const World& world
+	const World& world,
+	const DebugRenderMode renderMode
 	)
 {
 	const int mouseX = TCODMouse::getStatus().cx;
@@ -134,11 +142,56 @@ void debugRender(
 	{
 		const Cell& currentMouseCell = world.getCell(mouseX, mouseY);
 
-		std::stringstream waterText;
-		waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
-			<< currentMouseCell.heat << " f:" << currentMouseCell.fire;
-		TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
+		if (renderMode == eDebugRender_Cell)
+		{
+			std::stringstream waterText;
+			waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
+				<< currentMouseCell.heat << " f:" << currentMouseCell.fire;
+			TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
+		}
+
+		const char* const tooltip 
+			= mouseX == world.getPlayer().getPos().first && mouseY == world.getPlayer().getPos().second
+				? "The player"
+			: currentMouseCell.type == eOpenDoor || currentMouseCell.type == eClosedDoor 
+				? "Close doors with action. Closed doors slow fire and block water."
+			: currentMouseCell.type == eHose ? "Open hoses with action. Completely floods nearby rooms."
+			: currentMouseCell.type == eSprinklerControl ? "Trigger sprinklers with action. Partially floods whole floor."
+			: currentMouseCell.type == eStairsDown ? "Step onto stairs down to escape floor"
+			: currentMouseCell.water > 0.4f ? "Water quenches fire"
+			: currentMouseCell.fire > 0.0f ? "Fire will hurt you a lot"
+			: currentMouseCell.heat > 0.25f ? "Hot areas around fire will hurt you a litle"
+			: "";
+
+		TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 3, TCOD_BKGND_NONE, tooltip);
 	}
+
+	// hud
+
+	std::stringstream hud;
+	if (world.getPlayer().getHealth() == 0.0f)
+	{
+		hud << "You are dead. Press 'n' or space to restart.";
+	}
+	else
+	{
+		hud << "HP: " << static_cast<int>(world.getPlayer().getHealth()*100) << " Bombs remaining: " 
+			<< world.getPlayer().getBombsRemaining();
+	}
+	TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 2, TCOD_BKGND_NONE, hud.str().c_str());
+
+	// titles
+
+	TCODConsole::root->printCenter(world.getWidth()/2,0,TCOD_BKGND_NONE,"THE TOWERING INFERNO");
+	TCODConsole::root->printCenter(world.getWidth()/2,1,TCOD_BKGND_NONE,"Get to the stairs down '>' to escape the floor.");
+
+	const char* const helpMessage 
+		= world.getTurnCount() < 4 ? "You are '@'. Move with cursor keys, action with 'a' or enter, space to wait."
+		: world.getTurnCount() < 8 ? "'b' drops water bombs."
+		: world.getTurnCount() < 12 ? "hover mouse over items for tooltips"
+		: "";	
+	
+	TCODConsole::root->printCenter(world.getWidth()/2,2,TCOD_BKGND_NONE,helpMessage);
 }
 
 } // namespace toweringinferno
@@ -156,6 +209,7 @@ void toweringinferno::executeGameLoop()
 	bool newGamePlease = false;
 	bool newFloorPlease = true;
 	RenderMode renderMode = eRender_Normal;
+	DebugRenderMode debugRenderMode = eDebugRender_None;
 
 	World world(width, height);
 	
@@ -165,10 +219,11 @@ void toweringinferno::executeGameLoop()
 		{
 			world = World(width,height);
 
-			const int buffer = 2;
+			const int hbuffer = 2;
+			const int vbuffer = 3;
 			const proceduralgeneration::FloorGenerator floor(
-				buffer, buffer,
-				width - buffer*2, height - buffer*2);
+				hbuffer, vbuffer,
+				width - hbuffer*2, height - vbuffer*2);
 
 			pushFloorToMap(floor, world);
 			newFloorPlease = false;
@@ -177,7 +232,7 @@ void toweringinferno::executeGameLoop()
 
 		TCODConsole::root->clear();
 		renderWorld(world, renderMode);
-		debugRender(world);
+		debugRender(world, debugRenderMode);
 		TCODConsole::flush();
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
@@ -194,6 +249,10 @@ void toweringinferno::executeGameLoop()
 		else if (key.c == 'v')
 		{
 			renderMode = static_cast<RenderMode>((static_cast<int>(renderMode) + 1) % eRender_Count);
+		}
+		else if (key.c == 't')
+		{
+			debugRenderMode = static_cast<DebugRenderMode>((static_cast<int>(debugRenderMode) + 1) % eDebugRender_Count);
 		}
 		else if (key.c == 'n')
 		{

@@ -59,6 +59,8 @@ public:
 
 	bool isSprinklerSystemAvailable() const { return m_sprinkerAvailable; }
 
+	int getTurnCount() const { return m_turnCount; }
+
 private:
 	
 	enum ActionSuccess
@@ -82,6 +84,7 @@ private:
 	int m_height;
 	Player m_player;
 	bool m_sprinkerAvailable;
+	int m_turnCount;
 }; 
 
 } // namespace toweringinferno

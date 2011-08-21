@@ -87,6 +87,7 @@ toweringinferno::World::World(
 	, m_width(w)
 	, m_height(h)
 	, m_sprinkerAvailable(true)
+	, m_turnCount(0)
 {
 
 }
@@ -124,6 +125,8 @@ toweringinferno::WorldEvents toweringinferno::World::update(
 		// the player may have hit it by mistake, ignore it
 		return eEvent_InvalidInput;
 	}
+
+	++m_turnCount;
 
 	m_player.setPos(calculateNewPlayerPos(command.vk, m_player.getPos()));
 	m_player.update(*this);

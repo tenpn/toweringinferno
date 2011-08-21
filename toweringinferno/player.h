@@ -23,6 +23,7 @@ public:
 	bool isDead() const { return m_health == 0.0f; }
 
 	void useWaterBomb(World& world);
+	int getBombsRemaining() const { return m_waterBombs; }
 
 private:
 	Position m_pos;
