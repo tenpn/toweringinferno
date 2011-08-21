@@ -20,14 +20,17 @@ toweringinferno::Player::Player()
 	: m_pos(0,0)
 	, m_health(1.0f)
 	, m_waterBombs(2)
+	, m_civiliansRescued(0)
 {
 }
 
 void toweringinferno::Player::update(
-	const World& world
+	World& world
 	)
 {
 	m_health = utils::max(m_health - calculateDamage(world.getCell(m_pos)), 0.0f);
+
+	m_civiliansRescued += world.rescueCivilian(m_pos) ? 1 : 0;
 }
 
 void toweringinferno::Player::useWaterBomb(

@@ -14,7 +14,7 @@ class Player
 public:
 	Player();
 
-	void update(const World& world);
+	void update(World& world);
 
 	const Position& getPos() const { return m_pos; }
 	void setPos(const Position& pos) { setPos(pos.first, pos.second); }
@@ -23,13 +23,16 @@ public:
 	bool isDead() const { return m_health == 0.0f; }
 
 	void useWaterBomb(World& world);
+
 	int getBombsRemaining() const { return m_waterBombs; }
+	int getCiviliansRescued() const { return m_civiliansRescued; }
 
 private:
 	Position m_pos;
 	float m_health;
 
 	int m_waterBombs;
+	int m_civiliansRescued;
 }; 
 
 } // namespace toweringinferno

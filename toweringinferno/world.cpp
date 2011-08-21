@@ -58,7 +58,7 @@ bool isValidPlayerCell(
 	const CellType cell
 	)
 {
-	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
+	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor || cell == eCivilian;
 }
 
 inline
@@ -370,4 +370,19 @@ void toweringinferno::World::updateDynamics()
 			}
 		}
 	}
+}
+
+bool toweringinferno::World::rescueCivilian(
+	const Position& pos
+	)
+{
+	if (isValidCoords(pos.first, pos.second) == false)
+	{
+		return false;
+	}
+
+	Cell& cell = m_map[coordsToIndex(pos)];
+	const bool isCivilian = cell.type == eCivilian;
+	cell.type = isCivilian ? eFloor : cell.type;
+	return isCivilian;
 }

@@ -14,7 +14,8 @@ enum CellType
 	eHose,
 	eClosedDoor,
 	eOpenDoor,
-	eSprinklerControl
+	eSprinklerControl,
+	eCivilian
 };
 
 } // namespace toweringinferno

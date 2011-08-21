@@ -164,5 +164,13 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 
 	const Position sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp));
 	m_cells[worldCoordsToIndex(sprinklerControlPosition.first, sprinklerControlPosition.second)] = eSprinklerControl;
+
+	int civilianCount = TCODRandom::getInstance()->getInt(6,8);
+	while(civilianCount > 0)
+	{
+		const Position civilianPosition = calculateRandomPosition(findRandomLeaf(officeBsp));
+		m_cells[worldCoordsToIndex(civilianPosition.first, civilianPosition.second)] = eCivilian;
+		--civilianCount;
+	}
 }
 
