@@ -57,7 +57,6 @@ toweringinferno::World::World(
 	, m_height(h)
 	, m_playerPos(static_cast<int>(w*0.25f), static_cast<int>(h*0.25f))
 	, m_playerHealth(1.0f)
-	, m_hosesEnabled(true)
 {
 
 }

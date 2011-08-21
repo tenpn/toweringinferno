@@ -53,9 +53,6 @@ public:
 	void setPlayerPos(int x, int y) { m_playerPos = Position(x, y); }
 	float getPlayerHealth()const { return m_playerHealth; }
 
-	bool isHosesEnabled() const { return m_hosesEnabled; }
-	void toggleHoses() { m_hosesEnabled = !m_hosesEnabled; }
-
 private:
 
 	Position calculateNewPlayerPos(TCOD_keycode_t movementDir)const;
@@ -69,8 +66,6 @@ private:
 
 	Position m_playerPos;
 	float m_playerHealth;
-
-	bool m_hosesEnabled;
 }; 
 
 } // namespace toweringinferno

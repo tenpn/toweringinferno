@@ -129,9 +129,6 @@ void debugRender(
 			<< currentMouseCell.heat << " f:" << currentMouseCell.fire;
 		TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
 	}
-
-	TCODConsole::root->printLeft(0, world.getHeight() - 2, TCOD_BKGND_NONE, 
-		world.isHosesEnabled() ? "hoses ON" : "hoses OFF");
 }
 
 } // namespace toweringinferno
@@ -188,10 +185,6 @@ void toweringinferno::executeGameLoop()
 		else if (key.c == 'n')
 		{
 			newGamePlease = true;
-		}
-		else if (key.c == 'h')
-		{
-			world.toggleHoses();
 		}
 		
 	}
