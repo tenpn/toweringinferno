@@ -176,10 +176,9 @@ void toweringinferno::executeGameLoop()
 		TCODConsole::flush();
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
-		if (key.vk == TCODK_LEFT || key.vk == TCODK_RIGHT || key.vk == TCODK_UP || key.vk == TCODK_DOWN 
-			|| key.vk == TCODK_SPACE)
+		const WorldEvents ev = world.update(key);
+		if (ev != eEvent_InvalidInput)
 		{
-			const WorldEvents ev = world.update(key.vk);
 			newFloorPlease = ev == eEvent_NextFloorDown;
 			newGamePlease = key.vk == TCODK_SPACE && ev == eEvent_PlayerDied;
 		}	

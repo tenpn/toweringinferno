@@ -6,6 +6,21 @@
 namespace toweringinferno
 {
 
+bool isMovementKey(
+	const TCOD_keycode_t& key
+	)
+{
+	return key == TCODK_LEFT || key == TCODK_RIGHT || key == TCODK_UP || key == TCODK_DOWN;
+}
+
+bool isDoorToggleKey(
+	const TCOD_key_t& command
+	)
+{
+	return command.vk == TCODK_CHAR 
+		&& (command.c == '=' || command.c == '+' || command.c == 'c' || command.c == 'C');
+}
+
 Position calculateIdealNewPlayerPosition(
 	const Position& current,
 	const TCOD_keycode_t movementDir
@@ -68,21 +83,69 @@ toweringinferno::Position toweringinferno::World::calculateNewPlayerPos(
 }
 
 toweringinferno::WorldEvents toweringinferno::World::update(
-	const TCOD_keycode_t movementDir
+	const TCOD_key_t command
 	)
 {
+	if (isMovementKey(command.vk) == false && isDoorToggleKey(command) == false && command.vk != TCODK_SPACE)
+	{
+		return eEvent_InvalidInput;
+	}
+
 	if (m_player.isDead())
 	{
 		return eEvent_PlayerDied;
 	}
 
-	m_player.setPos(calculateNewPlayerPos(movementDir, m_player.getPos()));
-	m_player.update(*this);
+	if (updateDoors(command) == eDoorAction_NoDoorsFlipped)
+	{
+		// the player may have hit it by mistake, ignore it
+		return eEvent_InvalidInput;
+	}
 
+	m_player.setPos(calculateNewPlayerPos(command.vk, m_player.getPos()));
+	m_player.update(*this);
+	
 	updateDynamics();
 
 	return getType(m_player.getPos()) == eStairsDown ? eEvent_NextFloorDown 
 		: eEvent_None;
+}
+
+toweringinferno::World::DoorActionSuccess toweringinferno::World::updateDoors(
+	const TCOD_key_t command
+	)
+{
+	if (isDoorToggleKey(command) == false)
+	{
+		return eDoorAction_InvalidInput;
+	}
+
+	bool didAnyDoorFlip = false;
+	const Position playerPos = m_player.getPos();
+	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	{
+		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		{
+			if ((col != playerPos.first && row != playerPos.second) || isValidCoords(col, row) == false)
+			{
+				continue;
+			}
+
+			Cell& axisNeighbourCell = m_map[coordsToIndex(col, row)];
+			if (axisNeighbourCell.type == eOpenDoor)
+			{
+				axisNeighbourCell.type = eClosedDoor;
+				didAnyDoorFlip = true;
+			}
+			else if (axisNeighbourCell.type == eClosedDoor)
+			{
+				axisNeighbourCell.type = eOpenDoor;
+				didAnyDoorFlip = true;
+			}
+		}
+	}
+
+	return didAnyDoorFlip ? eDoorAction_FlippedDoor : eDoorAction_NoDoorsFlipped;
 }
 
 void toweringinferno::World::updateDynamics()
