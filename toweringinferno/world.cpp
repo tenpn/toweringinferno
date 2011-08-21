@@ -86,6 +86,7 @@ toweringinferno::World::World(
 	: m_width(w)
 	, m_height(h)
 	, m_floorData(w, h)
+	, m_floorsEscaped(0)
 {
 
 }
@@ -404,6 +405,7 @@ void toweringinferno::World::resetForNewFloor()
 	m_floorData = FloorSpecificData(m_width, m_height);
 
 	m_player.resetForNewFloor();
+	++m_floorsEscaped;
 }
 
 toweringinferno::World::FloorSpecificData::FloorSpecificData(

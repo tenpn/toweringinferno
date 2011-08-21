@@ -33,7 +33,8 @@ void toweringinferno::Player::update(
 
 	if (civiliansRescuedThisTurn > 0)
 	{
-		m_score += m_levelData.civiliansRescued * m_levelData.civiliansRescued * 100;
+		m_score += m_levelData.civiliansRescued * m_levelData.civiliansRescued * 100 
+			* (1 + world.getFloorsEscaped());
 	}
 }
 

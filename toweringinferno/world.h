@@ -66,6 +66,8 @@ public:
 	int getTurnCount() const { return m_floorData.turnCount; }
 	void resetTurnCount() { m_floorData.turnCount = 0; }
 
+	int getFloorsEscaped() const { return m_floorsEscaped; }
+
 private:
 	
 	enum ActionSuccess
@@ -97,6 +99,7 @@ private:
 	int m_height;
 	Player m_player;
 	FloorSpecificData m_floorData;
+	int m_floorsEscaped;
 }; 
 
 } // namespace toweringinferno
