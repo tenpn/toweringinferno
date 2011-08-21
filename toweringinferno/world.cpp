@@ -104,8 +104,12 @@ void toweringinferno::World::updateDynamics()
 			// calculate heat
 			float heat = 0.0f;
 				
-			float waterTotal = cell.water - 0.1f;
+			const float evaporation = utils::mapValue(cell.heat, 0.0f, 1.0f, 0.1f, 0.6f);
+			float waterTotal = cell.water - evaporation;
 			int waterContributors = 1;
+
+			float condensationScore = cell.water;
+			int condensationContributors = 1;
 
  			for(int neighbourCol = utils::max(col - 1, 0); 
 				neighbourCol < utils::min(getWidth(), col + 2);
@@ -133,6 +137,9 @@ void toweringinferno::World::updateDynamics()
 					
 					heat += neighbour.heat * heatContribution;
 
+					condensationScore += neighbour.water;
+					condensationContributors += neighbour.water > 0.0f ? 1 : 0;
+
 					const bool isNeighbourContributingWater = neighbour.type != eWall && neighbour.type != eSky
 						&& cell.water < neighbour.water;
 					waterTotal += (isNeighbourContributingWater ? neighbour.water : 0.0f);
@@ -145,7 +152,9 @@ void toweringinferno::World::updateDynamics()
 			
 			const float heatBuildRate = cell.type == eWall ? 0.6f : 0.2f;
 
-			cell.heatFlip = utils::min( cell.heat + heat * heatBuildRate, 1.0f);
+			const float condensation = utils::mapValue(condensationScore / static_cast<float>(condensationContributors), 
+				0.0f, 1.0f, 0.01f, 0.5f);
+			cell.heatFlip = utils::clamp( cell.heat + heat * heatBuildRate - condensation, 0.0f, 1.0f);
 		}
 	}
 
@@ -165,6 +174,10 @@ void toweringinferno::World::updateDynamics()
 			if (cell.heat > fireThreshold)
 			{
 				cell.fire = utils::clamp(cell.fire + utils::mapValue(cell.heat, fireThreshold, 1.0f, 0.0f, 0.05f), 0.0f, 1.0f);
+			}
+			else
+			{
+				cell.fire = 0.0f;
 			}
 		}
 	}
