@@ -221,8 +221,8 @@ void toweringinferno::executeGameLoop()
 	TCODConsole::root->setForegroundColor(TCODColor::darkerGrey);
 	TCODSystem::setFps(25);
 
-	bool newGamePlease = false;
-	bool newFloorPlease = true;
+	bool newGamePlease = true;
+	bool newFloorPlease = false;
 	RenderMode renderMode = eRender_Normal;
 	DebugRenderMode debugRenderMode = eDebugRender_None;
 
@@ -232,7 +232,14 @@ void toweringinferno::executeGameLoop()
 	{
 		if (newFloorPlease || newGamePlease)
 		{
-			world = World(width,height);
+			if (newGamePlease)
+			{
+				world = World(width,height);
+			}
+			else
+			{
+				world.resetForNewFloor();
+			}
 
 			const int hbuffer = 2;
 			const int vbuffer = 3;
