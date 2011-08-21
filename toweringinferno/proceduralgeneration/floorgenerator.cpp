@@ -11,9 +11,9 @@ namespace toweringinferno
 // -1 if no door
 int calculateDoorFrameIndex()
 {
-	return TCODRandom::getInstance()->getInt(0,2) == 0
-		? TCODRandom::getInstance()->getInt(1,2)
-		: -1;
+	return TCODRandom::getInstance()->getInt(0,4) == 0
+		? -1
+		: TCODRandom::getInstance()->getInt(1,2);
 }
 
 CellType calculateDoorCell(
@@ -21,7 +21,7 @@ CellType calculateDoorCell(
 	)
 {
 	return doorFrameIndex == 0 
-		? (TCODRandom::getInstance()->getInt(0,3) == 0 ? eClosedDoor : eOpenDoor)
+		? (TCODRandom::getInstance()->getInt(0,5) == 0 ? eClosedDoor : eOpenDoor)
 		: eFloor;
 }
 
