@@ -22,9 +22,13 @@ public:
 	float getHealth()const { return m_health; }
 	bool isDead() const { return m_health == 0.0f; }
 
+	void useWaterBomb(World& world);
+
 private:
 	Position m_pos;
 	float m_health;
+
+	int m_waterBombs;
 }; 
 
 } // namespace toweringinferno

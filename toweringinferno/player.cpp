@@ -19,6 +19,7 @@ float calculateDamage(
 toweringinferno::Player::Player()
 	: m_pos(0,0)
 	, m_health(1.0f)
+	, m_waterBombs(2)
 {
 }
 
@@ -27,4 +28,15 @@ void toweringinferno::Player::update(
 	)
 {
 	m_health = utils::max(m_health - calculateDamage(world.getCell(m_pos)), 0.0f);
+}
+
+void toweringinferno::Player::useWaterBomb(
+	World& world
+	)
+{
+	if (m_waterBombs > 0)
+	{
+		world.setWaterBomb(getPos());
+		--m_waterBombs;
+	}
 }

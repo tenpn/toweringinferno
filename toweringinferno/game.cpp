@@ -181,7 +181,7 @@ void toweringinferno::executeGameLoop()
 		}	
 		else if (key.c == 'b')
 		{
-			world.setWaterBomb(world.getPlayer().getPos());
+			world.getPlayer().useWaterBomb(world);
 		}
 		else if (key.c == 'v')
 		{
