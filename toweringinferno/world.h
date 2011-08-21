@@ -57,6 +57,8 @@ public:
 	const Player& getPlayer() const { return m_player; }
 	Player& getPlayer() { return m_player; }
 
+	bool isSprinklerSystemAvailable() const { return m_sprinkerAvailable; }
+
 private:
 	
 	enum ActionSuccess
@@ -78,6 +80,7 @@ private:
 	int m_width;
 	int m_height;
 	Player m_player;
+	bool m_sprinkerAvailable;
 }; 
 
 } // namespace toweringinferno

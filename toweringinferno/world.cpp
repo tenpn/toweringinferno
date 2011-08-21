@@ -86,6 +86,7 @@ toweringinferno::World::World(
 	: m_map(w*h)
 	, m_width(w)
 	, m_height(h)
+	, m_sprinkerAvailable(true)
 {
 
 }
@@ -134,9 +135,41 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerCon
 	const TCOD_key_t& command
 	)
 {
-	if (isActionKey(command) == false)
+	if (isActionKey(command) == false || m_sprinkerAvailable == false)
 	{
 		return eAction_InvalidInput;
+	}
+
+	const Position playerPos = m_player.getPos();
+	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	{
+		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		{
+			if ((col != playerPos.first && row != playerPos.second) || getType(col, row) != eSprinklerControl)
+			{
+				continue;
+			}
+
+			// GO GO SPRINKLERS
+			const int sprinklerSpacing = 9;
+			for (int sprinklerCol = sprinklerSpacing; sprinklerCol < m_width; sprinklerCol += sprinklerSpacing)
+			{
+				for(int sprinklerRow = sprinklerSpacing; sprinklerRow < m_height; sprinklerRow += sprinklerSpacing)
+				{
+					Cell& cell = m_map[coordsToIndex(sprinklerCol, sprinklerRow)];
+
+					if (cell.type == eFloor)
+					{
+						cell.water = 1.5f;
+						cell.fire = 0.0f;
+						cell.heat = 0.0f;
+					}
+				}
+			}
+
+			m_sprinkerAvailable = false;
+			return eAction_Succeeded;
+		}
 	}
 
 	return eAction_Failed;
