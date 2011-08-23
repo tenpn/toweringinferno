@@ -1,5 +1,6 @@
 #include <string>
 #include <sstream>
+#include <climits>
 #include "libtcod.hpp"
 #include "game.h"
 #include "world.h"
@@ -138,7 +139,8 @@ void debugRender(
 	const World& world,
 	const int highScore,
 	const int turnCount,
-	const DebugRenderMode renderMode
+	const DebugRenderMode renderMode,
+	const int levelSeed
 	)
 {
 	// hud
@@ -160,8 +162,7 @@ void debugRender(
 	score << "Turns:" << turnCount << " Floors escaped:" << world.getFloorsEscaped() << " Score:" << world.getPlayer().getScore() 
 		<< " High score:" << highScore;
 	TCODConsole::root->printCenter(world.getWidth()/2, world.getHeight() - 1, TCOD_BKGND_NONE, score.str().c_str());
-
-
+	
 	const int mouseX = TCODMouse::getStatus().cx;
 	const int mouseY = TCODMouse::getStatus().cy;
 
@@ -197,7 +198,15 @@ void debugRender(
 	
 	// titles
 
-	TCODConsole::root->printCenter(world.getWidth()/2,0,TCOD_BKGND_NONE,"THE TOWERING INFERNO");
+	std::stringstream titles;
+	titles << "THE TOWERING INFERNO";
+
+	if (renderMode == eDebugRender_Cell)
+	{
+		titles << " seed:" << levelSeed;
+	}
+
+	TCODConsole::root->printCenter(world.getWidth()/2,0,TCOD_BKGND_NONE,titles.str().c_str());
 	TCODConsole::root->printCenter(world.getWidth()/2,1,TCOD_BKGND_NONE,"Get to the stairs down '>' to escape the floor.");
 
 	static const char* const motd[] = {
@@ -242,6 +251,7 @@ void toweringinferno::executeGameLoop()
 	int highestScore = 0;
 	int turnCount = 0;
 	World world(width, height);
+	int levelSeed = 0;
 	
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
@@ -257,9 +267,11 @@ void toweringinferno::executeGameLoop()
 				world.resetForNewFloor();
 			}
 
+			levelSeed = TCODRandom::getInstance()->getInt(0, INT_MAX);
 			const int hbuffer = 2;
 			const int vbuffer = 3;
 			const proceduralgeneration::FloorGenerator floor(
+				levelSeed,
 				hbuffer, vbuffer,
 				width - hbuffer*2, height - vbuffer*2,
 				world.getFloorsEscaped());
@@ -277,7 +289,7 @@ void toweringinferno::executeGameLoop()
 
 		TCODConsole::root->clear();
 		renderWorld(world, renderMode);
-		debugRender(world, highestScore, turnCount, debugRenderMode);
+		debugRender(world, highestScore, turnCount, debugRenderMode, levelSeed);
 		TCODConsole::flush();
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
