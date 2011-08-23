@@ -73,6 +73,12 @@ void renderWorld(
 				continue;
 			}
 
+			const TCODColor floorCol = 
+				x % 2 == y % 2
+					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
+						floorRng.getGaussianFloat(0.0f, 0.25f))
+				: TCODColor::lightGrey;
+
 			const TCODColor baseBgCol 
 				= cell.type == eWall 
 					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
@@ -80,10 +86,7 @@ void renderWorld(
 				: cell.type == eClosedDoor ? closedDoor
 				: cell.type == eSprinklerControl ? 
 					(world.isSprinklerSystemAvailable() ? TCODColor::yellow : TCODColor::darkerYellow)
-				: x % 2 == y % 2
-					? TCODColor::lerp(TCODColor::lightGrey, TCODColor::darkGrey, 
-						floorRng.getGaussianFloat(0.0f, 0.25f))
-				: TCODColor::lightGrey;
+				: floorCol;
 
 			const float renderTarget = renderMode == eRender_Normal ? cell.fire : cell.heat;
 			const TCODColor heatBgCol = TCODColor::lerp(baseBgCol, renderTargetColor, 
