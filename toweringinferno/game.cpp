@@ -50,7 +50,8 @@ enum RenderMode
 
 void renderWorld(
 	const World& world,
-	const RenderMode renderMode
+	const RenderMode renderMode,
+	const int levelSeed
 	)
 {
 	static const TCODColor fire(255,0,0);
@@ -60,7 +61,7 @@ void renderWorld(
 
 	const TCODColor& renderTargetColor = renderMode == eRender_Heat ? heat : fire;
 
-	TCODRandom floorRng(0);
+	TCODRandom floorRng(levelSeed);
 
 	for(int x = 0; x < world.getWidth(); ++x)
 	{
@@ -291,7 +292,7 @@ void toweringinferno::executeGameLoop()
 		}
 
 		TCODConsole::root->clear();
-		renderWorld(world, renderMode);
+		renderWorld(world, renderMode, levelSeed);
 		debugRender(world, highestScore, turnCount, debugRenderMode, levelSeed);
 		TCODConsole::flush();
 
