@@ -30,6 +30,7 @@ public:
 	typedef std::vector<Position> PositionList;
 	const PositionList& getInitialFires() const { return m_initialFires; }
 	const PositionList& getHoses() const { return m_hoses; }
+	const PositionList& getCivilians() const { return m_civilians; }
 
 	TCODRandom& getRNG() { return m_rng; }
 
@@ -45,6 +46,7 @@ private:
 
 	std::vector<Position> m_initialFires;
 	std::vector<Position> m_hoses;
+	std::vector<Position> m_civilians;
 
 	TCODRandom m_rng;
 

@@ -6,6 +6,7 @@
 #include "world.h"
 #include "proceduralgeneration/floorgenerator.h"
 #include "utils.h"
+#include "heatvision/heatvisionsystem.h"
 
 namespace toweringinferno
 {
@@ -41,6 +42,19 @@ void pushFloorToMap(
 	}
 }
 
+void pushFloorToHeatvision(
+	const proceduralgeneration::FloorGenerator& floor,
+	heatvision::HeatvisionSystem& heatvision
+	)
+{
+	for(auto civilianPosIt = floor.getCivilians().begin()
+		; civilianPosIt != floor.getCivilians().end()
+		; ++civilianPosIt)
+	{
+		heatvision.addCivilian(*civilianPosIt);
+	}
+}
+
 enum RenderMode
 {
 	eRender_Normal,
@@ -50,6 +64,7 @@ enum RenderMode
 
 void renderWorld(
 	const World& world,
+	const heatvision::HeatvisionSystem& heatvision,
 	const RenderMode renderMode,
 	const int levelSeed
 	)
@@ -129,6 +144,14 @@ void renderWorld(
 
 			TCODConsole::root->putCharEx(x, y, c, fgColor, bgCol);
 		}
+	}
+
+	const TCODColor civilianColour = TCODColor::darkViolet;
+	for(auto civilian = heatvision.getCivilians().begin(); civilian != heatvision.getCivilians().end(); ++civilian)
+	{
+		const TCODColor backgroundCol = TCODConsole::root->getBack(civilian->pos.first, civilian->pos.second);
+		TCODConsole::root->putCharEx(civilian->pos.first, civilian->pos.second, 
+			'd', civilianColour, backgroundCol);
 	}
 }
 
@@ -255,6 +278,7 @@ void toweringinferno::executeGameLoop()
 	int highestScore = 0;
 	int turnCount = 0;
 	World world(width, height);
+	heatvision::HeatvisionSystem heatvision;
 	int levelSeed = 0;
 	
 	while ( TCODConsole::isWindowClosed() == false ) 
@@ -281,6 +305,7 @@ void toweringinferno::executeGameLoop()
 				world.getFloorsEscaped());
 
 			pushFloorToMap(floor, world);
+			pushFloorToHeatvision(floor, heatvision);
 			newFloorPlease = false;
 			newGamePlease = false;
 
@@ -292,12 +317,13 @@ void toweringinferno::executeGameLoop()
 		}
 
 		TCODConsole::root->clear();
-		renderWorld(world, renderMode, levelSeed);
+		renderWorld(world, heatvision, renderMode, levelSeed);
 		debugRender(world, highestScore, turnCount, debugRenderMode, levelSeed);
 		TCODConsole::flush();
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
 		const WorldEvents ev = world.update(key);
+		heatvision.update(world);
 
 		turnCount += (ev == eEvent_InvalidInput || ev == eEvent_PlayerDied) ? 0 : 1;
 

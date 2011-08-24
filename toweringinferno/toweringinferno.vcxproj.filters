@@ -16,6 +16,9 @@
     <Filter Include="Source Files\proceduralgeneration">
       <UniqueIdentifier>{bcc0758f-8077-4145-8201-8153be74d060}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\heatvision">
+      <UniqueIdentifier>{bd32e538-3926-42f5-bafb-46656de25376}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -32,6 +35,9 @@
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="heatvision\heatvisionsystem.cpp">
+      <Filter>Source Files\heatvision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heatvision\heatvisionsystem.h">
+      <Filter>Source Files\heatvision</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

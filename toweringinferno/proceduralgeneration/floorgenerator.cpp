@@ -203,13 +203,8 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	while(civilianCount > 0)
 	{
 		const Position civilianPosition = calculateRandomPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
-
-		const int cellIndex = worldCoordsToIndex(civilianPosition.first, civilianPosition.second);
-		if (m_cells[cellIndex] == eFloor)
-		{
-			m_cells[cellIndex] = eCivilian;
-			--civilianCount;
-		}
+		m_civilians.push_back(civilianPosition);
+		--civilianCount;
 	}
 }
 

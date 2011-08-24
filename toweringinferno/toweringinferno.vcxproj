@@ -95,6 +95,7 @@ copy $(SolutionDir)\libtcod-1.5.0\terminal.png $(SolutionDir)$(Configuration)\
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="heatvision\heatvisionsystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="proceduralgeneration\floorgenerator.cpp" />
@@ -103,6 +104,7 @@ copy $(SolutionDir)\libtcod-1.5.0\terminal.png $(SolutionDir)$(Configuration)\
   <ItemGroup>
     <ClInclude Include="celltype.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="heatvision\heatvisionsystem.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="proceduralgeneration\floorgenerator.h" />
