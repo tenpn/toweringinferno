@@ -258,6 +258,17 @@ void debugRender(
 	TCODConsole::root->printCenter(world.getWidth()/2,2,TCOD_BKGND_NONE,helpMessage);
 }
 
+void removeCivilians(
+	Player& player,
+	heatvision::HeatvisionSystem& heatVision
+	)
+{
+	if (heatVision.tryRemoveCivilian(player.getPos()))
+	{
+		player.rescueCivilian();
+	}
+}
+
 } // namespace toweringinferno
 
 void toweringinferno::executeGameLoop()
@@ -324,6 +335,7 @@ void toweringinferno::executeGameLoop()
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
 		const WorldEvents ev = world.update(key);
 		heatvision.update(world);
+		removeCivilians(world.getPlayer(), heatvision);
 
 		turnCount += (ev == eEvent_InvalidInput || ev == eEvent_PlayerDied) ? 0 : 1;
 
