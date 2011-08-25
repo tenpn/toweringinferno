@@ -27,6 +27,7 @@ public:
 	HeatvisionSystem();
 
 	void addCivilian(const Position& pos) { m_civilians.push_back(Civilian(pos)); }
+	bool tryRemoveCivilian(const Position& pos);
 
 	void update(const World& world);
 
