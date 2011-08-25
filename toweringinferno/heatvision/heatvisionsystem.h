@@ -14,8 +14,9 @@ namespace heatvision
 
 struct Civilian
 {
-	Civilian(const Position& pos) : pos(pos), hp(1.0f) {}
+	Civilian(const Position& posIn) : pos(posIn), hp(1.0f) {}
 	Civilian() : pos(0,0), hp(1.0f) {}
+	Civilian(const Position& posIn, const float hpIn) : pos(posIn), hp(hpIn) {}
 
 	Position pos;
 	float hp;

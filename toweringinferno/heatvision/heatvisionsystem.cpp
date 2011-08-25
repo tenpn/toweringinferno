@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <climits>
+#include <array>
 #include "heatvisionsystem.h"
 #include "../world.h"
 
@@ -62,14 +63,21 @@ bool isValidCivilianCell(
 	return type == eFloor || type == eOpenDoor;
 }
 
+template<typename t_CivilianConstIterator>
 float calculateDanger(
 	const Position& pos,
-	const World& world
+	const World& world,
+	const t_CivilianConstIterator& civiliansBegin,
+	const t_CivilianConstIterator& civiliansEnd
 	)
 {
 	const Cell& cell = world.getCell(pos);
+
+	const t_CivilianConstIterator occupyingCivilian = std::find(civiliansBegin, civiliansEnd, pos);
+
 	return isValidCivilianCell(cell.type) == false ? 1.0f
 		: cell.fire > 0.0f ? 1.0f
+		: occupyingCivilian != civiliansEnd ? 1.0f
 		: cell.heat;
 }
 
@@ -110,6 +118,8 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 	const toweringinferno::World& world
 	)
 {
+	std::vector<Civilian> newCivilians;
+
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
 		TileHeat heat[eTile_Count];
@@ -121,7 +131,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			const Tile currentTile = static_cast<Tile>(tileIndex);
 			const Position tilePos = calculatePosition(origin, currentTile);
 
-			const float danger = calculateDanger(tilePos, world);
+			const float danger = calculateDanger(tilePos, world, newCivilians.begin(), newCivilians.end());
 			const float desire = calculateDesire(tilePos, origin);
 
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
@@ -129,8 +139,10 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 
 		std::sort(heat, heat + eTile_Count);
 
-		civilianIt->pos = heat[0].pos;
+		newCivilians.push_back(Civilian(heat[0].pos, civilianIt->hp));
 	}
+
+	m_civilians = newCivilians;
 }
 
 bool toweringinferno::heatvision::HeatvisionSystem::tryRemoveCivilian(
