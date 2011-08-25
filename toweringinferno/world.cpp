@@ -96,10 +96,10 @@ bool isDeltaWithDirection(
 
 inline 
 bool isValidCivilianCell(
-	const CellType cell
+	const CellType /*cell*/
 	)
 {
-	return cell == eFloor || cell == eCivilian;
+	return false;
 }
 
 inline
@@ -107,7 +107,7 @@ bool isValidPlayerCell(
 	const CellType cell
 	)
 {
-	return isValidCivilianCell(cell) || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
+	return cell == eFloor || cell == eCivilian || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
 }
 
 inline
