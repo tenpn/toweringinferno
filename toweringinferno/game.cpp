@@ -334,13 +334,14 @@ void toweringinferno::executeGameLoop()
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
 		const WorldEvents ev = world.update(key);
-		heatvision.update(world);
-		removeCivilians(world.getPlayer(), heatvision);
-
+		
 		turnCount += (ev == eEvent_InvalidInput || ev == eEvent_PlayerDied) ? 0 : 1;
 
 		if (ev != eEvent_InvalidInput)
 		{
+			heatvision.update(world);
+			removeCivilians(world.getPlayer(), heatvision);
+
 			newFloorPlease = ev == eEvent_NextFloorDown;
 			newGamePlease = key.vk == TCODK_SPACE && ev == eEvent_PlayerDied;
 		}	
