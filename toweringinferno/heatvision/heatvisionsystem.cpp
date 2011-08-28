@@ -4,6 +4,7 @@
 #include <array>
 #include "heatvisionsystem.h"
 #include "../world.h"
+#include "../utils.h"
 
 namespace toweringinferno
 {
@@ -176,6 +177,16 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 {
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
+		const Cell& cell = world.getCell(civilianIt->pos);
+		const float hpDelta 
+			= cell.fire > 0.0f ? utils::mapValue(cell.fire, 0.0f, 0.5f, 0.0f, -0.4f)
+			: cell.water > 0.0f ? utils::mapValue(cell.water, 0.85f, 1.5f, 0.0f, -0.4f)
+			: 0.0f;
+
+		civilianIt->hp = utils::max(0.0f, civilianIt->hp = hpDelta);
+
+		//todo: remove dead civilians
+
 		TileHeat heat[eTile_Count];
 
 		const Position& origin = civilianIt->pos;
