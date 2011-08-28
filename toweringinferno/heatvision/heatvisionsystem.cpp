@@ -76,6 +76,7 @@ float calculateDanger(
 	return isValidCivilianCell(cell.type) == false ? 1.0f
 		: cell.fire > 0.0f ? 1.0f
 		: occupyingCivilian != civiliansEnd ? 1.0f
+		: world.getPlayer().getPos() == pos ? 1.0f
 		: cell.heat;
 }
 
@@ -190,7 +191,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
 		}
 
-		gaussianBlur(heat, 0.2f, civilianIt->heatMap);
+		gaussianBlur(heat, 0.0f, civilianIt->heatMap);
 
 		std::sort(civilianIt->heatMap, civilianIt->heatMap + eTile_Count);
 
