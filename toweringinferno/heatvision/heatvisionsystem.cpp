@@ -162,7 +162,10 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 	const toweringinferno::World& world
 	)
 {
-	std::vector<Position> newCiviliansPos;
+	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
+	{
+		civilianIt->pos = civilianIt->nextPos;
+	}
 
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
@@ -175,7 +178,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			const Tile currentTile = static_cast<Tile>(tileIndex);
 			const Position tilePos = calculatePosition(origin, currentTile);
 
-			const float danger = calculateDanger(tilePos, world, newCiviliansPos.begin(), newCiviliansPos.end());
+			const float danger = calculateDanger(tilePos, world, m_civilians.begin(), m_civilians.end());
 			const float desire = calculateDesire(tilePos, origin);
 
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
@@ -185,12 +188,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 
 		std::sort(civilianIt->heatMap, civilianIt->heatMap + eTile_Count);
 
-		newCiviliansPos.push_back(civilianIt->heatMap[0].pos);
-	}
-
-	for(unsigned int newCivilianIndex = 0; newCivilianIndex < newCiviliansPos.size(); ++newCivilianIndex)
-	{
-		m_civilians[newCivilianIndex].pos = newCiviliansPos[newCivilianIndex];
+		civilianIt->nextPos = civilianIt->heatMap[0].pos;
 	}
 }
 

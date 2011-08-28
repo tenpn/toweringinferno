@@ -41,11 +41,11 @@ Position calculatePosition(const Position& origin, const Tile tile);
 
 struct Civilian
 {
-	Civilian(const Position& posIn) : pos(posIn), hp(1.0f) {}
-	Civilian() : pos(0,0), hp(1.0f) {}
-	Civilian(const Position& posIn, const float hpIn) : pos(posIn), hp(hpIn) {}
+	Civilian(const Position& posIn) : pos(posIn), nextPos(posIn), hp(1.0f) {}
+	Civilian() : pos(0,0), nextPos(0,0), hp(1.0f) {}
 
 	Position pos;
+	Position nextPos;
 	float hp;
 
 	TileHeat heatMap[eTile_Count];
