@@ -69,6 +69,15 @@ private:
 	CivilianList m_civilians;
 };
 
+inline
+bool operator==(
+	const Civilian& civvie, 
+	const Position& pos
+	)
+{
+	return civvie.pos == pos;
+}
+
 } // namespace heatvision
 } // namespace toweringinferno
 

@@ -10,14 +10,6 @@ namespace toweringinferno
 namespace heatvision
 {
 
-bool operator==(
-	const Civilian& civvie, 
-	const Position& pos
-	)
-{
-	return civvie.pos == pos;
-}
-
 bool isTopRow(
 	const Tile t
 	)
