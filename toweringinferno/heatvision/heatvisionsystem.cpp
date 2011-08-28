@@ -32,6 +32,34 @@ enum Tile
 	eTile_Count,
 };
 
+bool isTopRow(
+	const Tile t
+	)
+{
+	return t >= eTile_TopLeft && t <= eTile_TopRight;
+}
+
+bool isBottomRow(
+	const Tile t
+	)
+{
+	return t >= eTile_BottomLeft && t <= eTile_BottomRight;
+}
+
+bool isLeft(
+	const Tile t
+	)
+{
+	return t == eTile_TopLeft || t == eTile_Left || t == eTile_BottomLeft;
+}
+
+bool isRight(
+	const Tile t
+	)
+{
+	return t == eTile_TopRight || t == eTile_Right || t == eTile_BottomRight;
+}
+
 Position calculatePosition(
 	const Position& origin,
 	const Tile tile
@@ -54,6 +82,19 @@ Position calculatePosition(
 		assert(false); // not expected
 		return origin;
 	}
+}
+
+Tile calculateTile(
+	const Tile origin,
+	const Tile direction
+	)
+{
+	return (isLeft(origin) && isLeft(direction)
+			|| isRight(origin) && isRight(direction)
+			|| isTopRow(origin) && isTopRow(direction)
+			|| isBottomRow(origin) && isBottomRow(direction)) 
+		? eTile_Count
+		: static_cast<Tile>(origin + (direction - eTile_Origin));
 }
 
 bool isValidCivilianCell(
@@ -107,6 +148,42 @@ bool operator<(const TileHeat& lhs, const TileHeat& rhs)
 		: false;
 }
 
+void gaussianBlur(
+	const TileHeat* const tileHeatsIn,
+	const float blurFactor,
+	TileHeat* const tileHeatsOut
+	)
+{
+	for(int tileIndex = 0; tileIndex < eTile_Count; ++tileIndex)
+	{
+		const Tile currentTile = static_cast<Tile>(tileIndex);
+		TileHeat runningTileHeat(tileHeatsIn[tileIndex]);
+		float contribution = 1.0f;
+
+		for(int neighbourIndex = 0; neighbourIndex < eTile_Count; ++neighbourIndex)
+		{
+			const Tile neighbourDirection = static_cast<Tile>(neighbourIndex);
+			const Tile neighbour = calculateTile(currentTile, neighbourDirection);
+			
+			if (neighbour == eTile_Count)
+			{
+				continue;
+			}
+
+			const TileHeat& neighbourTile = tileHeatsIn[neighbour];
+			contribution += blurFactor;
+
+			runningTileHeat.danger += neighbourTile.danger * blurFactor;
+			runningTileHeat.desire += neighbourTile.desire * blurFactor;
+		}
+
+		runningTileHeat.danger /= contribution;
+		runningTileHeat.desire /= contribution;
+
+		tileHeatsOut[tileIndex] = runningTileHeat;
+	}
+}
+
 } // namespace heatvision
 } // namespace toweringinferno
 
@@ -137,9 +214,12 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
 		}
 
-		std::sort(heat, heat + eTile_Count);
+		TileHeat bluredHeat[eTile_Count];
+		gaussianBlur(heat, 0.2f, bluredHeat);
 
-		newCivilians.push_back(Civilian(heat[0].pos, civilianIt->hp));
+		std::sort(bluredHeat, bluredHeat + eTile_Count);
+
+		newCivilians.push_back(Civilian(bluredHeat[0].pos, civilianIt->hp));
 	}
 
 	m_civilians = newCivilians;
