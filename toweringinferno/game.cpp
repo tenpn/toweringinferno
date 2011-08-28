@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <climits>
+#include <algorithm>
 #include "libtcod.hpp"
 #include "game.h"
 #include "world.h"
@@ -165,6 +166,7 @@ enum DebugRenderMode
 
 void debugRender(
 	const World& world,
+	const heatvision::HeatvisionSystem& heatvision,
 	const int highScore,
 	const int turnCount,
 	const DebugRenderMode renderMode,
@@ -204,6 +206,20 @@ void debugRender(
 			waterText << "(" << mouseX << "," << mouseY << ") w:" << currentMouseCell.water << " h:" 
 				<< currentMouseCell.heat << " f:" << currentMouseCell.fire << " hp: " << currentMouseCell.hp << " ";
 			TCODConsole::root->printLeft(0, world.getHeight() - 1, TCOD_BKGND_NONE, waterText.str().c_str());
+
+			const heatvision::HeatvisionSystem::CivilianList& civilians = heatvision.getCivilians();
+			const heatvision::HeatvisionSystem::CivilianList::const_iterator civilianAtMouse
+				= std::find(civilians.begin(), civilians.end(), Position(mouseX, mouseY));
+
+			if (civilianAtMouse != civilians.end())
+			{
+				for(int tileIndex = 0; tileIndex < heatvision::eTile_Count; ++tileIndex)
+				{
+					const heatvision::TileHeat& heatAtTile = civilianAtMouse->heatMap[tileIndex];
+					TCODConsole::root->setBack(heatAtTile.pos.first, heatAtTile.pos.second,
+						TCODColor::lerp(TCODColor(0,0,0), TCODColor::red, heatAtTile.danger));
+				}
+			}
 		}
 
 		const char* const tooltip 
@@ -330,7 +346,7 @@ void toweringinferno::executeGameLoop()
 
 		TCODConsole::root->clear();
 		renderWorld(world, heatvision, renderMode, levelSeed);
-		debugRender(world, highestScore, turnCount, debugRenderMode, levelSeed);
+		debugRender(world, heatvision, highestScore, turnCount, debugRenderMode, levelSeed);
 		TCODConsole::flush();
 
 		const TCOD_key_t key=TCODConsole::checkForKeypress();
