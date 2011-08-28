@@ -339,6 +339,7 @@ void toweringinferno::executeGameLoop()
 			{
 				TCOD_key_t space = { TCODK_SPACE };
 				world.update(space);
+				heatvision.update(world);
 			}
 		}
 
@@ -354,8 +355,9 @@ void toweringinferno::executeGameLoop()
 
 		if (ev != eEvent_InvalidInput)
 		{
-			heatvision.update(world);
+			heatvision.preUpdate();
 			removeCivilians(world.getPlayer(), heatvision);
+			heatvision.update(world);
 
 			newFloorPlease = ev == eEvent_NextFloorDown;
 			newGamePlease = key.vk == TCODK_SPACE && ev == eEvent_PlayerDied;

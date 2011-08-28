@@ -59,6 +59,7 @@ public:
 	void addCivilian(const Position& pos) { m_civilians.push_back(Civilian(pos)); }
 	bool tryRemoveCivilian(const Position& pos);
 
+	void preUpdate();
 	void update(const World& world);
 
 	typedef std::vector<Civilian> CivilianList;

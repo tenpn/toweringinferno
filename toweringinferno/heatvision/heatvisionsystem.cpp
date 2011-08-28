@@ -161,15 +161,18 @@ toweringinferno::heatvision::HeatvisionSystem::HeatvisionSystem()
 {
 }
 
-void toweringinferno::heatvision::HeatvisionSystem::update(
-	const toweringinferno::World& world
-	)
+void toweringinferno::heatvision::HeatvisionSystem::preUpdate()
 {
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
 		civilianIt->pos = civilianIt->nextPos;
 	}
+}
 
+void toweringinferno::heatvision::HeatvisionSystem::update(
+	const toweringinferno::World& world
+	)
+{
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
 		TileHeat heat[eTile_Count];
