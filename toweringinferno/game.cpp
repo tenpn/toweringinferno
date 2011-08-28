@@ -47,6 +47,7 @@ void pushFloorToHeatvision(
 	heatvision::HeatvisionSystem& heatvision
 	)
 {
+	heatvision = heatvision::HeatvisionSystem();
 	for(auto civilianPosIt = floor.getCivilians().begin()
 		; civilianPosIt != floor.getCivilians().end()
 		; ++civilianPosIt)
