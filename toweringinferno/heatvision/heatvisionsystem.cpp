@@ -61,6 +61,7 @@ bool isValidCivilianCell(
 template<typename t_CivilianConstIterator>
 float calculateDanger(
 	const Position& pos,
+	const Tile tile,
 	const World& world,
 	const t_CivilianConstIterator& civiliansBegin,
 	const t_CivilianConstIterator& civiliansEnd
@@ -68,7 +69,9 @@ float calculateDanger(
 {
 	const Cell& cell = world.getCell(pos);
 
-	const t_CivilianConstIterator occupyingCivilian = std::find(civiliansBegin, civiliansEnd, pos);
+	const t_CivilianConstIterator occupyingCivilian = tile == eTile_Origin 
+		? civiliansEnd // assume there's always a civilian at the center - us
+		: std::find(civiliansBegin, civiliansEnd, pos);
 
 	return isValidCivilianCell(cell.type) == false ? 1.0f
 		: cell.fire > 0.0f ? 1.0f
@@ -178,7 +181,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			const Tile currentTile = static_cast<Tile>(tileIndex);
 			const Position tilePos = calculatePosition(origin, currentTile);
 
-			const float danger = calculateDanger(tilePos, world, m_civilians.begin(), m_civilians.end());
+			const float danger = calculateDanger(tilePos, currentTile, world, m_civilians.begin(), m_civilians.end());
 			const float desire = calculateDesire(tilePos, origin);
 
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
