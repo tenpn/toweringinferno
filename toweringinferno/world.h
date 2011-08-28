@@ -53,8 +53,6 @@ public:
 	void setWaterBomb(const Position& pos);
 	void setHose(int x, int y);
 
-	bool rescueCivilian(const Position& pos);
-
 	bool isValidCoords(const int x, const int y)const { return x >= 0 && x < m_width && y >= 0 && y < m_height; }
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }

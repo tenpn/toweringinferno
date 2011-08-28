@@ -130,7 +130,6 @@ void renderWorld(
 				: cell.type == eClosedDoor ? '+'
 				: cell.type == eOpenDoor ? '-'
 				: cell.type == eSprinklerControl ? 'S'
-				: cell.type == eCivilian ? 'd'
 				: ' ';
 
 			const float playerHealth = world.getPlayer().getHealth();
@@ -139,7 +138,6 @@ void renderWorld(
 					? TCODColor::lerp(TCODColor::pink, TCODColor::desaturatedOrange, utils::mapValue(playerHealth, 0.0f, 0.2f, 0.0f, 1.0f))
 					: TCODColor::lerp(TCODColor::desaturatedOrange, TCODColor::orange, utils::mapValue(playerHealth, 0.2f, 1.0f, 0.0f, 1.0f))
 					)
-				: cell.type == eCivilian ? TCODColor::darkViolet
 				: cell.type == eHose && cell.hp > 0.0f ? TCODColor::blue
 				: cell.type == eStairsDown ? TCODColor::darkGreen
 				: TCODColor::black;
@@ -230,7 +228,7 @@ void debugRender(
 			: currentMouseCell.type == eHose ? "Open hoses with action. Completely floods nearby rooms."
 			: currentMouseCell.type == eSprinklerControl ? "Trigger sprinklers with action. Partially floods whole floor."
 			: currentMouseCell.type == eStairsDown ? "Step onto stairs down to escape floor"
-			: currentMouseCell.type == eCivilian ? "Walk over civilians to rescue them before they burn or drown."
+			//: currentMouseCell.type == eCivilian ? "Walk over civilians to rescue them before they burn or drown."
 			: currentMouseCell.water > 0.4f ? "Water quenches fire"
 			: currentMouseCell.fire > 0.0f ? "Fire will hurt you a lot"
 			: currentMouseCell.heat > 0.25f ? "Hot areas around fire will hurt you a litle"
