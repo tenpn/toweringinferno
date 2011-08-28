@@ -12,6 +12,33 @@ class World;
 namespace heatvision
 {
 
+struct TileHeat
+{
+	TileHeat() : pos(INT_MAX,INT_MAX), danger(0.0f), desire(0.0f) {}
+	TileHeat(const Position posIn, const float dangerIn, const float desireIn)
+		: pos(posIn), danger(dangerIn), desire(desireIn)
+	{}
+	Position pos;
+	float danger;
+	float desire;
+};
+
+enum Tile
+{
+	eTile_TopLeft,
+	eTile_Top,
+	eTile_TopRight,
+	eTile_Left,
+	eTile_Origin,
+	eTile_Right,
+	eTile_BottomLeft,
+	eTile_Bottom,
+	eTile_BottomRight,
+	eTile_Count,
+};
+
+Position calculatePosition(const Position& origin, const Tile tile);
+
 struct Civilian
 {
 	Civilian(const Position& posIn) : pos(posIn), hp(1.0f) {}
@@ -20,6 +47,8 @@ struct Civilian
 
 	Position pos;
 	float hp;
+
+	TileHeat heatMap[eTile_Count];
 };
 
 class HeatvisionSystem

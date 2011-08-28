@@ -18,20 +18,6 @@ bool operator==(
 	return civvie.pos == pos;
 }
 
-enum Tile
-{
-	eTile_TopLeft,
-	eTile_Top,
-	eTile_TopRight,
-	eTile_Left,
-	eTile_Origin,
-	eTile_Right,
-	eTile_BottomLeft,
-	eTile_Bottom,
-	eTile_BottomRight,
-	eTile_Count,
-};
-
 bool isTopRow(
 	const Tile t
 	)
@@ -58,30 +44,6 @@ bool isRight(
 	)
 {
 	return t == eTile_TopRight || t == eTile_Right || t == eTile_BottomRight;
-}
-
-Position calculatePosition(
-	const Position& origin,
-	const Tile tile
-	)
-{
-	switch(tile)
-	{
-	case eTile_TopLeft: return Position(origin.first-1, origin.second-1);
-	case eTile_Top: return Position(origin.first, origin.second-1);
-	case eTile_TopRight: return Position(origin.first+1, origin.second-1);
-	case eTile_Left: return Position(origin.first-1, origin.second);
-	case eTile_Origin: return origin;
-	case eTile_Right: return Position(origin.first+1, origin.second);
-	case eTile_BottomLeft: return Position(origin.first-1, origin.second+1);
-	case eTile_Bottom: return Position(origin.first, origin.second+1);
-	case eTile_BottomRight: return Position(origin.first+1, origin.second+1);
-
-	default:
-	case eTile_Count: 
-		assert(false); // not expected
-		return origin;
-	}
 }
 
 Tile calculateTile(
@@ -130,17 +92,6 @@ float calculateDesire(
 	return pos == origin ? 0.5f : 0.0f;
 }
 
-struct TileHeat
-{
-	TileHeat() : pos(INT_MAX,INT_MAX), danger(0.0f), desire(0.0f) {}
-	TileHeat(const Position posIn, const float dangerIn, const float desireIn)
-		: pos(posIn), danger(dangerIn), desire(desireIn)
-	{}
-	Position pos;
-	float danger;
-	float desire;
-};
-
 bool operator<(const TileHeat& lhs, const TileHeat& rhs)
 {
 	return lhs.danger < rhs.danger ? true
@@ -187,6 +138,30 @@ void gaussianBlur(
 } // namespace heatvision
 } // namespace toweringinferno
 
+toweringinferno::Position toweringinferno::heatvision::calculatePosition(
+	const Position& origin,
+	const Tile tile
+	)
+{
+	switch(tile)
+	{
+	case eTile_TopLeft: return Position(origin.first-1, origin.second-1);
+	case eTile_Top: return Position(origin.first, origin.second-1);
+	case eTile_TopRight: return Position(origin.first+1, origin.second-1);
+	case eTile_Left: return Position(origin.first-1, origin.second);
+	case eTile_Origin: return origin;
+	case eTile_Right: return Position(origin.first+1, origin.second);
+	case eTile_BottomLeft: return Position(origin.first-1, origin.second+1);
+	case eTile_Bottom: return Position(origin.first, origin.second+1);
+	case eTile_BottomRight: return Position(origin.first+1, origin.second+1);
+
+	default:
+	case eTile_Count: 
+		assert(false); // not expected
+		return origin;
+	}
+}
+
 toweringinferno::heatvision::HeatvisionSystem::HeatvisionSystem()
 {
 }
@@ -195,7 +170,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 	const toweringinferno::World& world
 	)
 {
-	std::vector<Civilian> newCivilians;
+	std::vector<Position> newCiviliansPos;
 
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
@@ -208,21 +183,23 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			const Tile currentTile = static_cast<Tile>(tileIndex);
 			const Position tilePos = calculatePosition(origin, currentTile);
 
-			const float danger = calculateDanger(tilePos, world, newCivilians.begin(), newCivilians.end());
+			const float danger = calculateDanger(tilePos, world, newCiviliansPos.begin(), newCiviliansPos.end());
 			const float desire = calculateDesire(tilePos, origin);
 
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
 		}
 
-		TileHeat bluredHeat[eTile_Count];
-		gaussianBlur(heat, 0.2f, bluredHeat);
+		gaussianBlur(heat, 0.2f, civilianIt->heatMap);
 
-		std::sort(bluredHeat, bluredHeat + eTile_Count);
+		std::sort(civilianIt->heatMap, civilianIt->heatMap + eTile_Count);
 
-		newCivilians.push_back(Civilian(bluredHeat[0].pos, civilianIt->hp));
+		newCiviliansPos.push_back(civilianIt->heatMap[0].pos);
 	}
 
-	m_civilians = newCivilians;
+	for(unsigned int newCivilianIndex = 0; newCivilianIndex < newCiviliansPos.size(); ++newCivilianIndex)
+	{
+		m_civilians[newCivilianIndex].pos = newCiviliansPos[newCivilianIndex];
+	}
 }
 
 bool toweringinferno::heatvision::HeatvisionSystem::tryRemoveCivilian(
