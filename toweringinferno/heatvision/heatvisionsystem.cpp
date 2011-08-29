@@ -169,6 +169,19 @@ void toweringinferno::heatvision::HeatvisionSystem::preUpdate()
 	{
 		civilianIt->pos = civilianIt->nextPos;
 	}
+
+	auto deadCivilianIt = m_civilians.begin();
+	while(deadCivilianIt != m_civilians.end())
+	{
+		if (deadCivilianIt->isAlive())
+		{
+			++deadCivilianIt;
+		}
+		else
+		{
+			deadCivilianIt = m_civilians.erase(deadCivilianIt);
+		}
+	}
 }
 
 void toweringinferno::heatvision::HeatvisionSystem::update(
@@ -177,15 +190,15 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 {
 	for(auto civilianIt = m_civilians.begin(); civilianIt != m_civilians.end(); ++civilianIt)
 	{
+		assert(civilianIt->isAlive());
+
 		const Cell& cell = world.getCell(civilianIt->pos);
 		const float hpDelta 
 			= cell.fire > 0.0f ? utils::mapValue(cell.fire, 0.0f, 0.5f, 0.0f, -0.4f)
 			: cell.water > 0.0f ? utils::mapValue(cell.water, 0.85f, 1.5f, 0.0f, -0.4f)
 			: 0.0f;
 
-		civilianIt->hp = utils::max(0.0f, civilianIt->hp = hpDelta);
-
-		//todo: remove dead civilians
+		civilianIt->hp = utils::max(0.0f, civilianIt->hp + hpDelta);
 
 		TileHeat heat[eTile_Count];
 
@@ -215,7 +228,7 @@ bool toweringinferno::heatvision::HeatvisionSystem::tryRemoveCivilian(
 	)
 {
 	const auto civilian = std::find(m_civilians.begin(), m_civilians.end(), pos);
-	if (civilian != m_civilians.end())
+	if (civilian != m_civilians.end() && civilian->isAlive())
 	{
 		m_civilians.erase(civilian);
 		return true;

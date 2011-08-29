@@ -49,6 +49,8 @@ struct Civilian
 	float hp;
 
 	TileHeat heatMap[eTile_Count];
+
+	bool isAlive() const { return hp > 0.0f; }
 };
 
 class HeatvisionSystem
