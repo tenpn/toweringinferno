@@ -60,7 +60,7 @@ bool isValidCivilianCell(
 }
 
 template<typename t_CivilianConstIterator>
-float calculateDanger(
+float calculateNonBleedableDanger(
 	const Position& pos,
 	const Tile tile,
 	const World& world,
@@ -75,9 +75,19 @@ float calculateDanger(
 		: std::find(civiliansBegin, civiliansEnd, pos);
 
 	return isValidCivilianCell(cell.type) == false ? 1.0f
-		: cell.fire > 0.0f ? 1.0f
 		: occupyingCivilian != civiliansEnd ? 1.0f
 		: world.getPlayer().getPos() == pos ? 1.0f
+		: 0.0f;
+}
+
+float calculateBleedableDanger(
+	const Position& pos,
+	const World& world
+	)
+{
+	const Cell& cell = world.getCell(pos);
+
+	return cell.fire > 0.0f ? 1.0f
 		: cell.heat;
 }
 
@@ -209,13 +219,23 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 			const Tile currentTile = static_cast<Tile>(tileIndex);
 			const Position tilePos = calculatePosition(origin, currentTile);
 
-			const float danger = calculateDanger(tilePos, currentTile, world, m_civilians.begin(), m_civilians.end());
+			const float danger = calculateBleedableDanger(tilePos, world);
 			const float desire = calculateDesire(tilePos, origin);
 
 			heat[tileIndex] = TileHeat(tilePos, danger, desire);
 		}
 
-		gaussianBlur(heat, 0.0f, civilianIt->heatMap);
+		gaussianBlur(heat, 0.2f, civilianIt->heatMap);
+
+		for(int tileIndex = 0; tileIndex < eTile_Count; ++tileIndex)
+		{
+			const Tile currentTile = static_cast<Tile>(tileIndex);
+			const Position tilePos = calculatePosition(origin, currentTile);
+
+			const float danger = calculateNonBleedableDanger(tilePos, currentTile, world, m_civilians.begin(), m_civilians.end());
+
+			civilianIt->heatMap[tileIndex].danger = utils::max(danger, civilianIt->heatMap[tileIndex].danger);
+		}
 
 		std::sort(civilianIt->heatMap, civilianIt->heatMap + eTile_Count);
 
