@@ -306,6 +306,7 @@ void toweringinferno::executeGameLoop()
 	World world(width, height);
 	heatvision::HeatvisionSystem heatvision;
 	int levelSeed = 0;
+	Position lastExitPosition(-1,-1);
 	
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{
@@ -328,7 +329,9 @@ void toweringinferno::executeGameLoop()
 				levelSeed,
 				hbuffer, vbuffer,
 				width - hbuffer*2, height - vbuffer*2,
-				world.getFloorsEscaped());
+				world.getFloorsEscaped(),
+				lastExitPosition);
+			lastExitPosition = floor.getExitPosition();
 
 			pushFloorToMap(floor, world);
 			pushFloorToHeatvision(floor, heatvision);

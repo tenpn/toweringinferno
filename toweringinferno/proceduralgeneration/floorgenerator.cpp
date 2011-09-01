@@ -129,7 +129,8 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const int top,
 	const int w, 
 	const int h, 
-	const int floorsCleared
+	const int floorsCleared, 
+	const Position& entranceSeed
 	)
 	: m_cells(w*h,eFloor)
 	, m_width(w)
@@ -145,14 +146,17 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	officeBsp.traversePostOrder(&wallWriter, this);
 
 	// find player start / end pos by iterating down branches
-	const bool startOnLeft = m_rng.getInt(0,1) == 0;
-	const TCODBsp& playerStartNode = findRandomLeaf(startOnLeft ? *officeBsp.getLeft() : *officeBsp.getRight(), m_rng);
-	const Position playerStartPos = calculateRandomPosition(playerStartNode, m_rng);
+	const bool startOnLeft = entranceSeed.first == -1
+		? m_rng.getInt(0,1) == 0
+		: officeBsp.getLeft()->contains(entranceSeed.first, entranceSeed.second);
+	const Position playerStartPos = entranceSeed.first == -1
+		? calculateRandomPosition(findRandomLeaf(startOnLeft ? *officeBsp.getLeft() : *officeBsp.getRight(), m_rng), m_rng)
+		: entranceSeed;
 	setType(playerStartPos.first, playerStartPos.second, eStairsUp);
 
 	const TCODBsp& playerExitNode = findRandomLeaf(startOnLeft ? *officeBsp.getRight() : *officeBsp.getLeft(), m_rng);
-	const Position playerExitPos = calculateRandomPosition(playerExitNode, m_rng);
-	setType(playerExitPos.first, playerExitPos.second, eStairsDown);
+	m_exitPosition = calculateRandomPosition(playerExitNode, m_rng);
+	setType(m_exitPosition.first, m_exitPosition.second, eStairsDown);
 
 	int fireCount = utils::max(2, static_cast<int>((floorsCleared+1)/1.3f));
 	assert(fireCount > 0);
