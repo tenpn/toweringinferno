@@ -88,6 +88,7 @@ float calculateBleedableDanger(
 	const Cell& cell = world.getCell(pos);
 
 	return cell.fire > 0.0f ? 1.0f
+		: cell.water > 0.85f ? utils::mapValue(cell.water, 0.85f, 1.5f, 0.0f, 0.5f)
 		: cell.heat;
 }
 
