@@ -47,31 +47,31 @@ Position calculateIdealNewPlayerPosition(
 	{
 	case TCODK_LEFT:
 	case TCODK_KP4:
-		return Position(current.first - 1, current.second);
+		return Position(current.col - 1, current.row);
 
 	case TCODK_RIGHT:
 	case TCODK_KP6:
-		return Position(current.first + 1, current.second);
+		return Position(current.col + 1, current.row);
 
 	case TCODK_UP:
 	case TCODK_KP8:
-		return Position(current.first, current.second - 1);
+		return Position(current.col, current.row - 1);
 
 	case TCODK_DOWN:
 	case TCODK_KP2:
-		return Position(current.first, current.second + 1);
+		return Position(current.col, current.row + 1);
 
 	case TCODK_KP7:
-		return Position(current.first-1, current.second-1);
+		return Position(current.col-1, current.row-1);
 
 	case TCODK_KP9:
-		return Position(current.first+1, current.second-1);
+		return Position(current.col+1, current.row-1);
 
 	case TCODK_KP1:
-		return Position(current.first-1, current.second+1);
+		return Position(current.col-1, current.row+1);
 
 	case TCODK_KP3:
-		return Position(current.first+1, current.second+1);
+		return Position(current.col+1, current.row+1);
 
 	default:
 		return current;
@@ -211,9 +211,9 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerCon
 	}
 
 	const Position playerPos = m_player.getPos();
-	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
-		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
 		{
 			if (getType(col, row) != eSprinklerControl)
 			{
@@ -255,9 +255,9 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateHoseRelease(
 	}
 
 	const Position playerPos = m_player.getPos();
-	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
-		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
 		{
 			if (getType(col, row) != eHose)
 			{
@@ -296,11 +296,11 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 	Cell* wallToAxe = NULL;
 
 	const Position playerPos = m_player.getPos();
-	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
-		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
 		{
-			if ((col == playerPos.first && row == playerPos.second) || isValidCoords(col, row) == false)
+			if ((col == playerPos.col && row == playerPos.row) || isValidCoords(col, row) == false)
 			{
 				continue;
 			}
@@ -309,7 +309,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 
 			if (axisNeighbourCell.type == eWall 
 				&& (wallToAxe == NULL 
-					|| isDeltaWithDirection(col - playerPos.first, row - playerPos.second, m_floorData.lastMovementDir)))
+					|| isDeltaWithDirection(col - playerPos.col, row - playerPos.row, m_floorData.lastMovementDir)))
 			{
 				wallToAxe = &axisNeighbourCell;
 			}
@@ -344,9 +344,9 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateDoors(
 
 	bool didAnyDoorFlip = false;
 	const Position playerPos = m_player.getPos();
-	for(int col = playerPos.first - 1; col < playerPos.first + 2; ++col)
+	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
-		for(int row = playerPos.second - 1; row < playerPos.second + 2; ++row)
+		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
 		{
 			if (isValidCoords(col, row) == false)
 			{

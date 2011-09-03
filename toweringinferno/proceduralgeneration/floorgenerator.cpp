@@ -146,17 +146,17 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	officeBsp.traversePostOrder(&wallWriter, this);
 
 	// find player start / end pos by iterating down branches
-	const bool startOnLeft = entranceSeed.first == -1
+	const bool startOnLeft = entranceSeed.col == -1
 		? m_rng.getInt(0,1) == 0
-		: officeBsp.getLeft()->contains(entranceSeed.first, entranceSeed.second);
-	const Position playerStartPos = entranceSeed.first == -1
+		: officeBsp.getLeft()->contains(entranceSeed.col, entranceSeed.row);
+	const Position playerStartPos = entranceSeed.col == -1
 		? calculateRandomPosition(findRandomLeaf(startOnLeft ? *officeBsp.getLeft() : *officeBsp.getRight(), m_rng), m_rng)
 		: entranceSeed;
-	setType(playerStartPos.first, playerStartPos.second, eStairsUp);
+	setType(playerStartPos.col, playerStartPos.row, eStairsUp);
 
 	const TCODBsp& playerExitNode = findRandomLeaf(startOnLeft ? *officeBsp.getRight() : *officeBsp.getLeft(), m_rng);
 	m_exitPosition = calculateRandomPosition(playerExitNode, m_rng);
-	setType(m_exitPosition.first, m_exitPosition.second, eStairsDown);
+	setType(m_exitPosition.col, m_exitPosition.row, eStairsDown);
 
 	int fireCount = utils::max(2, static_cast<int>((floorsCleared+1)/1.3f));
 	assert(fireCount > 0);
@@ -183,7 +183,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 		const TCODBsp& hoseRoom = findRandomLeaf(officeBsp, m_rng);
 
 		const Position hosePos = calculateRandomWallPosition(hoseRoom, m_rng);
-		const int cellIndex = worldCoordsToIndex(hosePos.first, hosePos.second);
+		const int cellIndex = worldCoordsToIndex(hosePos.col, hosePos.row);
 		if (m_cells[cellIndex] == eWall)
 		{
 			m_cells[cellIndex] = eHose;
@@ -195,7 +195,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	while(sprinklers > 0)
 	{
 		const Position sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
-		const int sprinklerIndex = worldCoordsToIndex(sprinklerControlPosition.first, sprinklerControlPosition.second);
+		const int sprinklerIndex = worldCoordsToIndex(sprinklerControlPosition.col, sprinklerControlPosition.row);
 		if (m_cells[sprinklerIndex] == eWall)
 		{
 			m_cells[sprinklerIndex] = eSprinklerControl;

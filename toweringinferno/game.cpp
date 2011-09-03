@@ -34,12 +34,12 @@ void pushFloorToMap(
 
 	for(auto firePos = floor.getInitialFires().begin(); firePos != floor.getInitialFires().end(); ++firePos)
 	{
-		world.setFire(firePos->first, firePos->second, 1.0f);
+		world.setFire(firePos->col, firePos->row, 1.0f);
 	}
 
 	for(auto hosePos = floor.getHoses().begin(); hosePos != floor.getHoses().end(); ++hosePos)
 	{
-		world.setHose(hosePos->first, hosePos->second);
+		world.setHose(hosePos->col, hosePos->row);
 	}
 }
 
@@ -119,7 +119,7 @@ void renderWorld(
 				? heatBgCol
 				: waterBgCol;
 			
-			const bool isPlayer = x == world.getPlayer().getPos().first && y == world.getPlayer().getPos().second;
+			const bool isPlayer = x == world.getPlayer().getPos().col && y == world.getPlayer().getPos().row;
 
 			const int c
 				= isPlayer ? '@'
@@ -149,8 +149,8 @@ void renderWorld(
 	const TCODColor civilianColour = TCODColor::darkViolet;
 	for(auto civilian = heatvision.getCivilians().begin(); civilian != heatvision.getCivilians().end(); ++civilian)
 	{
-		const TCODColor backgroundCol = TCODConsole::root->getBack(civilian->pos.first, civilian->pos.second);
-		TCODConsole::root->putCharEx(civilian->pos.first, civilian->pos.second, 
+		const TCODColor backgroundCol = TCODConsole::root->getBack(civilian->pos.col, civilian->pos.row);
+		TCODConsole::root->putCharEx(civilian->pos.col, civilian->pos.row, 
 			'd', civilianColour, backgroundCol);
 	}
 }
@@ -214,14 +214,14 @@ void debugRender(
 				for(int tileIndex = 0; tileIndex < heatvision::eTile_Count; ++tileIndex)
 				{
 					const heatvision::TileHeat& heatAtTile = civilianAtMouse->heatMap[tileIndex];
-					TCODConsole::root->setBack(heatAtTile.pos.first, heatAtTile.pos.second,
+					TCODConsole::root->setBack(heatAtTile.pos.col, heatAtTile.pos.row,
 						TCODColor::lerp(TCODColor(0,0,0), TCODColor::red, heatAtTile.danger));
 				}
 			}
 		}
 
 		const char* const tooltip 
-			= mouseX == world.getPlayer().getPos().first && mouseY == world.getPlayer().getPos().second
+			= mouseX == world.getPlayer().getPos().col && mouseY == world.getPlayer().getPos().row
 				? "The player"
 			: currentMouseCell.type == eOpenDoor || currentMouseCell.type == eClosedDoor 
 				? "Close doors with action. Closed doors slow fire and block water."

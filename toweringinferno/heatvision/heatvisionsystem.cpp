@@ -153,15 +153,15 @@ toweringinferno::Position toweringinferno::heatvision::calculatePosition(
 {
 	switch(tile)
 	{
-	case eTile_TopLeft: return Position(origin.first-1, origin.second-1);
-	case eTile_Top: return Position(origin.first, origin.second-1);
-	case eTile_TopRight: return Position(origin.first+1, origin.second-1);
-	case eTile_Left: return Position(origin.first-1, origin.second);
+	case eTile_TopLeft: return Position(origin.col-1, origin.row-1);
+	case eTile_Top: return Position(origin.col, origin.row-1);
+	case eTile_TopRight: return Position(origin.col+1, origin.row-1);
+	case eTile_Left: return Position(origin.col-1, origin.row);
 	case eTile_Origin: return origin;
-	case eTile_Right: return Position(origin.first+1, origin.second);
-	case eTile_BottomLeft: return Position(origin.first-1, origin.second+1);
-	case eTile_Bottom: return Position(origin.first, origin.second+1);
-	case eTile_BottomRight: return Position(origin.first+1, origin.second+1);
+	case eTile_Right: return Position(origin.col+1, origin.row);
+	case eTile_BottomLeft: return Position(origin.col-1, origin.row+1);
+	case eTile_Bottom: return Position(origin.col, origin.row+1);
+	case eTile_BottomRight: return Position(origin.col+1, origin.row+1);
 
 	default:
 	case eTile_Count: 

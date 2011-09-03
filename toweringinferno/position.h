@@ -5,7 +5,20 @@
 
 namespace toweringinferno
 {
-	typedef std::pair<int,int> Position;
+	struct Position
+	{
+		Position() : col(0), row(0) {}
+		Position(const int colIn, const int rowIn) : col(colIn), row(rowIn) {}
+
+		int col;
+		int row;
+	};
+
+	inline
+	bool operator==(const Position& lhs, const Position& rhs)
+	{
+		return lhs.col == rhs.col && lhs.row == rhs.row;
+	}
 
 } // namespace toweringinferno
 

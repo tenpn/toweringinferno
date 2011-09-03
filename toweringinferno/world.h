@@ -44,9 +44,9 @@ public:
 
 	WorldEvents update(const TCOD_key_t& command);
 
-	CellType getType(const Position& pos)const { return getType(pos.first, pos.second); }
+	CellType getType(const Position& pos)const { return getType(pos.col, pos.row); }
 	CellType getType(int x, int y)const;
-	const Cell& getCell(const Position& pos)const { return getCell(pos.first, pos.second); }
+	const Cell& getCell(const Position& pos)const { return getCell(pos.col, pos.row); }
 	const Cell& getCell(int x, int y)const;
 	void set(int x, int y, CellType newType);
 	void setFire(int x, int y, float newFire);
@@ -80,7 +80,7 @@ private:
 	void updateDynamics();
 	ActionSuccess calculateNewPlayerPos(TCOD_keycode_t movementDir, const Position& playerPos);
 
-	inline int coordsToIndex(const Position& pos) const { return coordsToIndex(pos.first, pos.second); }
+	inline int coordsToIndex(const Position& pos) const { return coordsToIndex(pos.col, pos.row); }
 	int coordsToIndex(int x, int y) const;
 
 	struct FloorSpecificData
@@ -138,7 +138,7 @@ void toweringinferno::World::setWaterBomb(
 	const Position& pos
 	)
 {
-	m_floorData.map[coordsToIndex(pos.first,pos.second)].water = 1.5f;
+	m_floorData.map[coordsToIndex(pos.col,pos.row)].water = 1.5f;
 }
 
 inline

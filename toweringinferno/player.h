@@ -19,7 +19,7 @@ public:
 	void update(World& world);
 
 	const Position& getPos() const { return m_pos; }
-	void setPos(const Position& pos) { setPos(pos.first, pos.second); }
+	void setPos(const Position& pos) { setPos(pos.col, pos.row); }
 	void setPos(int x, int y) { m_pos = Position(x, y); }
 	float getHealth()const { return m_health; }
 	bool isDead() const { return m_health == 0.0f; }
