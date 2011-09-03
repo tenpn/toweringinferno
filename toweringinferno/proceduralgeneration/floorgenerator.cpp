@@ -2,6 +2,7 @@
 #include "floorgenerator.h"
 #include "libtcod.hpp"
 #include "../utils/utils.h"
+#include "../utils/intersections.h"
 
 namespace toweringinferno
 {
@@ -158,6 +159,8 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	m_exitPosition = calculateRandomPosition(playerExitNode, m_rng);
 	setType(m_exitPosition.col, m_exitPosition.row, eStairsDown);
 
+	const utils::Circle exitExclusionZone(m_exitPosition, 8);
+
 	int fireCount = utils::max(2, static_cast<int>((floorsCleared+1)/1.3f));
 	assert(fireCount > 0);
 	m_initialFires.reserve(fireCount);
@@ -169,9 +172,14 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 
 		if (isTooCloseToExitRoom == false)
 		{
-			m_initialFires.push_back(calculateRandomPosition(fireRoom, m_rng));
+			const Point speculativeFirePos = calculateRandomPosition(fireRoom, m_rng);
 
-			--fireCount;
+			if (exitExclusionZone.contains(speculativeFirePos) == false)
+			{
+				m_initialFires.push_back(calculateRandomPosition(fireRoom, m_rng));
+
+				--fireCount;
+			}
 		}
 	}
 
