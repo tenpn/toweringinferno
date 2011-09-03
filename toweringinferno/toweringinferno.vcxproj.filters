@@ -53,9 +53,6 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="celltype.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -69,6 +66,9 @@
       <Filter>Source Files\heatvision</Filter>
     </ClInclude>
     <ClInclude Include="utils\intersections.h">
+      <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\utils.h">
       <Filter>Source Files\utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #include "game.h"
 #include "world.h"
 #include "proceduralgeneration/floorgenerator.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "heatvision/heatvisionsystem.h"
 
 namespace toweringinferno

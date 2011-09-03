@@ -108,8 +108,8 @@ copy $(SolutionDir)\libtcod-1.5.0\terminal.png $(SolutionDir)$(Configuration)\
     <ClInclude Include="player.h" />
     <ClInclude Include="position.h" />
     <ClInclude Include="proceduralgeneration\floorgenerator.h" />
-    <ClInclude Include="utils.h" />
     <ClInclude Include="utils\intersections.h" />
+    <ClInclude Include="utils\utils.h" />
     <ClInclude Include="world.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

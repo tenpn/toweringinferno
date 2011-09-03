@@ -1,7 +1,7 @@
 #include <math.h>
 #include "player.h"
 #include "world.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 namespace toweringinferno
 {

@@ -1,6 +1,6 @@
 #include <array>
 #include "world.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 
 namespace toweringinferno

@@ -4,7 +4,7 @@
 #include <array>
 #include "heatvisionsystem.h"
 #include "../world.h"
-#include "../utils.h"
+#include "../utils/utils.h"
 
 namespace toweringinferno
 {

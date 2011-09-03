@@ -1,7 +1,7 @@
 #include <assert.h>
 #include "floorgenerator.h"
 #include "libtcod.hpp"
-#include "../utils.h"
+#include "../utils/utils.h"
 
 namespace toweringinferno
 {
