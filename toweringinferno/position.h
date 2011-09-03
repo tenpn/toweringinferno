@@ -6,10 +6,10 @@
 namespace toweringinferno
 {
 	// a point in space
-	struct Position
+	struct Point
 	{
-		Position() : col(0), row(0) {}
-		Position(const int colIn, const int rowIn) : col(colIn), row(rowIn) {}
+		Point() : col(0), row(0) {}
+		Point(const int colIn, const int rowIn) : col(colIn), row(rowIn) {}
 
 		int col;
 		int row;
@@ -26,27 +26,27 @@ namespace toweringinferno
 	};
 
 	inline
-	bool operator==(const Position& lhs, const Position& rhs)
+	bool operator==(const Point& lhs, const Point& rhs)
 	{
 		return lhs.col == rhs.col && lhs.row == rhs.row;
 	}
 
 	inline 
-	int calculateManhattenDistance(const Position& lhs, const Position&rhs)
+	int calculateManhattenDistance(const Point& lhs, const Point&rhs)
 	{
 		return abs(lhs.row - rhs.row) + abs(lhs.col - rhs.col);
 	}
 
 	inline
-	Vector operator-(const Position& lhs, const Position& rhs)
+	Vector operator-(const Point& lhs, const Point& rhs)
 	{
 		return Vector(lhs.col - rhs.col, lhs.row - rhs.row);
 	}
 
 	inline
-	Position operator+(const Position& source, const Vector& direction)
+	Point operator+(const Point& source, const Vector& direction)
 	{
-		return Position(source.col + direction.x, source.row + direction.y);
+		return Point(source.col + direction.x, source.row + direction.y);
 	}
 
 } // namespace toweringinferno

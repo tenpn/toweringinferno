@@ -61,7 +61,7 @@ bool isValidCivilianCell(
 
 template<typename t_CivilianConstIterator>
 float calculateNonBleedableDanger(
-	const Position& pos,
+	const Point& pos,
 	const Tile tile,
 	const World& world,
 	const t_CivilianConstIterator& civiliansBegin,
@@ -81,7 +81,7 @@ float calculateNonBleedableDanger(
 }
 
 float calculateBleedableDanger(
-	const Position& pos,
+	const Point& pos,
 	const World& world
 	)
 {
@@ -93,8 +93,8 @@ float calculateBleedableDanger(
 }
 
 float calculateDesire(
-	const Position& pos,
-	const Position& origin
+	const Point& pos,
+	const Point& origin
 	)
 {
 	return pos == origin ? 0.5f : 0.0f;
@@ -146,22 +146,22 @@ void gaussianBlur(
 } // namespace heatvision
 } // namespace toweringinferno
 
-toweringinferno::Position toweringinferno::heatvision::calculatePosition(
-	const Position& origin,
+toweringinferno::Point toweringinferno::heatvision::calculatePosition(
+	const Point& origin,
 	const Tile tile
 	)
 {
 	switch(tile)
 	{
-	case eTile_TopLeft: return Position(origin.col-1, origin.row-1);
-	case eTile_Top: return Position(origin.col, origin.row-1);
-	case eTile_TopRight: return Position(origin.col+1, origin.row-1);
-	case eTile_Left: return Position(origin.col-1, origin.row);
+	case eTile_TopLeft: return Point(origin.col-1, origin.row-1);
+	case eTile_Top: return Point(origin.col, origin.row-1);
+	case eTile_TopRight: return Point(origin.col+1, origin.row-1);
+	case eTile_Left: return Point(origin.col-1, origin.row);
 	case eTile_Origin: return origin;
-	case eTile_Right: return Position(origin.col+1, origin.row);
-	case eTile_BottomLeft: return Position(origin.col-1, origin.row+1);
-	case eTile_Bottom: return Position(origin.col, origin.row+1);
-	case eTile_BottomRight: return Position(origin.col+1, origin.row+1);
+	case eTile_Right: return Point(origin.col+1, origin.row);
+	case eTile_BottomLeft: return Point(origin.col-1, origin.row+1);
+	case eTile_Bottom: return Point(origin.col, origin.row+1);
+	case eTile_BottomRight: return Point(origin.col+1, origin.row+1);
 
 	default:
 	case eTile_Count: 
@@ -213,12 +213,12 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 
 		TileHeat heat[eTile_Count];
 
-		const Position& origin = civilianIt->pos;
+		const Point& origin = civilianIt->pos;
 
 		for(int tileIndex = 0; tileIndex < eTile_Count; ++tileIndex)
 		{
 			const Tile currentTile = static_cast<Tile>(tileIndex);
-			const Position tilePos = calculatePosition(origin, currentTile);
+			const Point tilePos = calculatePosition(origin, currentTile);
 
 			const float danger = calculateBleedableDanger(tilePos, world);
 			const float desire = calculateDesire(tilePos, origin);
@@ -231,7 +231,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 		for(int tileIndex = 0; tileIndex < eTile_Count; ++tileIndex)
 		{
 			const Tile currentTile = static_cast<Tile>(tileIndex);
-			const Position tilePos = calculatePosition(origin, currentTile);
+			const Point tilePos = calculatePosition(origin, currentTile);
 
 			const float danger = calculateNonBleedableDanger(tilePos, currentTile, world, m_civilians.begin(), m_civilians.end());
 
@@ -245,7 +245,7 @@ void toweringinferno::heatvision::HeatvisionSystem::update(
 }
 
 bool toweringinferno::heatvision::HeatvisionSystem::tryRemoveCivilian(
-	const Position& pos
+	const Point& pos
 	)
 {
 	const auto civilian = std::find(m_civilians.begin(), m_civilians.end(), pos);

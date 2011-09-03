@@ -38,8 +38,8 @@ bool isDoorToggleKey(
 			&& (command.c == '=' || command.c == '+' || command.c == 'c' || command.c == 'C'));
 }
 
-Position calculateIdealNewPlayerPosition(
-	const Position& current,
+Point calculateIdealNewPlayerPosition(
+	const Point& current,
 	const TCOD_keycode_t movementDir
 	)
 {
@@ -47,31 +47,31 @@ Position calculateIdealNewPlayerPosition(
 	{
 	case TCODK_LEFT:
 	case TCODK_KP4:
-		return Position(current.col - 1, current.row);
+		return Point(current.col - 1, current.row);
 
 	case TCODK_RIGHT:
 	case TCODK_KP6:
-		return Position(current.col + 1, current.row);
+		return Point(current.col + 1, current.row);
 
 	case TCODK_UP:
 	case TCODK_KP8:
-		return Position(current.col, current.row - 1);
+		return Point(current.col, current.row - 1);
 
 	case TCODK_DOWN:
 	case TCODK_KP2:
-		return Position(current.col, current.row + 1);
+		return Point(current.col, current.row + 1);
 
 	case TCODK_KP7:
-		return Position(current.col-1, current.row-1);
+		return Point(current.col-1, current.row-1);
 
 	case TCODK_KP9:
-		return Position(current.col+1, current.row-1);
+		return Point(current.col+1, current.row-1);
 
 	case TCODK_KP1:
-		return Position(current.col-1, current.row+1);
+		return Point(current.col-1, current.row+1);
 
 	case TCODK_KP3:
-		return Position(current.col+1, current.row+1);
+		return Point(current.col+1, current.row+1);
 
 	default:
 		return current;
@@ -134,7 +134,7 @@ toweringinferno::World::World(
 
 toweringinferno::World::ActionSuccess toweringinferno::World::calculateNewPlayerPos(
 	const TCOD_keycode_t movementDir, 
-	const Position& playerPos
+	const Point& playerPos
 	)
 {
 	if (isMovementKey(movementDir) == false)
@@ -144,7 +144,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::calculateNewPlayer
 
 	m_floorData.lastMovementDir = movementDir;
 
-	const Position idealNewPosition = calculateIdealNewPlayerPosition(playerPos, movementDir);
+	const Point idealNewPosition = calculateIdealNewPlayerPosition(playerPos, movementDir);
 	const CellType newPositionType = getType(idealNewPosition);
 	if (isValidPlayerCell(newPositionType))
 	{
@@ -210,7 +210,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateSprinklerCon
 		return eAction_Failed;
 	}
 
-	const Position playerPos = m_player.getPos();
+	const Point playerPos = m_player.getPos();
 	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
 		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
@@ -254,7 +254,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateHoseRelease(
 		return eAction_InvalidInput;
 	}
 
-	const Position playerPos = m_player.getPos();
+	const Point playerPos = m_player.getPos();
 	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
 		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
@@ -295,7 +295,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateAxe(
 
 	Cell* wallToAxe = NULL;
 
-	const Position playerPos = m_player.getPos();
+	const Point playerPos = m_player.getPos();
 	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
 		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)
@@ -343,7 +343,7 @@ toweringinferno::World::ActionSuccess toweringinferno::World::updateDoors(
 	}
 
 	bool didAnyDoorFlip = false;
-	const Position playerPos = m_player.getPos();
+	const Point playerPos = m_player.getPos();
 	for(int col = playerPos.col - 1; col < playerPos.col + 2; ++col)
 	{
 		for(int row = playerPos.row - 1; row < playerPos.row + 2; ++row)

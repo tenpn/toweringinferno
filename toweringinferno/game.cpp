@@ -207,7 +207,7 @@ void debugRender(
 
 			const heatvision::HeatvisionSystem::CivilianList& civilians = heatvision.getCivilians();
 			const heatvision::HeatvisionSystem::CivilianList::const_iterator civilianAtMouse
-				= std::find(civilians.begin(), civilians.end(), Position(mouseX, mouseY));
+				= std::find(civilians.begin(), civilians.end(), Point(mouseX, mouseY));
 
 			if (civilianAtMouse != civilians.end())
 			{
@@ -306,7 +306,7 @@ void toweringinferno::executeGameLoop()
 	World world(width, height);
 	heatvision::HeatvisionSystem heatvision;
 	int levelSeed = 0;
-	Position lastExitPosition(-1,-1);
+	Point lastExitPosition(-1,-1);
 	
 	while ( TCODConsole::isWindowClosed() == false ) 
 	{

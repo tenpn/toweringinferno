@@ -96,28 +96,28 @@ const TCODBsp& findRandomLeaf(
 		: findRandomLeaf(*node.getRight(), rng);
 }
 
-Position calculateRandomPosition(
+Point calculateRandomPosition(
 	const TCODBsp& node, 
 	TCODRandom& rng
 	)
 {
-	return Position(
+	return Point(
 		rng.getInt(node.x + 1,node.x + node.w - 2),
 		rng.getInt(node.y + 1,node.y + node.h - 2)
 		);
 }
 
-Position calculateRandomWallPosition(
+Point calculateRandomWallPosition(
 	const TCODBsp& node,
 	TCODRandom& rng
 	)
 {
 	const int wallChoice = rng.getInt(0,3);
 
-	return wallChoice == 0 ? Position(rng.getInt(node.x+1,node.x + node.w - 2), node.y)
-		: wallChoice == 1 ? Position(rng.getInt(node.x+1,node.x + node.w - 2), node.y + node.h - 1)
-		: wallChoice == 2 ? Position(node.x, rng.getInt(node.y+1, node.y + node.h - 2))
-		: Position(node.x + node.w - 1, rng.getInt(node.y+1, node.y + node.h - 2));
+	return wallChoice == 0 ? Point(rng.getInt(node.x+1,node.x + node.w - 2), node.y)
+		: wallChoice == 1 ? Point(rng.getInt(node.x+1,node.x + node.w - 2), node.y + node.h - 1)
+		: wallChoice == 2 ? Point(node.x, rng.getInt(node.y+1, node.y + node.h - 2))
+		: Point(node.x + node.w - 1, rng.getInt(node.y+1, node.y + node.h - 2));
 }
 
 	} // namespace proceduralgeneration
@@ -130,7 +130,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const int w, 
 	const int h, 
 	const int floorsCleared, 
-	const Position& entranceSeed
+	const Point& entranceSeed
 	)
 	: m_cells(w*h,eFloor)
 	, m_width(w)
@@ -149,7 +149,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const bool startOnLeft = entranceSeed.col == -1
 		? m_rng.getInt(0,1) == 0
 		: officeBsp.getLeft()->contains(entranceSeed.col, entranceSeed.row);
-	const Position playerStartPos = entranceSeed.col == -1
+	const Point playerStartPos = entranceSeed.col == -1
 		? calculateRandomPosition(findRandomLeaf(startOnLeft ? *officeBsp.getLeft() : *officeBsp.getRight(), m_rng), m_rng)
 		: entranceSeed;
 	setType(playerStartPos.col, playerStartPos.row, eStairsUp);
@@ -182,7 +182,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	{
 		const TCODBsp& hoseRoom = findRandomLeaf(officeBsp, m_rng);
 
-		const Position hosePos = calculateRandomWallPosition(hoseRoom, m_rng);
+		const Point hosePos = calculateRandomWallPosition(hoseRoom, m_rng);
 		const int cellIndex = worldCoordsToIndex(hosePos.col, hosePos.row);
 		if (m_cells[cellIndex] == eWall)
 		{
@@ -194,7 +194,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	int sprinklers = 1;
 	while(sprinklers > 0)
 	{
-		const Position sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
+		const Point sprinklerControlPosition = calculateRandomWallPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
 		const int sprinklerIndex = worldCoordsToIndex(sprinklerControlPosition.col, sprinklerControlPosition.row);
 		if (m_cells[sprinklerIndex] == eWall)
 		{
@@ -206,7 +206,7 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	int civilianCount = m_rng.getInt(6,8);
 	while(civilianCount > 0)
 	{
-		const Position civilianPosition = calculateRandomPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
+		const Point civilianPosition = calculateRandomPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
 		m_civilians.push_back(civilianPosition);
 		--civilianCount;
 	}

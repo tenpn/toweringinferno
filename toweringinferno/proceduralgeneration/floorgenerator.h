@@ -15,7 +15,7 @@ namespace toweringinferno
 class FloorGenerator
 {
 public:
-	FloorGenerator(int seed, int left, int top, int w, int h, int floorsCleared, const Position& entranceSeed);
+	FloorGenerator(int seed, int left, int top, int w, int h, int floorsCleared, const Point& entranceSeed);
 	
 	CellType getType(int x, int y) const;
 	void setType(int x, int y, CellType newType);
@@ -27,11 +27,11 @@ public:
 	int getRight() const { return m_left + m_width; }
 	int getBottom() const { return m_top + m_height; }
 
-	typedef std::vector<Position> PositionList;
+	typedef std::vector<Point> PositionList;
 	const PositionList& getInitialFires() const { return m_initialFires; }
 	const PositionList& getHoses() const { return m_hoses; }
 	const PositionList& getCivilians() const { return m_civilians; }
-	const Position& getExitPosition() const { return m_exitPosition; }
+	const Point& getExitPosition() const { return m_exitPosition; }
 
 	TCODRandom& getRNG() { return m_rng; }
 
@@ -45,11 +45,11 @@ private:
 	int m_left;
 	int m_top;
 
-	std::vector<Position> m_initialFires;
-	std::vector<Position> m_hoses;
-	std::vector<Position> m_civilians;
+	std::vector<Point> m_initialFires;
+	std::vector<Point> m_hoses;
+	std::vector<Point> m_civilians;
 
-	Position m_exitPosition;
+	Point m_exitPosition;
 
 	TCODRandom m_rng;
 

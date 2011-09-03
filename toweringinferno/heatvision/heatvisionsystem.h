@@ -15,10 +15,10 @@ namespace heatvision
 struct TileHeat
 {
 	TileHeat() : pos(INT_MAX,INT_MAX), danger(0.0f), desire(0.0f) {}
-	TileHeat(const Position posIn, const float dangerIn, const float desireIn)
+	TileHeat(const Point posIn, const float dangerIn, const float desireIn)
 		: pos(posIn), danger(dangerIn), desire(desireIn)
 	{}
-	Position pos;
+	Point pos;
 	float danger;
 	float desire;
 };
@@ -37,15 +37,15 @@ enum Tile
 	eTile_Count,
 };
 
-Position calculatePosition(const Position& origin, const Tile tile);
+Point calculatePosition(const Point& origin, const Tile tile);
 
 struct Civilian
 {
-	Civilian(const Position& posIn) : pos(posIn), nextPos(posIn), hp(1.0f) {}
+	Civilian(const Point& posIn) : pos(posIn), nextPos(posIn), hp(1.0f) {}
 	Civilian() : pos(0,0), nextPos(0,0), hp(1.0f) {}
 
-	Position pos;
-	Position nextPos;
+	Point pos;
+	Point nextPos;
 	float hp;
 
 	TileHeat heatMap[eTile_Count];
@@ -58,8 +58,8 @@ class HeatvisionSystem
 public:
 	HeatvisionSystem();
 
-	void addCivilian(const Position& pos) { m_civilians.push_back(Civilian(pos)); }
-	bool tryRemoveCivilian(const Position& pos);
+	void addCivilian(const Point& pos) { m_civilians.push_back(Civilian(pos)); }
+	bool tryRemoveCivilian(const Point& pos);
 
 	void preUpdate();
 	void update(const World& world);
@@ -75,7 +75,7 @@ private:
 inline
 bool operator==(
 	const Civilian& civvie, 
-	const Position& pos
+	const Point& pos
 	)
 {
 	return civvie.pos == pos;
