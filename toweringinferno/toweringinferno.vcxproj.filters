@@ -19,6 +19,9 @@
     <Filter Include="Source Files\heatvision">
       <UniqueIdentifier>{bd32e538-3926-42f5-bafb-46656de25376}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utils">
+      <UniqueIdentifier>{5a81702c-0696-46ff-b11e-84b794c69254}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -64,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="heatvision\heatvisionsystem.h">
       <Filter>Source Files\heatvision</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\intersections.h">
+      <Filter>Source Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
