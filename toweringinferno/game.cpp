@@ -41,6 +41,11 @@ void pushFloorToMap(
 	{
 		world.setHose(hosePos->col, hosePos->row);
 	}
+
+	for(auto furnature = floor.getFurnature().begin(); furnature != floor.getFurnature().end(); ++furnature)
+	{
+		world.setFurnature(furnature->first, furnature->second);
+	}
 }
 
 void pushFloorToHeatvision(
@@ -130,6 +135,7 @@ void renderWorld(
 				: cell.type == eClosedDoor ? '+'
 				: cell.type == eOpenDoor ? '-'
 				: cell.type == eSprinklerControl ? 'S'
+				: cell.hasFurnature() ? cell.furnature
 				: ' ';
 
 			const float playerHealth = world.getPlayer().getHealth();

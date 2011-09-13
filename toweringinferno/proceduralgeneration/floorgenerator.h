@@ -19,6 +19,7 @@ public:
 	
 	CellType getType(int x, int y) const;
 	void setType(int x, int y, CellType newType);
+	void addFurnature(int x, int y, char furnature);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
@@ -32,6 +33,10 @@ public:
 	const PositionList& getHoses() const { return m_hoses; }
 	const PositionList& getCivilians() const { return m_civilians; }
 	const Point& getExitPosition() const { return m_exitPosition; }
+
+	typedef std::pair<Point,char> PointFurnature;
+	typedef std::vector<PointFurnature> FurnatureList;
+	const FurnatureList& getFurnature() const { return m_furnature; }
 
 	TCODRandom& getRNG() { return m_rng; }
 
@@ -48,6 +53,7 @@ private:
 	std::vector<Point> m_initialFires;
 	std::vector<Point> m_hoses;
 	std::vector<Point> m_civilians;
+	FurnatureList m_furnature;	
 
 	Point m_exitPosition;
 
@@ -102,6 +108,16 @@ toweringinferno::CellType toweringinferno::proceduralgeneration::FloorGenerator:
 	return isWorldCoordsInFloor(x,y)
 		? m_cells[worldCoordsToIndex(x,y)]
 		: eSky;
+}
+
+inline 
+void toweringinferno::proceduralgeneration::FloorGenerator::addFurnature(
+	int x, 
+	int y, 
+	char furnature
+	)
+{
+	m_furnature.push_back(PointFurnature(Point(x,y), furnature));
 }
 
 #endif // __TI_FLOORGENERATOR_H_

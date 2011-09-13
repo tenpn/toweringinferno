@@ -57,6 +57,10 @@ public:
 				floor->setType(node->x, wallRow, eWall);
 				floor->setType(maxCol - 1, wallRow, eWall);
 			}
+
+			// fill with office furnature:
+
+
 		} 
 		else if (node->horizontal) 
 		{

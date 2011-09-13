@@ -21,9 +21,10 @@ enum WorldEvents
 
 struct Cell
 {
-	Cell() : type(eSky), fire(0.0f), heat(0.0f), water(0.0f), waterFlip(0.0f), heatFlip(0.0f), typeFlip(eSky), hp(1.0f) {}
+	Cell() : type(eSky), furnature(' '), fire(0.0f), heat(0.0f), water(0.0f), waterFlip(0.0f), heatFlip(0.0f), typeFlip(eSky), hp(1.0f) {}
 
 	CellType type;
+	char furnature;
 	float fire;
 	float heat;
 	float water;
@@ -33,6 +34,7 @@ struct Cell
 	float hp;
 
 	void setFire(const float fireIn) { fire = heat = fireIn; }
+	bool hasFurnature() const { return type == eFloor && furnature != ' '; }
 };
 
 class World
@@ -52,6 +54,7 @@ public:
 	void setFire(int x, int y, float newFire);
 	void setWaterBomb(const Point& pos);
 	void setHose(int x, int y);
+	void setFurnature(const Point& pos, char furnature);
 
 	bool isValidCoords(const int x, const int y)const { return x >= 0 && x < m_width && y >= 0 && y < m_height; }
 	int getWidth() const { return m_width; }
@@ -173,6 +176,17 @@ toweringinferno::CellType toweringinferno::World::getType(
 	return x < 0 || x >= m_width ? eSky
 		: y < 0 || y >= m_height ? eSky
 		: m_floorData.map[coordsToIndex(x,y)].type;
+}
+
+inline
+void toweringinferno::World::setFurnature(
+	const Point& pos, 
+	const char furnature
+	)
+{
+	Cell& cell = m_floorData.map[coordsToIndex(pos)];
+	assert(cell.type == eFloor);
+	cell.furnature = furnature;
 }
 
 #endif // __TI_WORLD_H_

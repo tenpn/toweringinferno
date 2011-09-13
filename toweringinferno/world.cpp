@@ -96,10 +96,11 @@ bool isDeltaWithDirection(
 
 inline
 bool isValidPlayerCell(
-	const CellType cell
+	const Cell& cell
 	)
 {
-	return cell == eFloor || cell == eStairsDown || cell == eStairsUp || cell == eOpenDoor;
+	return (cell.type == eFloor && (cell.hasFurnature() == false || cell.furnature == 'h'))
+		|| cell.type == eStairsDown || cell.type == eStairsUp || cell.type == eOpenDoor;
 }
 
 inline
@@ -145,8 +146,8 @@ toweringinferno::World::ActionSuccess toweringinferno::World::calculateNewPlayer
 	m_floorData.lastMovementDir = movementDir;
 
 	const Point idealNewPosition = calculateIdealNewPlayerPosition(playerPos, movementDir);
-	const CellType newPositionType = getType(idealNewPosition);
-	if (isValidPlayerCell(newPositionType))
+	const Cell& newPosition = getCell(idealNewPosition);
+	if (isValidPlayerCell(newPosition))
 	{
 		m_player.setPos(idealNewPosition);
 		return eAction_Succeeded;
