@@ -115,6 +115,25 @@ void createBoardroom(
 	ringBox(x+2, y+2, w-4, h-4, floorOut, eLineStyle_Double);
 
 	// surround with chairs
+	const int maxX = x + w;
+	const int maxY = y + h;
+	for(int col = x+2; col < maxX-2; ++col)
+	{
+		if (col % 3 == 0)
+		{
+			floorOut.addFurnature(col, y+1, 'h');
+			floorOut.addFurnature(col, maxY - 2, 'h');
+		}
+	}
+
+	for(int row = y+2; row < maxY-2; ++row)
+	{
+		if (row % 3 == 0)
+		{
+			floorOut.addFurnature(x+1, row, 'h');
+			floorOut.addFurnature(maxX - 2, row, 'h');
+		}
+	}
 }
 
 class SparseDesksWriter : public ITCODBspCallback 
