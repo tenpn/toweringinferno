@@ -11,7 +11,7 @@ namespace toweringinferno
 void createDesk(
 	const int x,
 	const int y,
-	const int /*w*/,
+	const int w,
 	const int h,
 	FloorGenerator& floorOut
 	)
@@ -21,10 +21,28 @@ void createDesk(
 		return;
 	}
 
-	const int row = y + (h/2);
-	floorOut.addFurnature(x,row,'h');
-	floorOut.addFurnature(x+1,row,'[');
-	floorOut.addFurnature(x+2,row,']');
+	if (floorOut.getRNG().getInt(0,2) > 0)
+	{
+		const int row = y + (h/2);
+		floorOut.addFurnature(x,row,'h');
+		floorOut.addFurnature(x+1,row-1,TCOD_CHAR_NW);
+		floorOut.addFurnature(x+1,row,TCOD_CHAR_VLINE);
+		floorOut.addFurnature(x+1,row+1,TCOD_CHAR_SW);
+		floorOut.addFurnature(x+2,row-1,TCOD_CHAR_NE);
+		floorOut.addFurnature(x+2,row,TCOD_CHAR_VLINE);
+		floorOut.addFurnature(x+2,row+1,TCOD_CHAR_SE);
+	}
+	else
+	{
+		const int col = x + (w/2);
+		floorOut.addFurnature(col, y, 'h');
+		floorOut.addFurnature(col-1,y+1,TCOD_CHAR_NW);
+		floorOut.addFurnature(col,y+1,TCOD_CHAR_HLINE);
+		floorOut.addFurnature(col+1,y+1,TCOD_CHAR_NE);
+		floorOut.addFurnature(col-1,y+2,TCOD_CHAR_SW);
+		floorOut.addFurnature(col,y+2,TCOD_CHAR_HLINE);
+		floorOut.addFurnature(col+1,y+2,TCOD_CHAR_SE);
+	}
 }
 
 void ringBox(
@@ -86,7 +104,7 @@ void toweringinferno::proceduralgeneration::generateRoom(
 	FloorGenerator& floorOut
 	)
 {
-	TCODBsp deskBSP(x, y, w, h);
+	TCODBsp deskBSP(x + 1, y + 1, w - 2, h - 2);
 	deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 0.95f, 0.95f);
 
 	BSPDeskWriter deskWriter;
