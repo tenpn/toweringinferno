@@ -124,8 +124,8 @@ void renderWorld(
 			const int c
 				= isPlayer ? '@'
 				: cell.type == eWall ? '#'
-				: cell.type == eStairsUp ? '<'
-				: cell.type == eStairsDown ? '>'
+				: cell.type == eStairsUp ? TCOD_CHAR_ARROW2_N
+				: cell.type == eStairsDown ? TCOD_CHAR_ARROW2_S
 				: cell.type == eHose ? 'H'
 				: cell.type == eClosedDoor ? '+'
 				: cell.type == eOpenDoor ? '-'
@@ -249,7 +249,11 @@ void debugRender(
 	}
 
 	TCODConsole::root->printCenter(world.getWidth()/2,0,TCOD_BKGND_NONE,titles.str().c_str());
-	TCODConsole::root->printCenter(world.getWidth()/2,1,TCOD_BKGND_NONE,"Get to the stairs down '>' to escape the floor.");
+
+	std::stringstream objective;
+	objective << "Get to the stairs down (" << static_cast<char>(TCOD_CHAR_ARROW2_S) << ") to escape the floor.";
+
+	TCODConsole::root->printCenter(world.getWidth()/2,1,TCOD_BKGND_NONE,objective.str().c_str());
 
 	static const char* const motd[] = {
 		"You are '@'. Move with cursor keys, action with 'a' or enter, space to wait.",
