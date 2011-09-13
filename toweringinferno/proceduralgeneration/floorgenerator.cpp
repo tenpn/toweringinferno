@@ -3,6 +3,7 @@
 #include "libtcod.hpp"
 #include "../utils/utils.h"
 #include "../utils/intersections.h"
+#include "roomgenerator.h"
 
 namespace toweringinferno
 {
@@ -58,9 +59,7 @@ public:
 				floor->setType(maxCol - 1, wallRow, eWall);
 			}
 
-			// fill with office furnature:
-
-
+			generateRoom(node->x + 1, node->y + 1, node->w - 2, node->h - 2, *floor);
 		} 
 		else if (node->horizontal) 
 		{

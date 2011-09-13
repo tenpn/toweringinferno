@@ -19,7 +19,7 @@ public:
 	
 	CellType getType(int x, int y) const;
 	void setType(int x, int y, CellType newType);
-	void addFurnature(int x, int y, char furnature);
+	void addFurnature(int x, int y, unsigned char furnature);
 
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
@@ -34,7 +34,7 @@ public:
 	const PositionList& getCivilians() const { return m_civilians; }
 	const Point& getExitPosition() const { return m_exitPosition; }
 
-	typedef std::pair<Point,char> PointFurnature;
+	typedef std::pair<Point,unsigned char> PointFurnature;
 	typedef std::vector<PointFurnature> FurnatureList;
 	const FurnatureList& getFurnature() const { return m_furnature; }
 
@@ -114,7 +114,7 @@ inline
 void toweringinferno::proceduralgeneration::FloorGenerator::addFurnature(
 	int x, 
 	int y, 
-	char furnature
+	unsigned char furnature
 	)
 {
 	m_furnature.push_back(PointFurnature(Point(x,y), furnature));

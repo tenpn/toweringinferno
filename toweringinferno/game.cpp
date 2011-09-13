@@ -44,7 +44,10 @@ void pushFloorToMap(
 
 	for(auto furnature = floor.getFurnature().begin(); furnature != floor.getFurnature().end(); ++furnature)
 	{
-		world.setFurnature(furnature->first, furnature->second);
+		if (world.getType(furnature->first) == eFloor)
+		{
+			world.setFurnature(furnature->first, furnature->second);
+		}
 	}
 }
 

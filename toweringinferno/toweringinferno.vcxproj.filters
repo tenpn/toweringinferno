@@ -42,6 +42,9 @@
     <ClCompile Include="heatvision\heatvisionsystem.cpp">
       <Filter>Source Files\heatvision</Filter>
     </ClCompile>
+    <ClCompile Include="proceduralgeneration\roomgenerator.cpp">
+      <Filter>Source Files\proceduralgeneration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -70,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="utils\utils.h">
       <Filter>Source Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="proceduralgeneration\roomgenerator.h">
+      <Filter>Source Files\proceduralgeneration</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

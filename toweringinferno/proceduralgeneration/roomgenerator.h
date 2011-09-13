@@ -8,7 +8,7 @@ namespace toweringinferno
 
 class FloorGenerator;
 
-
+void generateRoom(int x, int y, int w, int h, FloorGenerator& floorOut);
 
 	}
 }
