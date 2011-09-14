@@ -15,6 +15,12 @@ enum LineStyle
 	eLineStyle_Count,
 };
 
+enum FillStyle
+{
+	eFillStyle_Filled,
+	eFillStyle_Empty,
+};
+
 enum LineType
 {
 	eLineType_Horizontal,
@@ -52,7 +58,8 @@ void ringBox(
 	const int w,
 	const int h,
 	FloorGenerator& floorOut,
-	const LineStyle style
+	const LineStyle line,
+	const FillStyle fill
 	)
 {
 	const int maxX = x + w;
@@ -60,20 +67,28 @@ void ringBox(
 
 	for(int col = x; col < maxX; ++col)
 	{
-		floorOut.addFurnature(col, y, s_lineConstants[style][eLineType_Horizontal]);
-		floorOut.addFurnature(col, maxY - 1, s_lineConstants[style][eLineType_Horizontal]);
+		floorOut.addFurnature(col, y, s_lineConstants[line][eLineType_Horizontal]);
+		floorOut.addFurnature(col, maxY - 1, s_lineConstants[line][eLineType_Horizontal]);
+
+		if (fill == eFillStyle_Filled)
+		{
+			for(int row = y+1; row < maxY-1; ++row)
+			{
+				floorOut.addFurnature(col, row, '.');
+			}
+		}
 	}
 
 	for(int row = y; row < maxY; ++row)
 	{
-		floorOut.addFurnature(x, row, s_lineConstants[style][eLineType_Vertical]);
-		floorOut.addFurnature(maxX - 1, row, s_lineConstants[style][eLineType_Vertical]);
+		floorOut.addFurnature(x, row, s_lineConstants[line][eLineType_Vertical]);
+		floorOut.addFurnature(maxX - 1, row, s_lineConstants[line][eLineType_Vertical]);
 	}
 
-	floorOut.addFurnature(x,y, s_lineConstants[style][eLineType_Corner_NW]);
-	floorOut.addFurnature(x,maxY - 1, s_lineConstants[style][eLineType_Corner_SW]);
-	floorOut.addFurnature(maxX - 1,y, s_lineConstants[style][eLineType_Corner_NE]);
-	floorOut.addFurnature(maxX - 1,maxY - 1, s_lineConstants[style][eLineType_Corner_SE]);
+	floorOut.addFurnature(x,y, s_lineConstants[line][eLineType_Corner_NW]);
+	floorOut.addFurnature(x,maxY - 1, s_lineConstants[line][eLineType_Corner_SW]);
+	floorOut.addFurnature(maxX - 1,y, s_lineConstants[line][eLineType_Corner_NE]);
+	floorOut.addFurnature(maxX - 1,maxY - 1, s_lineConstants[line][eLineType_Corner_SE]);
 }
 
 void createDesk(
@@ -93,13 +108,13 @@ void createDesk(
 	{
 		const int row = y + (h/2);
 		floorOut.addFurnature(x,row,'h');
-		ringBox(x+1,row-1,2,3,floorOut, eLineStyle_Single);
+		ringBox(x+1,row-1,2,3,floorOut, eLineStyle_Single, eFillStyle_Empty);
 	}
 	else
 	{
 		const int col = x + (w/2);
 		floorOut.addFurnature(col, y, 'h');
-		ringBox(col-1,y+1,3,2, floorOut, eLineStyle_Single);
+		ringBox(col-1,y+1,3,2, floorOut, eLineStyle_Single, eFillStyle_Empty);
 	}
 }
 
@@ -116,7 +131,7 @@ void createBoardroom(
 	const int deskWidth = w%2 == 0 ? w-5 : w-4; 
 	const int deskRowBegin = y+2;
 	const int deskHeight = h%2 == 0 ? h-5 : h-4; 
-	ringBox(deskColBegin, deskRowBegin, deskWidth, deskHeight, floorOut, eLineStyle_Double);
+	ringBox(deskColBegin, deskRowBegin, deskWidth, deskHeight, floorOut, eLineStyle_Double, eFillStyle_Filled);
 
 	// surround with chairs
 	const int deskColEnd = deskColBegin + deskWidth;
