@@ -111,27 +111,33 @@ void createBoardroom(
 	FloorGenerator& floorOut
 	)
 {
-	// draw table
-	ringBox(x+2, y+2, w-4, h-4, floorOut, eLineStyle_Double);
+	// make sure desk dimensions are always odd
+	const int deskColBegin = x+2;
+	const int deskWidth = w%2 == 0 ? w-5 : w-4; 
+	const int deskRowBegin = y+2;
+	const int deskHeight = h%2 == 0 ? h-5 : h-4; 
+	ringBox(deskColBegin, deskRowBegin, deskWidth, deskHeight, floorOut, eLineStyle_Double);
 
 	// surround with chairs
-	const int maxX = x + w;
-	const int maxY = y + h;
-	for(int col = x+2; col < maxX-2; ++col)
+	const int deskColEnd = deskColBegin + deskWidth;
+	const int chairSpacing = 2;
+	const int chairSpacingMid = static_cast<int>(chairSpacing/2);
+	const int deskRowEnd = deskRowBegin + deskHeight;
+	for(int col = deskColBegin; col < deskColEnd; ++col)
 	{
-		if (col % 3 == 0)
+		if ((col - deskColBegin) % chairSpacing == chairSpacingMid)
 		{
-			floorOut.addFurnature(col, y+1, 'h');
-			floorOut.addFurnature(col, maxY - 2, 'h');
+			floorOut.addFurnature(col, deskRowBegin-1, 'h');
+			floorOut.addFurnature(col, deskRowEnd, 'h');
 		}
 	}
 
-	for(int row = y+2; row < maxY-2; ++row)
+	for(int row = y+2; row < deskRowEnd; ++row)
 	{
-		if (row % 3 == 0)
+		if ((row - deskRowBegin) % chairSpacing == chairSpacingMid)
 		{
-			floorOut.addFurnature(x+1, row, 'h');
-			floorOut.addFurnature(maxX - 2, row, 'h');
+			floorOut.addFurnature(deskColBegin-1, row, 'h');
+			floorOut.addFurnature(deskColEnd, row, 'h');
 		}
 	}
 }
