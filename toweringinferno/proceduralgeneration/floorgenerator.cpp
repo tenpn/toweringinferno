@@ -29,6 +29,37 @@ CellType calculateDoorCell(
 		: eFloor;
 }
 
+class BSPFurnitureWriter : public ITCODBspCallback 
+{
+public:
+	BSPFurnitureWriter(const Point& entrancePos, const Point& exitPos)
+		: m_entrancePos(entrancePos)
+		, m_exitPos(exitPos)
+	{}
+
+	virtual bool visitNode(TCODBsp * node, void * userData)
+	{
+		assert(userData != NULL);
+		assert(node != NULL);
+
+		FloorGenerator * const floor = static_cast<FloorGenerator*>(userData);
+
+		if (node->isLeaf() 
+			&& node->contains(m_entrancePos.col, m_entrancePos.row) == false
+			&& node->contains(m_exitPos.col, m_exitPos.row) == false
+			)
+		{
+			generateRoom(node->x + 1, node->y + 1, node->w - 2, node->h - 2, *floor);
+		}
+
+		return true;
+	}
+
+private:
+	Point m_entrancePos;
+	Point m_exitPos;
+};
+
 class BSPWallWriter : public ITCODBspCallback 
 {
 public:
@@ -59,8 +90,6 @@ public:
 				floor->setType(node->x, wallRow, eWall);
 				floor->setType(maxCol - 1, wallRow, eWall);
 			}
-
-			generateRoom(node->x + 1, node->y + 1, node->w - 2, node->h - 2, *floor);
 		} 
 		else if (node->horizontal) 
 		{
@@ -162,6 +191,9 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	const TCODBsp& playerExitNode = findRandomLeaf(startOnLeft ? *officeBsp.getRight() : *officeBsp.getLeft(), m_rng);
 	m_exitPosition = calculateRandomPosition(playerExitNode, m_rng);
 	setType(m_exitPosition.col, m_exitPosition.row, eStairsDown);
+
+	BSPFurnitureWriter furnitureWriter(playerStartPos, m_exitPosition);
+	officeBsp.traversePostOrder(&furnitureWriter, this);
 
 	const utils::Circle exitExclusionZone(m_exitPosition, 8);
 
