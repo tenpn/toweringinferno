@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <algorithm>
 #include "floorgenerator.h"
 #include "libtcod.hpp"
 #include "../utils/utils.h"
@@ -124,6 +125,20 @@ Point calculateRandomWallPosition(
 		: Point(node.x + node.w - 1, rng.getInt(node.y+1, node.y + node.h - 2));
 }
 
+class TCODRNGSTLZOMGWrapper
+{
+public:
+	TCODRNGSTLZOMGWrapper(TCODRandom& rng) : m_rng(&rng) {}
+
+	int operator()(const int exclusiveMax)
+	{
+		return m_rng->getInt(0, exclusiveMax-1);
+	}
+
+private:
+	TCODRandom* m_rng;
+};
+
 	} // namespace proceduralgeneration
 } // namespace toweringinferno
 
@@ -215,11 +230,19 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 	}
 
 	int civilianCount = m_rng.getInt(6,8);
-	while(civilianCount > 0)
+	//TCODRNGSTLZOMGWrapper stlRng(m_rng);
+	//std::random_shuffle(m_furnature.begin(), m_furnature.end(), stlRng);
+	auto furnatureIt = m_furnature.begin();
+	for(int civilianIndex = 0; civilianIndex < civilianCount; ++civilianIndex)
 	{
-		const Point civilianPosition = calculateRandomPosition(findRandomLeaf(officeBsp, m_rng), m_rng);
+		while (furnatureIt->second != 'h' && furnatureIt != m_furnature.end())
+		{
+			++furnatureIt;
+		}
+		assert(furnatureIt != m_furnature.end());
+		const Point civilianPosition = furnatureIt->first;
 		m_civilians.push_back(civilianPosition);
-		--civilianCount;
+		++furnatureIt;
 	}
 }
 
