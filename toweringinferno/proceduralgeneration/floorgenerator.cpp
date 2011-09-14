@@ -125,20 +125,6 @@ Point calculateRandomWallPosition(
 		: Point(node.x + node.w - 1, rng.getInt(node.y+1, node.y + node.h - 2));
 }
 
-class TCODRNGSTLZOMGWrapper
-{
-public:
-	TCODRNGSTLZOMGWrapper(TCODRandom& rng) : m_rng(&rng) {}
-
-	int operator()(const int exclusiveMax)
-	{
-		return m_rng->getInt(0, exclusiveMax-1);
-	}
-
-private:
-	TCODRandom* m_rng;
-};
-
 	} // namespace proceduralgeneration
 } // namespace toweringinferno
 
@@ -229,8 +215,9 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 		}
 	}
 
+	// spwan civillians on random chairs
 	int civilianCount = m_rng.getInt(6,8);
-	//TCODRNGSTLZOMGWrapper stlRng(m_rng);
+	//auto stlRng = [&](int exclusiveMax){ return m_rng.getInt(0, exclusiveMax - 1); };
 	//std::random_shuffle(m_furnature.begin(), m_furnature.end(), stlRng);
 	auto furnatureIt = m_furnature.begin();
 	for(int civilianIndex = 0; civilianIndex < civilianCount; ++civilianIndex)
