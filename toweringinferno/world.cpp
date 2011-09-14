@@ -112,10 +112,11 @@ bool isHeatProof(
 
 inline
 bool isWaterBlocker(
-	const CellType cell
+	const Cell& cell
 	)
 {
-	return cell == eSky || cell == eWall || cell == eClosedDoor || cell == eSprinklerControl;
+	return (cell.type == eFloor && cell.hasFurnature() && cell.furnature != 'h') 
+		|| cell.type == eSky || cell.type == eWall || cell.type == eClosedDoor || cell.type == eSprinklerControl;
 }
 
 } // namespace toweringinferno
@@ -444,14 +445,14 @@ void toweringinferno::World::updateDynamics()
 						condensationContributors += neighbour.water > 0.0f ? 1 : 0;
 					}
 
-					const bool isNeighbourContributingWater = isWaterBlocker(neighbour.type) == false
+					const bool isNeighbourContributingWater = isWaterBlocker(neighbour) == false
 						&& cell.water < neighbour.water;
 					waterTotal += (isNeighbourContributingWater ? neighbour.water : 0.0f);
 					waterContributors += isNeighbourContributingWater ? 1 : 0;
 				}
 			}
 
-			cell.waterFlip = isWaterBlocker(cell.type) ? 0.0f
+			cell.waterFlip = isWaterBlocker(cell) ? 0.0f
 				: utils::max(waterTotal / static_cast<float>(waterContributors), 0.0f);
 			
 			const float heatBuildRate 
