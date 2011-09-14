@@ -99,8 +99,7 @@ bool isValidPlayerCell(
 	const Cell& cell
 	)
 {
-	return (cell.type == eFloor && (cell.hasFurnature() == false || cell.furnature == 'h'))
-		|| cell.type == eStairsDown || cell.type == eStairsUp || cell.type == eOpenDoor;
+	return cell.type == eFloor || cell.type == eStairsDown || cell.type == eStairsUp || cell.type == eOpenDoor;
 }
 
 inline
