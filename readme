@@ -2,4 +2,4 @@ My entry for August 2011's Ludum Dare.
 A roguelike where you must evacuate a towering inferno, fighting fire and interacting with the environment.
 Written in C++ with libtcod
 
-(c) Andrew Fray 2011 All Rights Reserved
+Distributed under the GPLv3. See toweringinferno-license.txt for details.
