@@ -258,10 +258,13 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 		{
 			++furnatureIt;
 		}
-		assert(furnatureIt != m_furnature.end());
-		const Point civilianPosition = furnatureIt->first;
+
+		const Point civilianPosition = furnatureIt == m_furnature.end()
+			? calculateRandomPosition(findRandomLeaf(officeBsp, m_rng), m_rng)
+			: furnatureIt->first;
+
 		m_civilians.push_back(civilianPosition);
-		++furnatureIt;
+		furnatureIt = furnatureIt == m_furnature.end() ? furnatureIt : furnatureIt + 1;
 	}
 }
 
