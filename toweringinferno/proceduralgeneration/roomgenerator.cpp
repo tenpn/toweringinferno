@@ -1,4 +1,5 @@
-
+#include <cassert>
+#include <cmath>
 #include "roomgenerator.h"
 #include "floorgenerator.h"
 #include "libtcod.hpp"
@@ -106,6 +107,9 @@ void createDesk(
 	FloorGenerator& floorOut
 	)
 {
+	assert (w >= 3);
+	assert (h >= 3);
+
 	if (chairOrientation == eChairOrientation_Left)
 	{
 		const int row = y + (h/2);
@@ -117,6 +121,31 @@ void createDesk(
 		const int col = x + (w/2);
 		floorOut.addFurnature(col, y, 'h');
 		ringBox(col-1,y+1,3,2, floorOut, eLineStyle_Single, eFillStyle_Empty);
+	}
+}
+
+void createCubeFarm(
+	const int x,
+	const int y,
+	const int w,
+	const int h,
+	const ChairOrientation chairOrientation,
+	FloorGenerator& floorOut
+	)
+{
+	const int cubeFarmDeskWidth = 4;
+	assert(w >= cubeFarmDeskWidth);
+	assert(h >= cubeFarmDeskWidth);
+	const int desksWide = static_cast<int>(floor(w/static_cast<float>(cubeFarmDeskWidth)));
+	const int desksTall = static_cast<int>(floor(h/static_cast<float>(cubeFarmDeskWidth)));
+
+	for(int deskX = 0; deskX < desksWide; ++deskX)
+	{
+		for(int deskY = 0; deskY < desksTall; ++deskY)
+		{
+			createDesk(x + cubeFarmDeskWidth*deskX, y + cubeFarmDeskWidth*deskY, cubeFarmDeskWidth, cubeFarmDeskWidth,
+				chairOrientation, floorOut);
+		}
 	}
 }
 
@@ -159,9 +188,14 @@ void createBoardroom(
 	}
 }
 
-class SparseDesksWriter : public ITCODBspCallback 
+class DesksWriter : public ITCODBspCallback 
 {
 public:
+	DesksWriter(const float proportionFilledLeaves, const float proportionLeftChairs)
+		: m_proportionFilledLeaves(proportionFilledLeaves)
+		, m_proportionLeftChairs(proportionLeftChairs)
+	{}
+
 	virtual bool visitNode(TCODBsp * node, void * userData)
 	{
 		if(node->isLeaf() == false)
@@ -171,14 +205,19 @@ public:
 
 		FloorGenerator * const floor = static_cast<FloorGenerator*>(userData);
 
-		if (floor->getRNG().getInt(0,3) == 0)
+		if (floor->getRNG().getFloat(0.0f, 1.0f) <= m_proportionFilledLeaves)
 		{
-			const ChairOrientation chair 
-				= floor->getRNG().getInt(0,2) > 0 ? eChairOrientation_Left : eChairOrientation_Top;
+			const ChairOrientation chair = floor->getRNG().getFloat(0.0f, 1.0f) <= m_proportionLeftChairs 
+				? eChairOrientation_Left 
+				: eChairOrientation_Top;
 			createDesk(node->x, node->y, node->w, node->h, chair, *floor);
 		}
 		return true;
 	}
+
+private:
+	float m_proportionFilledLeaves;
+	float m_proportionLeftChairs;
 };
 
 	} // namespace proceduralgeneration
@@ -201,21 +240,19 @@ void toweringinferno::proceduralgeneration::generateRoom(
 	{
 		createBoardroom(x, y, w, h, floorOut);
 	}
+	else if (w > 10 && h > 10 && floorOut.getRNG().getInt(0,2) == 0)
+	{
+		createCubeFarm(x+1, y+1, w-1, h-1, 
+			floorOut.getRNG().getInt(0,1) == 0 ? eChairOrientation_Left : eChairOrientation_Top, 
+			floorOut);
+	}
 	else
 	{
+		// just a few desks
 		TCODBsp deskBSP(x + 1, y + 1, w - 2, h - 2);
+		deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 0.95f, 0.95f);
 
-		if (floorOut.getRNG().getInt(0,2) == 0)
-		{
-			deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 1.0f, 1.0f);
-		}
-		else
-		{
-		
-			deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 0.95f, 0.95f);
-
-			SparseDesksWriter deskWriter;
-			deskBSP.traversePostOrder(&deskWriter, &floorOut);
-		}
+		DesksWriter sparseDesksWriter(0.25f, 0.66f);
+		deskBSP.traversePostOrder(&sparseDesksWriter, &floorOut);
 	}
 }
