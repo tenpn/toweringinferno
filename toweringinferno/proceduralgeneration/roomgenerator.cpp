@@ -65,7 +65,7 @@ void ringBox(
 	const int maxX = x + w;
 	const int maxY = y + h;
 
-	for(int col = x; col < maxX; ++col)
+	for(int col = x+1; col < maxX-1; ++col)
 	{
 		floorOut.addFurnature(col, y, s_lineConstants[line][eLineType_Horizontal]);
 		floorOut.addFurnature(col, maxY - 1, s_lineConstants[line][eLineType_Horizontal]);
@@ -79,7 +79,7 @@ void ringBox(
 		}
 	}
 
-	for(int row = y; row < maxY; ++row)
+	for(int row = y+1; row < maxY-1; ++row)
 	{
 		floorOut.addFurnature(x, row, s_lineConstants[line][eLineType_Vertical]);
 		floorOut.addFurnature(maxX - 1, row, s_lineConstants[line][eLineType_Vertical]);
