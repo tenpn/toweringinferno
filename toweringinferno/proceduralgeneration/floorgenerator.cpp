@@ -249,12 +249,12 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 
 	// spwan civillians on random chairs
 	int civilianCount = m_rng.getInt(6,8);
-	//auto stlRng = [&](int exclusiveMax){ return m_rng.getInt(0, exclusiveMax - 1); };
-	//std::random_shuffle(m_furnature.begin(), m_furnature.end(), stlRng);
+	auto stlRng = [&](int exclusiveMax){ return m_rng.getInt(0, exclusiveMax - 1); };
+	std::random_shuffle(m_furnature.begin(), m_furnature.end(), stlRng);
 	auto furnatureIt = m_furnature.begin();
 	for(int civilianIndex = 0; civilianIndex < civilianCount; ++civilianIndex)
 	{
-		while (furnatureIt->second != 'h' && furnatureIt != m_furnature.end())
+		while (furnatureIt != m_furnature.end() && furnatureIt->second != 'h')
 		{
 			++furnatureIt;
 		}
@@ -263,5 +263,18 @@ toweringinferno::proceduralgeneration::FloorGenerator::FloorGenerator(
 		m_civilians.push_back(civilianPosition);
 		++furnatureIt;
 	}
+}
+
+void toweringinferno::proceduralgeneration::FloorGenerator::addFurnature(
+	int x, 
+	int y, 
+	unsigned char furnature
+	)
+{
+	assert(
+		std::find_if(m_furnature.begin(), m_furnature.end(), 
+				[x,y](const PointFurnature& f){ return f.first.col == x && f.first.row == y; })
+			== m_furnature.end());
+	m_furnature.push_back(PointFurnature(Point(x,y), furnature));
 }
 

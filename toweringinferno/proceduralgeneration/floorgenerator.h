@@ -110,14 +110,4 @@ toweringinferno::CellType toweringinferno::proceduralgeneration::FloorGenerator:
 		: eSky;
 }
 
-inline 
-void toweringinferno::proceduralgeneration::FloorGenerator::addFurnature(
-	int x, 
-	int y, 
-	unsigned char furnature
-	)
-{
-	m_furnature.push_back(PointFurnature(Point(x,y), furnature));
-}
-
 #endif // __TI_FLOORGENERATOR_H_
