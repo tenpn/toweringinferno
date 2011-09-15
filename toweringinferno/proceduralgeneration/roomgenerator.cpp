@@ -91,20 +91,22 @@ void ringBox(
 	floorOut.addFurnature(maxX - 1,maxY - 1, s_lineConstants[line][eLineType_Corner_SE]);
 }
 
+enum ChairOrientation
+{
+	eChairOrientation_Left,
+	eChairOrientation_Top,
+};
+
 void createDesk(
 	const int x,
 	const int y,
 	const int w,
 	const int h,
+	const ChairOrientation chairOrientation,
 	FloorGenerator& floorOut
 	)
 {
-	if (floorOut.getRNG().getInt(0,3) > 0)
-	{
-		return;
-	}
-
-	if (floorOut.getRNG().getInt(0,2) > 0)
+	if (chairOrientation == eChairOrientation_Left)
 	{
 		const int row = y + (h/2);
 		floorOut.addFurnature(x,row,'h');
@@ -169,9 +171,12 @@ public:
 
 		FloorGenerator * const floor = static_cast<FloorGenerator*>(userData);
 
-		createDesk(node->x, node->y, node->w, node->h, *floor);
-		//ringBox(node->x, node->y, node->w, node->h, *floor);
-
+		if (floor->getRNG().getInt(0,3) == 0)
+		{
+			const ChairOrientation chair 
+				= floor->getRNG().getInt(0,2) > 0 ? eChairOrientation_Left : eChairOrientation_Top;
+			createDesk(node->x, node->y, node->w, node->h, chair, *floor);
+		}
 		return true;
 	}
 };
@@ -199,9 +204,18 @@ void toweringinferno::proceduralgeneration::generateRoom(
 	else
 	{
 		TCODBsp deskBSP(x + 1, y + 1, w - 2, h - 2);
-		deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 0.95f, 0.95f);
 
-		SparseDesksWriter deskWriter;
-		deskBSP.traversePostOrder(&deskWriter, &floorOut);
+		if (floorOut.getRNG().getInt(0,2) == 0)
+		{
+			deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 1.0f, 1.0f);
+		}
+		else
+		{
+		
+			deskBSP.splitRecursive(&floorOut.getRNG(), 999, 5, 4, 0.95f, 0.95f);
+
+			SparseDesksWriter deskWriter;
+			deskBSP.traversePostOrder(&deskWriter, &floorOut);
+		}
 	}
 }
